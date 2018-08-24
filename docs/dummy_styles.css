@@ -1,0 +1,35 @@
+body {
+	background: #90C090;
+	color: #000000;
+}
+
+#page-heading {
+	font-size: 20;
+}
+#navigationBlock ul li {
+  list-style: none;
+  display: inline;
+}
+
+#navigationBlock ul li a {
+  /* background: #70a070; */
+
+  border: 1px solid #808080;
+  /* border-bottom: none; */
+  margin-left: 1px;
+  padding: 3px 6px;
+  text-decoration: none;
+  font-weight: bold;
+  font-family: arial;  
+}
+
+#navigationBlock ul li a#navCurrent {
+  background: #60C060;    
+}
+
+#navigationBlock ul li a:hover {
+  background: #007000 !important;
+  border-color: #00ff00;
+  color: #00ff00;   
+}
+
