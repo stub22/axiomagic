@@ -1,0 +1,35 @@
+Axiomagic credits, updated 2018-Sep-02
+--------------------------------------
+Axiomagic is licensed under terms of the Apache 2.0 license.
+See the file AXIOMAGIC_LICENSE_APACHE2.txt.
+Axiomagic also makes use of the following software:
+
+Apache 2.0 Licensed:
+Maven   				https://maven.apache.org
+Jena RDF suite    		https://jena.apache.org
+Log4J    				https://logging.apache.org/log4j
+Appdapter				http://www.appdapter.org
+Apache Commons			https://commons.apache.org
+Akka					https://doc.akka.io/docs/akka/2.5/project/licenses.html
+Spray					http://spray.io/project-info/license/
+FasterXML Jackson 2.x	https://github.com/FasterXML/jackson/wiki/FAQ
+
+BSD 3-Clause Licensed:
+Scala				https://www.scala-lang.org/license/
+JSON-LD Java 		https://github.com/jsonld-java/jsonld-java/blob/master/LICENCE
+
+MIT-style Licensed:
+SLF4J				https://www.slf4j.org/license.html
+
+Public Domain:
+Scala-Maven-Plugin in artifact group net.alchim31.maven
+	(was previously Apache License 2.0, is now Public Domain)
+	https://github.com/davidB/scala-maven-plugin
+
+Other components may be included indirectly, via pom.xml dependencies,
+classpaths, web services, and other mechanisms.  If you notice a 
+substantial omission from the above list of credits, please let us know!
+
+Other licenses:
+Java - not included with Axiomagic, see your java vendor
+for license terms.
