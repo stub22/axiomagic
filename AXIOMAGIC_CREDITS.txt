@@ -13,6 +13,7 @@ Apache Commons			https://commons.apache.org
 Akka					https://doc.akka.io/docs/akka/2.5/project/licenses.html
 Spray					http://spray.io/project-info/license/
 FasterXML Jackson 2.x	https://github.com/FasterXML/jackson/wiki/FAQ
+WikiData Toolkit		https://github.com/Wikidata/Wikidata-Toolkit
 
 BSD 3-Clause Licensed:
 Scala				https://www.scala-lang.org/license/
