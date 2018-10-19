@@ -26,7 +26,6 @@
     <modules>
         <module>axmgc_ext_jena</module>
         <module>axmgc_web_pond</module>
-        <module>axmgc_wkdt_graze</module>
     </modules>
 
 </project>
