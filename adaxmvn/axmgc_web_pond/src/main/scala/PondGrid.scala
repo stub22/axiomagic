@@ -4,7 +4,7 @@ package org.appdapter.axmgc.web.pond
 
 import org.apache.jena.rdf.model.{Model => JenaModel}
 
-// import scala.xml.*
+import scala.xml.Elem
 
 class PondGrid {
 
@@ -25,6 +25,10 @@ trait PondShower {
 	def getPondViewDat(pondID : String, frameTime : String) : String = {
 		dummyJsonTxt
 	}
+	def getPondViewXhtml(pondID : String, frameTime : String) : Elem = {
+		val xmlViewOut = <div><span>[PondID = { pondID}]</span></div>
+		xmlViewOut // .toString()
+	}
 
 }
 trait RectUiFuncs {
@@ -32,11 +36,10 @@ trait RectUiFuncs {
 	val OF_JSON = "JSON"
 	def makePondDataDump(outFmt : String, pShowers: Traversable[PondShower]) : String = {
 		// List[String]
-		val shownXmlNodes = pShowers.map(ps => {
-			val xmlNode = <div>
-			</div>
-			xmlNode
-		})
+		val shownXmlNodes : List[Elem] = pShowers.map(ps => {
+			val xmlElem : Elem = ps.getPondViewXhtml("pid", "now")
+			xmlElem
+		}).toList
 		val result = "big ol XML dump : [" + shownXmlNodes.toString + "]"
 		result
 	}

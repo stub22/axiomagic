@@ -80,8 +80,10 @@ object AxmgcPonderApp {
 		val gridMkr = new PondGrid {}
 		// val pshwrs = gridMkr.
 		val rui = new RectUiFuncs {}
-		val x = rui.makePondDataDump(rui.OF_JSON, List())
-		val muchDat = ""
-		banner
+		val (pshwrA, pshwrB) = (new PondShower {},new PondShower {})
+		val pList : List[PondShower] = List(pshwrA, pshwrB)
+		val pondShowerDump = rui.makePondDataDump(rui.OF_JSON, pList)
+
+		pondShowerDump
 	}
 }
