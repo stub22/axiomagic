@@ -42,11 +42,13 @@ object AxmgcPonderApp {
           complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, "<h1>Say hello to akka-http</h1>"))
         }
       } ~ // note tilde connects to next case
-      path(pathB) {
-        get {
-          complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, "<h1>Say goodbye to akka-http</h1>"))
-        }
-      } ~ path(pathJsonPreDump) {
+       path(pathB) {
+          get {
+            val dummyOld = "<h1>Say goodbye to akka-http</h1>"
+            val muchBester = getSomeXhtml5()
+            complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, muchBester ))
+          }
+     } ~ path(pathJsonPreDump) {
           val x = getSomeJsonLD()
           complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, "<pre>" + x + "</pre>"))
       }  ~ path(pathJsonLdMime) {
@@ -71,5 +73,13 @@ object AxmgcPonderApp {
     val jldTxt = sds.writeModelToJsonLDString_Pretty(mdl)
     System.out.println("Formatted: " + jldTxt)
     jldTxt
+  }
+    def getSomeXhtml5() : String = {
+    val banner : String = "<h3>Much Bester Down Here</h3>"
+    val gridMkr = new PondGrid {}
+    val rui = new RectUiFuncs {}
+
+    val muchDat = ""
+    banner
   }
 }

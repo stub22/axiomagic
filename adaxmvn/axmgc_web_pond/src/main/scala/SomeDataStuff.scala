@@ -23,10 +23,10 @@ class SomeDataStuff {
 		val grph : JenaGraph = jm.getGraph
 		val fmt : RDFFormat = RDFFormat.JSONLD_COMPACT_PRETTY
 		val jldWCtx : JsonLDWriteContext = new JsonLDWriteContext()
-		val outTxt = writeModelToJsonLDString(grph, fmt, jldWCtx)
+		val outTxt = writeJenGrphToJsonLDStr(grph, fmt, jldWCtx)
 		outTxt
 	}
-	def writeModelToJsonLDString (jgrph : JenaGraph, fmt : RDFFormat, jldWCtx : JsonLDWriteContext) : String = {
+	def writeJenGrphToJsonLDStr(jgrph : JenaGraph, fmt : RDFFormat, jldWCtx : JsonLDWriteContext) : String = {
 		val outBAOS = new ByteArrayOutputStream
 		try {
 			val wrtr : WriterGraphRIOT = RDFDataMgr.createGraphWriter(fmt)
