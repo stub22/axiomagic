@@ -12,74 +12,76 @@ import scala.io.StdIn
  * @author ${user.name}
  */
 object AxmgcPonderApp {
-  val pathA = "patha"
-  val pathB = "pathb"
-  val pathJsonPreDump = "json-pre-dump"
-  val pathJsonLdMime = "json-ld-mime"
+	val pathA = "patha"
+	val pathB = "pathb"
+	val pathJsonPreDump = "json-pre-dump"
+	val pathJsonLdMime = "json-ld-mime"
 
-  def foo(x : Array[String]) = x.foldLeft("")((a,b) => a + b)
-  
-  def main(args : Array[String]) {
-    println( "Hello World!" )
-    println("concat arguments = " + foo(args))
+	def foo(x : Array[String]) = x.foldLeft("")((a,b) => a + b)
 
-    LogCtl.setLog4j
+	def main(args : Array[String]) {
+		println( "Hello World!" )
+		println("concat arguments = " + foo(args))
 
-    import org.slf4j.LoggerFactory
-    val logger = LoggerFactory.getLogger(classOf[App])
-    logger.warn("logger warning whee")
-    launchWebServer
-  }
-  def launchWebServer : Unit = {
-    implicit val system = ActorSystem("my-system")
-    implicit val materializer = ActorMaterializer()
-    // needed for the future flatMap/onComplete in the end
-    implicit val executionContext = system.dispatcher
+		LogCtl.setLog4j
 
-    val route =
-      path(pathA) {
-        get {
-          complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, "<h1>Say hello to akka-http</h1>"))
-        }
-      } ~ // note tilde connects to next case
-       path(pathB) {
-          get {
-            val dummyOld = "<h1>Say goodbye to akka-http</h1>"
-            val muchBester = getSomeXhtml5()
-            complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, muchBester ))
-          }
-     } ~ path(pathJsonPreDump) {
-          val x = getSomeJsonLD()
-          complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, "<pre>" + x + "</pre>"))
-      }  ~ path(pathJsonLdMime) {
-          val x = getSomeJsonLD()
-          // Note scala backticks, used to identify variables containing special chars
-          complete(HttpEntity(ContentTypes.`application/json`, x ))
-      }
+		import org.slf4j.LoggerFactory
+		val logger = LoggerFactory.getLogger(classOf[App])
+		logger.warn("logger warning whee")
+		launchWebServer
+	}
+	def launchWebServer : Unit = {
+		implicit val system = ActorSystem("my-system")
+		implicit val materializer = ActorMaterializer()
+		// needed for the future flatMap/onComplete in the end
+		implicit val executionContext = system.dispatcher
 
-      val bindingFuture = Http().bindAndHandle(route, "localhost", 8080)
+		val route =
+	path(pathA) {
+		get {
+		complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, "<h1>Say hello to akka-http</h1>"))
+		}
+	} ~ // note tilde connects to next case
+	path(pathB) {
+		get {
+		val dummyOld = "<h1>Say goodbye to akka-http</h1>"
+		val muchBester = getSomeXhtml5()
+		complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, muchBester ))
+		}
+	} ~ path(pathJsonPreDump) {
+		val x = getSomeJsonLD()
+		complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, "<pre>" + x + "</pre>"))
+	}  ~ path(pathJsonLdMime) {
+	val x = getSomeJsonLD()
+		// Note scala backticks, used to identify variables containing special chars
+		complete(HttpEntity(ContentTypes.`application/json`, x ))
+	}
 
-      println(s"Server online at http://localhost:8080/\nPress RETURN to stop...")
-      StdIn.readLine() // let it run until user presses return
-      bindingFuture
-              .flatMap(_.unbind()) // trigger unbinding from the port
-              .onComplete(_ => system.terminate()) // and shutdown when done
-    }
-  def getSomeJsonLD() : String = {
-    val sds = new SomeDataStuff()
-    val mdl = sds.loadThatModel()
-    val mdmp = mdl.toString
-    System.out.println("Loaded: " + mdmp)
-    val jldTxt = sds.writeModelToJsonLDString_Pretty(mdl)
-    System.out.println("Formatted: " + jldTxt)
-    jldTxt
-  }
-    def getSomeXhtml5() : String = {
-    val banner : String = "<h3>Much Bester Down Here</h3>"
-    val gridMkr = new PondGrid {}
-    val rui = new RectUiFuncs {}
+	val bindingFuture = Http().bindAndHandle(route, "localhost", 8080)
 
-    val muchDat = ""
-    banner
-  }
+	println(s"Server online at http://localhost:8080/\nPress RETURN to stop...")
+	StdIn.readLine() // let it run until user presses return
+	bindingFuture
+		.flatMap(_.unbind()) // trigger unbinding from the port
+		.onComplete(_ => system.terminate()) // and shutdown when done
+	}
+	def getSomeJsonLD() : String = {
+		val sds = new SomeDataStuff()
+		val mdl = sds.loadThatModel()
+		val mdmp = mdl.toString
+		System.out.println("Loaded: " + mdmp)
+		val jldTxt = sds.writeModelToJsonLDString_Pretty(mdl)
+		System.out.println("Formatted: " + jldTxt)
+		jldTxt
+	}
+
+	def getSomeXhtml5() : String = {
+		val banner : String = "<h3>Much Bester Down Here</h3>"
+		val gridMkr = new PondGrid {}
+		// val pshwrs = gridMkr.
+		val rui = new RectUiFuncs {}
+		val x = rui.makePondDataDump(rui.OF_JSON, List())
+		val muchDat = ""
+		banner
+	}
 }
