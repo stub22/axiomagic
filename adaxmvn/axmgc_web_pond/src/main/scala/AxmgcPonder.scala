@@ -18,7 +18,7 @@ trait RouteMaker {
 	val pathJsonPreDump = "json-pre-dump"
 	val pathJsonLdMime = "json-ld-mime"
 	val pathMore = "moreHere"
-
+	// Note scala backticks, used to identify variables containing special chars
 	val htmlCntType = ContentTypes.`text/html(UTF-8)`
 	val jsonCntType = ContentTypes.`application/json`
 
@@ -29,23 +29,22 @@ trait RouteMaker {
 				val pageEnt = makeHtmlEntity(pageTxt)
 				complete(pageEnt)
 			}
-		} ~ // note tilde connects to next alternate route
-				path(pathB) {
-					get {
-						val dummyOld = "<h1>Say goodbye to akka-http</h1>"
-						val muchBesterTxt = getSomeXhtml5()
-						val muchBesterEnt = makeHtmlEntity(muchBesterTxt)
-						complete(muchBesterEnt) // HttpEntity(ContentTypes.`text/html(UTF-8)`, muchBesterTxt ))
-					}
-				} ~ path(pathJsonPreDump) {
+		} ~ path(pathB) { // note tilde connects to next alternate route
+			get {
+				val dummyOld = "<h1>Say goodbye to akka-http</h1>"
+				val muchBesterTxt = getSomeXhtml5()
+				val muchBesterEnt = makeHtmlEntity(muchBesterTxt)
+				complete(muchBesterEnt) // HttpEntity(ContentTypes.`text/html(UTF-8)`, muchBesterTxt ))
+			}
+		} ~ path(pathJsonPreDump) {
 			val jsLdTxt = getSomeJsonLD()
 			val htTxt = "<pre>" + jsLdTxt + "</pre>"
 			val htEnt = makeHtmlEntity(htTxt)
 			complete(htEnt)
 		} ~ path(pathJsonLdMime) {
 			val jsonDat = getSomeJsonLD()
-			// Note scala backticks, used to identify variables containing special chars
-			complete(HttpEntity(jsonCntType, jsonDat))
+			val jsonEnt = makeJsonEntity(jsonDat)
+			complete(jsonEnt)
 		}
 	}
 	def makeHtmlEntity (htmlTxt : String) : HttpEntity.Strict = {
@@ -120,7 +119,7 @@ object AxmgcPonderApp {
 
 		val actSysName = "my-sys"
 		val srvIntf = "localhost"
-		val srvPort = 8080
+		val srvPort = 8095
 		val launcher = new WebServerLauncher {}
 		launcher.launchWebServer(route, actSysName, srvIntf, srvPort)
 		println("END of .main()");
