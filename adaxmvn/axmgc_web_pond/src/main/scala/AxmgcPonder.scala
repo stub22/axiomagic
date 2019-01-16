@@ -2,77 +2,59 @@ package org.appdapter.axmgc.web.pond
 
 import org.apache.jena.atlas.logging.LogCtl
 import akka.actor.ActorSystem
-import akka.http.scaladsl.Http
+import akka.http.scaladsl.{Http, server => dslServer}
 import akka.http.scaladsl.model._
 import akka.http.scaladsl.server.Directives.{path, _}
 import akka.stream.ActorMaterializer
-
+import scala.concurrent.{Future => ConcFut}
 import scala.io.StdIn
 /**
- * @author ${user.name}
+ * @author stub22
  */
-object AxmgcPonderApp {
+
+trait RouteMaker {
 	val pathA = "patha"
 	val pathB = "pathb"
 	val pathJsonPreDump = "json-pre-dump"
 	val pathJsonLdMime = "json-ld-mime"
 	val pathMore = "moreHere"
 
-	def foo(x : Array[String]) = x.foldLeft("")((a,b) => a + b)
-
-	def main(args : Array[String]) {
-		println( "Hello World!" )
-		println("concat arguments = " + foo(args))
-
-		LogCtl.setLog4j
-
-		import org.slf4j.LoggerFactory
-		val logger = LoggerFactory.getLogger(classOf[App])
-		logger.warn("logger warning whee")
-		launchWebServer
-	}
 	val htmlCntType = ContentTypes.`text/html(UTF-8)`
-	def launchWebServer : Unit = {
-		implicit val system = ActorSystem("my-system")
-		implicit val materializer = ActorMaterializer()
-		// needed for the future flatMap/onComplete in the end
-		implicit val executionContext = system.dispatcher
+	val jsonCntType = ContentTypes.`application/json`
 
-		val route =
-	path(pathA) {
-		get {
-			val pageTxt = "<h1>Say hello to akka-http</h1>"
-			complete(HttpEntity(htmlCntType, pageTxt))
+	def makeRouteTree: dslServer.Route = {
+		path(pathA) {
+			get {
+				val pageTxt = "<h1>Say hello to akka-http</h1>"
+				val pageEnt = makeHtmlEntity(pageTxt)
+				complete(pageEnt)
+			}
+		} ~ // note tilde connects to next alternate route
+				path(pathB) {
+					get {
+						val dummyOld = "<h1>Say goodbye to akka-http</h1>"
+						val muchBesterTxt = getSomeXhtml5()
+						val muchBesterEnt = makeHtmlEntity(muchBesterTxt)
+						complete(muchBesterEnt) // HttpEntity(ContentTypes.`text/html(UTF-8)`, muchBesterTxt ))
+					}
+				} ~ path(pathJsonPreDump) {
+			val jsLdTxt = getSomeJsonLD()
+			val htTxt = "<pre>" + jsLdTxt + "</pre>"
+			val htEnt = makeHtmlEntity(htTxt)
+			complete(htEnt)
+		} ~ path(pathJsonLdMime) {
+			val jsonDat = getSomeJsonLD()
+			// Note scala backticks, used to identify variables containing special chars
+			complete(HttpEntity(jsonCntType, jsonDat))
 		}
-	} ~ // note tilde connects to next case
-	path(pathB) {
-		get {
-		val dummyOld = "<h1>Say goodbye to akka-http</h1>"
-		val muchBester = getSomeXhtml5()
-		complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, muchBester ))
-		}
-	} ~ path(pathJsonPreDump) {
-		val jsLdTxt = getSomeJsonLD()
-		val htTxt = "<pre>" + jsLdTxt + "</pre>"
-		val htEnt = makeHtmlEntity(htTxt)
-		complete(htEnt)
-	}  ~ path(pathJsonLdMime) {
-	val x = getSomeJsonLD()
-		// Note scala backticks, used to identify variables containing special chars
-		complete(HttpEntity(ContentTypes.`application/json`, x ))
-	}
-
-	val bindingFuture = Http().bindAndHandle(route, "localhost", 8080)
-
-	println(s"Server online at http://localhost:8080/\nPress RETURN to stop...")
-	StdIn.readLine() // let it run until user presses return
-	bindingFuture
-		.flatMap(_.unbind()) // trigger unbinding from the port
-		.onComplete(_ => system.terminate()) // and shutdown when done
 	}
 	def makeHtmlEntity (htmlTxt : String) : HttpEntity.Strict = {
-		HttpEntity(ContentTypes.`text/html(UTF-8)`, htmlTxt)
+		HttpEntity(htmlCntType, htmlTxt)
 	}
+	def makeJsonEntity (jsonTxt : String) : HttpEntity.Strict = {
+		HttpEntity(jsonCntType, jsonTxt)
+	}
+
 	def getSomeJsonLD() : String = {
 		val sds = new SomeDataStuff()
 		val mdl = sds.loadThatModel()
@@ -94,4 +76,49 @@ object AxmgcPonderApp {
 
 		pondShowerDump
 	}
+}
+object AxmgcPonderApp {
+
+
+	def foo(x: Array[String]) = x.foldLeft("")((a, b) => a + b)
+
+	def main(args: Array[String]) {
+		println("Hello World!")
+		println("concat arguments = " + foo(args))
+
+		LogCtl.setLog4j
+
+		import org.slf4j.LoggerFactory
+		val logger = LoggerFactory.getLogger(classOf[App])
+		logger.warn("logger warning whee")
+		val routeMaker = new RouteMaker {}
+		val route = routeMaker.makeRouteTree
+
+		val actSysName = "my-sys"
+		val srvIntf = "localhost"
+		val srvPort = 8080
+		launchWebServer(route, actSysName, srvIntf, srvPort)
+	}
+
+	def launchWebServer (route: dslServer.Route, actSysNm : String, srvIntf : String, portNum: Int) : Unit = {
+		implicit val actrSys : ActorSystem = ActorSystem("my-system")
+		implicit val actrMtrlzr = ActorMaterializer()
+
+		val bindingFuture : ConcFut[Http.ServerBinding]
+				= Http().bindAndHandle(route, srvIntf, portNum)
+		println("Server online at http://" + srvIntf + "/" + portNum)
+		runUntilNewlineThenExit(actrSys, bindingFuture)
+	}
+
+	private def runUntilNewlineThenExit(actSys: ActorSystem, bindFut : ConcFut[Http.ServerBinding]) : Unit = {
+		// needed for the future flatMap/onComplete in the end
+		implicit val executionContext = actSys.dispatcher
+		println("Press RETURN to stop...")
+		StdIn.readLine() // let it run until user presses return
+		bindFut
+				.flatMap(_.unbind()) // trigger unbinding from the port
+				.onComplete(_ => actSys.terminate()) // and shutdown when done
+
+	}
+
 }
