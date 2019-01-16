@@ -5,7 +5,6 @@ import spray.json.{DefaultJsonProtocol, DeserializationException, JsString, JsVa
 
 trait JsonEntMkr extends SprayJsonSupport {
 
-	// val testJF = {json}
 }
 
 
@@ -32,6 +31,13 @@ object MyJsonProtocol extends DefaultJsonProtocol {
 
 }
 
+// It utilizes SprayJsonSupport via the PersonJsonSupport object as the in-scope unmarshaller.
+
+
+case class Person(name: String, favoriteNumber: Int)
+object PersonJsonSupport extends DefaultJsonProtocol with SprayJsonSupport {
+	implicit val myJF_Person : JsonFormat[Person] = jsonFormat2(Person)
+}
 /*
 The SprayJsonSupport trait provides a FromEntityUnmarshaller[T] and ToEntityMarshaller[T]
 for every type T that an implicit spray.json.RootJsonReader and/or spray.json.RootJsonWriter

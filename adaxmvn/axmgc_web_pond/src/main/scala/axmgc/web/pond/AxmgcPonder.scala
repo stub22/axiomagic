@@ -13,49 +13,14 @@ import scala.io.StdIn
  * @author stub22
  */
 
-trait RouteMaker {
-	val pathA = "patha"
-	val pathB = "pathb"
-	val pathJsonPreDump = "json-pre-dump"
-	val pathJsonLdMime = "json-ld-mime"
-	val pathMore = "moreHere"
-
-	lazy val myTdatChnkr = new TdatChunker {}
-	lazy val myEntMkr = new HtEntMkr {}
-	def makeRouteTree: dslServer.Route = {
-		path(pathA) {
-			get {
-				val pageTxt = "<h1>Say hello to akka-http</h1>"
-				val pageEnt = myEntMkr.makeHtmlEntity(pageTxt)
-				complete(pageEnt)
-			}
-		} ~ path(pathB) { // note tilde connects to next alternate route
-			get {
-				val dummyOld = "<h1>Say goooooodbye to akka-http</h1>"
-				val muchBesterTxt = myTdatChnkr.getSomeXhtml5()
-				val muchBesterEnt = myEntMkr.makeHtmlEntity(muchBesterTxt)
-				complete(muchBesterEnt) // HttpEntity(ContentTypes.`text/html(UTF-8)`, muchBesterTxt ))
-			}
-		} ~ path(pathJsonPreDump) {
-			val jsLdTxt = myTdatChnkr.getSomeJsonLD()
-			val htTxt = "<pre>" + jsLdTxt + "</pre>"
-			val htEnt = myEntMkr.makeHtmlEntity(htTxt)
-			complete(htEnt)
-		} ~ path(pathJsonLdMime) {
-			val jsonDat = myTdatChnkr.getSomeJsonLD()
-			val jsonEnt = myEntMkr.makeJsonEntity(jsonDat)
-			complete(jsonEnt)
-		}
-	}
-}
 
 trait WebServerLauncher {
 	def launchWebServer (route: dslServer.Route, actSysNm : String, srvIntf : String, portNum: Int) : Unit = {
 		implicit val actrSys : ActorSystem = ActorSystem(actSysNm)
 		implicit val actrMtrlzr = ActorMaterializer()
 
-		val bindingFuture : ConcFut[Http.ServerBinding]
-		= Http().bindAndHandle(route, srvIntf, portNum)
+		val bindingFuture : ConcFut[Http.ServerBinding] =
+					Http().bindAndHandle(route, srvIntf, portNum)
 		println("Server online at http://" + srvIntf + ":" + portNum)
 		runUntilNewlineThenExit(actrSys, bindingFuture)
 	}
