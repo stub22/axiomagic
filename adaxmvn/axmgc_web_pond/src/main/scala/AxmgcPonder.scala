@@ -31,7 +31,7 @@ trait RouteMaker {
 			}
 		} ~ path(pathB) { // note tilde connects to next alternate route
 			get {
-				val dummyOld = "<h1>Say goodbye to akka-http</h1>"
+				val dummyOld = "<h1>Say goooooodbye to akka-http</h1>"
 				val muchBesterTxt = getSomeXhtml5()
 				val muchBesterEnt = makeHtmlEntity(muchBesterTxt)
 				complete(muchBesterEnt) // HttpEntity(ContentTypes.`text/html(UTF-8)`, muchBesterTxt ))
