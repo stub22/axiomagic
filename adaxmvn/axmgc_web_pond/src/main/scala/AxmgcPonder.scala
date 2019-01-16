@@ -16,6 +16,7 @@ object AxmgcPonderApp {
 	val pathB = "pathb"
 	val pathJsonPreDump = "json-pre-dump"
 	val pathJsonLdMime = "json-ld-mime"
+	val pathMore = "moreHere"
 
 	def foo(x : Array[String]) = x.foldLeft("")((a,b) => a + b)
 
@@ -30,6 +31,7 @@ object AxmgcPonderApp {
 		logger.warn("logger warning whee")
 		launchWebServer
 	}
+	val htmlCntType = ContentTypes.`text/html(UTF-8)`
 	def launchWebServer : Unit = {
 		implicit val system = ActorSystem("my-system")
 		implicit val materializer = ActorMaterializer()
@@ -39,7 +41,8 @@ object AxmgcPonderApp {
 		val route =
 	path(pathA) {
 		get {
-		complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, "<h1>Say hello to akka-http</h1>"))
+			val pageTxt = "<h1>Say hello to akka-http</h1>"
+			complete(HttpEntity(htmlCntType, pageTxt))
 		}
 	} ~ // note tilde connects to next case
 	path(pathB) {
@@ -49,8 +52,10 @@ object AxmgcPonderApp {
 		complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, muchBester ))
 		}
 	} ~ path(pathJsonPreDump) {
-		val x = getSomeJsonLD()
-		complete(HttpEntity(ContentTypes.`text/html(UTF-8)`, "<pre>" + x + "</pre>"))
+		val jsLdTxt = getSomeJsonLD()
+		val htTxt = "<pre>" + jsLdTxt + "</pre>"
+		val htEnt = makeHtmlEntity(htTxt)
+		complete(htEnt)
 	}  ~ path(pathJsonLdMime) {
 	val x = getSomeJsonLD()
 		// Note scala backticks, used to identify variables containing special chars
@@ -64,6 +69,9 @@ object AxmgcPonderApp {
 	bindingFuture
 		.flatMap(_.unbind()) // trigger unbinding from the port
 		.onComplete(_ => system.terminate()) // and shutdown when done
+	}
+	def makeHtmlEntity (htmlTxt : String) : HttpEntity.Strict = {
+		HttpEntity(ContentTypes.`text/html(UTF-8)`, htmlTxt)
 	}
 	def getSomeJsonLD() : String = {
 		val sds = new SomeDataStuff()
