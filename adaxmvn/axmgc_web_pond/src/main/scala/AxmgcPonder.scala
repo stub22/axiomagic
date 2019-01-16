@@ -3,7 +3,7 @@ package org.appdapter.axmgc.web.pond
 import org.apache.jena.atlas.logging.LogCtl
 import akka.actor.ActorSystem
 import akka.http.scaladsl.{Http, server => dslServer}
-import akka.http.scaladsl.model._
+import akka.http.scaladsl.model.{ContentTypes, HttpEntity}
 import akka.http.scaladsl.server.Directives.{path, _}
 import akka.stream.ActorMaterializer
 import scala.concurrent.{Future => ConcFut}
@@ -77,8 +77,32 @@ trait RouteMaker {
 		pondShowerDump
 	}
 }
-object AxmgcPonderApp {
+trait WebServerLauncher {
+	def launchWebServer (route: dslServer.Route, actSysNm : String, srvIntf : String, portNum: Int) : Unit = {
+		implicit val actrSys : ActorSystem = ActorSystem(actSysNm)
+		implicit val actrMtrlzr = ActorMaterializer()
 
+		val bindingFuture : ConcFut[Http.ServerBinding]
+		= Http().bindAndHandle(route, srvIntf, portNum)
+		println("Server online at http://" + srvIntf + ":" + portNum)
+		runUntilNewlineThenExit(actrSys, bindingFuture)
+	}
+
+	private def runUntilNewlineThenExit(actSys: ActorSystem, bindFut : ConcFut[Http.ServerBinding]) : Unit = {
+		// needed for the future flatMap/onComplete in the end
+		implicit val executionContext = actSys.dispatcher
+		println("Presssss RETURN to stop...")
+		StdIn.readLine() // let it run until user presses return
+		println("Got user return, starting unbind")
+		bindFut
+				.flatMap(_.unbind()) // trigger unbinding from the port
+				.onComplete(_ => actSys.terminate()) // and shutdown when done
+		println("We finished setting up the terminator, but it may not have completed yet.")
+		println("END of runUntilNewlineThenExit");
+	}
+
+}
+object AxmgcPonderApp {
 
 	def foo(x: Array[String]) = x.foldLeft("")((a, b) => a + b)
 
@@ -97,28 +121,10 @@ object AxmgcPonderApp {
 		val actSysName = "my-sys"
 		val srvIntf = "localhost"
 		val srvPort = 8080
-		launchWebServer(route, actSysName, srvIntf, srvPort)
+		val launcher = new WebServerLauncher {}
+		launcher.launchWebServer(route, actSysName, srvIntf, srvPort)
+		println("END of .main()");
 	}
 
-	def launchWebServer (route: dslServer.Route, actSysNm : String, srvIntf : String, portNum: Int) : Unit = {
-		implicit val actrSys : ActorSystem = ActorSystem("my-system")
-		implicit val actrMtrlzr = ActorMaterializer()
-
-		val bindingFuture : ConcFut[Http.ServerBinding]
-				= Http().bindAndHandle(route, srvIntf, portNum)
-		println("Server online at http://" + srvIntf + "/" + portNum)
-		runUntilNewlineThenExit(actrSys, bindingFuture)
-	}
-
-	private def runUntilNewlineThenExit(actSys: ActorSystem, bindFut : ConcFut[Http.ServerBinding]) : Unit = {
-		// needed for the future flatMap/onComplete in the end
-		implicit val executionContext = actSys.dispatcher
-		println("Press RETURN to stop...")
-		StdIn.readLine() // let it run until user presses return
-		bindFut
-				.flatMap(_.unbind()) // trigger unbinding from the port
-				.onComplete(_ => actSys.terminate()) // and shutdown when done
-
-	}
 
 }
