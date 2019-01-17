@@ -13,8 +13,10 @@ import org.apache.jena.riot.{JsonLDWriteContext, RDFDataMgr, RDFFormat, WriterGr
 
 class SomeDataStuff {
 	val thatModelPath = "gdat/glp_dat_01_owl.ttl"
-	def loadThatModel() : JenaModel = {
-		val mdl = RDFDataMgr.loadModel(thatModelPath)
+	val buiTestPath = "gdat/box_ui_cfg_02.ttl"
+	def loadThatModel(useBui : Boolean) : JenaModel = {
+		val path = if (useBui) buiTestPath else thatModelPath
+		val mdl = RDFDataMgr.loadModel(path)
 		mdl
 	}
 
@@ -44,9 +46,9 @@ class SomeDataStuff {
 	}
 }
 trait TdatChunker {
-	def getSomeJsonLD() : String = {
+	def getSomeJsonLD(useBui : Boolean) : String = {
 		val sds = new SomeDataStuff()
-		val mdl = sds.loadThatModel()
+		val mdl = sds.loadThatModel(useBui)
 		val mdmp = mdl.toString
 		System.out.println("Loaded: " + mdmp)
 		val jldTxt = sds.writeModelToJsonLDString_Pretty(mdl)

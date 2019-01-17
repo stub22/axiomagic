@@ -16,7 +16,7 @@ trait PondShower {
 	private lazy val mySDS = new SomeDataStuff()
 
 	private def loadDummyModel : JenaModel = {
-		val mdl = mySDS.loadThatModel()
+		val mdl = mySDS.loadThatModel(false)
 		val mdmp = mdl.toString
 		System.out.println("Loaded: " + mdmp)
 		mdl
