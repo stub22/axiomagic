@@ -27,14 +27,23 @@ Axiomagic is the foundation of Glue-AI 2.0.
 
 ## Fun Part : What, Why, How?
 These components generate tweakable and routable multidimensional experiences for users,
-employing color, sound, motion, music.
+employing color, sound, motion, music.  These experiences are defined in terms of timelines,
+including the familiar concept of events.
 
-Features are added by creating equations, functions, mappings, templates, rules, schemas,
-employing a substrate of:
+Features are added by creating equations, functions, mappings, templates, rules, and schemas.
+These definitions commonly use parameters, which may be tweaked by users at runtime.
+The combination of formal mapping with playful tweaking is what we call FAF:
+
+**Formal Adjustment Fun**
+
+Now you know why we make Axiomagic: to have fun with Ax-FAF!  
+But remember, we are also quite formal around here.
+
+The underlying open source components allow us to build apps as interlocking tapestries of:
 *  Client GUI code:  Uses Vue.js to update HTML+CSS GUI, renders client UI from graphs 
 *  Client Graphs: RDF in browser via rdfjs, optional JSON-LD, talks to server agents
 *  Server Agents: Akka via HTTP, WebSockets, generates custom HTML+data GUI per client
 *  Server Graphs:  SHACL, GraphQuery, SPARQL, TinkerPop/Gremlin
-*  Server Functions:  Scala, Lambda, proof systems incl Haskell, Agda, [MMT](https://uniformal.github.io/doc/)
+*  Server Functions:  Scala, Lambda, proof systems embodying HOTT: Agda (haskell), Isabelle/HOL (ocaml), [MMT](https://uniformal.github.io/doc/)
 ## Support and Contact
 Gitter chatrooms here: https://gitter.im/glue-v2/axiomagic
