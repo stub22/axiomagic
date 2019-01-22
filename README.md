@@ -5,7 +5,9 @@ Axiomagic is an open source meta-system for interactive exploration.<br/>
 AxMgc contains the latest (2018-19) work in authorable RDF system design by
 Stu B22 and pals.   
 
-This work builds on our previous projects including glue.ai and appadapter.org.  
+This work builds on our previous projects, including [Glue-AI 1.x](http://glue.ai).  
+
+Axiomagic is the foundation of Glue-AI 2.0.
 
 ## Gritty Summary
  Axiomagic provides both Client (AxCli) and Server (AxSrv) components, which may be deployed in an embedded (AxEmb) setup.
