@@ -16,11 +16,13 @@ Axiomagic is the foundation of Glue-AI 2.0.
    *  Primarily used in HTML5 + JS environments.
    *  Uses [rdfjs N3](https://github.com/rdfjs/N3.js/) parser to read inbound turtle-RDF msgs.
    *  Optional MIDI connections for tweaking and switching of running components.
+   *  Authentication and data privacy+portability integrations with WebId and [Solid](https://stub22.solid.community/). (link to stub22's community page)
  * AxSrv
    *  RDF-mediated layered system for state, query, goal-seeking and planning.
+   *  Apps authored using lab server components, tested by running AxCli GUI with local info streams.
+     * Publish apps as bundled deployments, connected to runtime cloud info streams.
    *  Laboratory webServer + dataRoute components use Akka + Scala, running on JVM, on Linux or MS-Win (untried on Mac).
-   *  Produces and configure cloud functional components for Lambda, etc.     
-   *  Lab components runnable AxSrv generates deployments and info streams usable in the AxCli GUIs.
+   *  Deploy RDF-configured cloud functional components to Lambda and other cloud compute services.     
  * AxEmb
    *  Embedded components combine features of AxSrv and AxCli for a particular narrow use case.
    *  Preferred approach is compiling via Rust to LLVM executable, runnable on micro-OS.
