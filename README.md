@@ -47,5 +47,19 @@ The underlying open source components allow us to build apps as interlocking tap
 *  Server Agents: Akka via HTTP, WebSockets, generates custom HTML+data GUI per client
 *  Server Graphs:  SHACL, GraphQuery, SPARQL, TinkerPop/Gremlin
 *  Server Functions:  Scala, Lambda, proof systems embodying HOTT: Agda (haskell), Isabelle/HOL (ocaml), [MMT](https://uniformal.github.io/doc/)
+
+## Getting Started
+
+As of 2019-January, Axiomagic contains a skeleton of scala projects, built with maven.
+We use the Intellij IDEA for a friendly coding experience.  
+
+The axmgc.web.pond project contains the runnable object AxmgcPonderApp, in package axmgc.web.pond.
+
+This app launches a web service running Akka HTTP.  The service delivers test web pages and RDF-backed query results.
+
+Our javascript UI prototypes are not yet committed to this repository.
+
+_Coming Soon:  Screenshots, plus perhaps a video?_
+
 ## Support and Contact
 Gitter chatrooms here: https://gitter.im/glue-v2/axiomagic
