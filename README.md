@@ -24,5 +24,12 @@ This work builds on our previous projects including glue.ai and appadapter.org.
 These components generate tweakable and routable multidimensional experiences for users,
 employing color, sound, motion, music.
 
+Features are added by creating equations, functions, mappings, templates, rules, schemas,
+employing a substrate of:
+*  Client GUI code:  Uses Vue.js to update HTML+CSS GUI, renders client UI from graphs 
+*  Client Graphs: RDF in browser via rdfjs, optional JSON-LD, talks to server agents
+*  Server Agents: Akka via HTTP, WebSockets, generates custom HTML+data GUI per client
+*  Server Graphs:  SHACL, GraphQuery, SPARQL, TinkerPop/Gremlin
+*  Server Functions:  Scala, Lambda, proof systems incl Haskell, Agda, [MMT](https://uniformal.github.io/doc/)
 ## Support and Contact
 Gitter chatrooms here: https://gitter.im/glue-v2/axiomagic
