@@ -7,7 +7,7 @@ package axmgc.web.pond
 trait WebOut {}
 
 
-import akka.http.scaladsl.model.{ContentType, ContentTypes, HttpEntity}
+import akka.http.scaladsl.model._
 import akka.stream.scaladsl.Source
 import akka.util.ByteString
 
@@ -18,6 +18,12 @@ trait HtEntMkr {
 	val jsonCntType = ContentTypes.`application/json`
 	val plainCntType = ContentTypes.`text/plain(UTF-8)`
 	val xmlCntType = ContentTypes.`text/xml(UTF-8)`
+	// val cssCntType = ContentTypes.`te
+// https://stackoverflow.com/questions/38061599/how-to-serve-a-text-css-file-from-akka-backend
+	val cssMType = MediaTypes.`text/css`
+	val u8Chrset = HttpCharsets.`UTF-8`
+	val cssU8CType = ContentType(cssMType, u8Chrset)
+	// text/css
 
 	def makeHtmlEntity(htmlTxt: String): HttpEntity.Strict = {
 		HttpEntity(htmlCntType, htmlTxt)
@@ -31,6 +37,17 @@ trait HtEntMkr {
 		val chnkStrmEnt = HttpEntity.Chunked.fromData(plainCntType, strmDat)
 		chnkStrmEnt
 	}
+
+	val dummyCssTxt =
+		"""
+	body {
+		background-color: green;
+	}
+		"""
+	def makeDummyCssEnt() : HttpEntity.Strict = {
+		HttpEntity(cssU8CType, dummyCssTxt)
+	}
+
 }
 
 import akka.http.scaladsl.marshallers.xml.ScalaXmlSupport

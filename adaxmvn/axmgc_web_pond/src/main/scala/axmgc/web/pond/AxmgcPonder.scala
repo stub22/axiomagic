@@ -11,6 +11,8 @@ import scala.io.StdIn
 
 /**
  * @author stub22
+  * 2018-9 demo launcher code adapted from Akka Http doc examples.
+  * See WebRoute for top-level app logic.
  */
 
 

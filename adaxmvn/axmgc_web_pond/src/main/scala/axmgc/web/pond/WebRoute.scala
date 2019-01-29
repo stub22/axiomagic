@@ -10,8 +10,15 @@ import akka.util.ByteString
 // import spray.json.{DefaultJsonProtocol
 import spray.json._
 import PersonJsonSupport._
-
 // type Route = RequestContext => Future[RouteResult]
+
+/**
+  * @author stub22
+  * 2018-9 akka-route DSL test features
+  */
+
+
+trait WebRoute
 
 trait RouteMaker extends  SprayJsonSupport with CORSHandler  {
 	val pathA = "patha"
@@ -21,47 +28,60 @@ trait RouteMaker extends  SprayJsonSupport with CORSHandler  {
 	val pathMore = "moreHere"
 	val pathJsonPerson = "jpers"
 	val pathUseSource = "usrc"
+	val pathCssT01 = "t01.css"
 
 	lazy val myTdatChnkr = new TdatChunker {}
 	lazy val myEntMkr = new HtEntMkr {}
 	def makeRouteTree: dslServer.Route = {
-		path(pathA) {
-			get {
-				val pageTxt = "<h1>Say hello to akka-http</h1>"
-				val pageEnt = myEntMkr.makeHtmlEntity(pageTxt)
-				complete(pageEnt)
+		parameterMap { paramMap =>
+			path(pathA) {
+				get {
+					val pageTxt = "<h1>Say hello to akka-http</h1>"
+					val pageEnt = myEntMkr.makeHtmlEntity(pageTxt)
+					complete(pageEnt)
+				}
+			} ~ path(pathB) { // note tilde connects to next alternate route
+				get {
+					val dummyOld = "<h1>Say goooooodbye to akka-http</h1>"
+					val muchBesterTxt = myTdatChnkr.getSomeXhtml5()
+					val muchBesterEnt = myEntMkr.makeHtmlEntity(muchBesterTxt)
+					complete(muchBesterEnt) // HttpEntity(ContentTypes.`text/html(UTF-8)`, muchBesterTxt ))
+				}
+			} ~ path(pathJsonPreDump) {
+				val jsLdTxt = myTdatChnkr.getSomeJsonLD(true)
+				val htTxt = "<pre>" + jsLdTxt + "</pre>"
+				val htEnt = myEntMkr.makeHtmlEntity(htTxt)
+				complete(htEnt)
+
+
+			} ~ path(pathJsonLdMime) {
+				val jsonDat = myTdatChnkr.getSomeJsonLD(true)
+				val jsonEnt = myEntMkr.makeJsonEntity(jsonDat)
+				corsHandler (complete(jsonEnt))
+			} ~ path(pathJsonPerson) {
+				complete("nope")
+	/*
+				entity(as[Person]) { prsn => {
+					val msg = s"Person: ${prsn.name} - favorite number: ${prsn.favoriteNumber}"
+					println("person = " + prsn)
+					complete(msg)
+				}}
+	*/
+			} ~ path(pathUseSource) {
+				val streamingData = Source.repeat("hello \n").take(10).map(ByteString(_))
+				// render the response in streaming fashion:
+				val chnkdEnt = myEntMkr.makeChunked(streamingData)
+				val resp = HttpResponse(entity = chnkdEnt)
+				println("This usrc response gets constructed NOW!", resp)
+				complete(resp)
+			}  ~ path(pathCssT01) {
+				println ("Running the route of the css request, params=", paramMap)
+				complete {
+					println("Completing css request, params=", paramMap)
+					val cssEnt = myEntMkr.makeDummyCssEnt()
+					cssEnt
+				}
 			}
-		} ~ path(pathB) { // note tilde connects to next alternate route
-			get {
-				val dummyOld = "<h1>Say goooooodbye to akka-http</h1>"
-				val muchBesterTxt = myTdatChnkr.getSomeXhtml5()
-				val muchBesterEnt = myEntMkr.makeHtmlEntity(muchBesterTxt)
-				complete(muchBesterEnt) // HttpEntity(ContentTypes.`text/html(UTF-8)`, muchBesterTxt ))
-			}
-		} ~ path(pathJsonPreDump) {
-			val jsLdTxt = myTdatChnkr.getSomeJsonLD(true)
-			val htTxt = "<pre>" + jsLdTxt + "</pre>"
-			val htEnt = myEntMkr.makeHtmlEntity(htTxt)
-			complete(htEnt)
-		} ~ path(pathJsonLdMime) {
-			val jsonDat = myTdatChnkr.getSomeJsonLD(true)
-			val jsonEnt = myEntMkr.makeJsonEntity(jsonDat)
-			corsHandler (complete(jsonEnt))
-		} ~ path(pathJsonPerson) {
-			complete("nope")
-/*
-			entity(as[Person]) { prsn => {
-				val msg = s"Person: ${prsn.name} - favorite number: ${prsn.favoriteNumber}"
-				println("person = " + prsn)
-				complete(msg)
-			}}
-*/
-		} ~ path(pathUseSource) {
-			val streamingData = Source.repeat("hello \n").take(10).map(ByteString(_))
-			// render the response in streaming fashion:
-			val chnkdEnt = myEntMkr.makeChunked(streamingData)
-			val resp = HttpResponse(entity = chnkdEnt)
-			complete(resp)
 		}
 	}
 }
