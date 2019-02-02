@@ -65,7 +65,7 @@ _Coming Soon:  Screenshots, plus perhaps a video?_
 Conceptually this project intends to harness dependent types and theorem prover technology, discussed broadly here:
 * [open-sci-proof](https://gitlab.com/stub22/open-sci-proof/)
 
-Our current prototype design uses aspects of primarily [Idris](http://idris-lang) (agda (haskell)) and [MMT](https://uniformal.github.io/doc/).
+Our current prototype design uses aspects of primarily [Idris](https://www.idris-lang.org) (agda (haskell)) and [MMT](https://uniformal.github.io/doc/).
 
 The structures embedding these concepts are the main thrust of current research (as of 2019-Feb). 
 
