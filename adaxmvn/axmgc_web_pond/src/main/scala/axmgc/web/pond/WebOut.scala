@@ -47,18 +47,18 @@ trait HtEntMkr {
 	def makeDummyCssEnt() : HttpEntity.Strict = {
 		HttpEntity(cssU8CType, dummyCssTxt)
 	}
-
 }
 
 import akka.http.scaladsl.marshallers.xml.ScalaXmlSupport
 import scala.xml.NodeSeq
 
-trait XmlEntMkr extends ScalaXmlSupport {
+trait XmlEntMkr extends HtEntMkr with ScalaXmlSupport {
 	type AlNodeSeq = NodeSeq
 
-	def makeXmlEntity(nodeSeq: NodeSeq, ctyp: ContentType.WithCharset): HttpEntity.Strict = {
+	def makeXmlEntity(nodeSeq: NodeSeq, ctyp: ContentType.WithCharset = xmlCntType): HttpEntity.Strict = {
 		HttpEntity(ctyp, nodeSeq.toString()) // the "toString" is not what we want!
 	}
+
 }
 /*
 This directive is meant to be used at level of route.
