@@ -46,8 +46,7 @@ The underlying open source components allow us to build apps as interlocking tap
 *  Client Graphs: RDF in browser via rdfjs, optional JSON-LD, talks to server agents
 *  Server Agents: Akka via HTTP, WebSockets, generates custom HTML+data GUI per client
 *  Server Graphs:  SHACL, GraphQuery, SPARQL, TinkerPop/Gremlin
-*  Server Functions:  Scala, Lambda, proof systems embodying HOTT: Agda (haskell), Isabelle/HOL (ocaml), [MMT](https://uniformal.github.io/doc/)
-
+*  Server Functions:  Scala, AWS-Lambda, and similar functions compiled via proof systems embodying modern type theory.  See "Research Direction" section below.
 ## Getting Started
 
 As of 2019-January, Axiomagic contains a skeleton of scala projects, built with maven.
@@ -60,6 +59,15 @@ This app launches a web service running Akka HTTP.  The service delivers test we
 Our javascript UI prototypes are not yet committed to this repository.
 
 _Coming Soon:  Screenshots, plus perhaps a video?_
+
+## Research Direction
+
+Conceptually this project intends to harness dependent types and theorem prover technology, discussed broadly here:
+* [open-sci-proof](https://gitlab.com/stub22/open-sci-proof/)
+
+Our current prototype design uses aspects of primarily [Idris](https://www.idris-lang.org) (agda (haskell)) and [MMT](https://uniformal.github.io/doc/).
+
+The structures embedding these concepts are the main thrust of current research (as of 2019-Feb). 
 
 ## Support and Contact
 Gitter chatrooms here: https://gitter.im/glue-v2/axiomagic
