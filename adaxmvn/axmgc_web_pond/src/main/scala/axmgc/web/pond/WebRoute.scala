@@ -148,7 +148,7 @@ trait RouteMaker extends  SprayJsonSupport with CORSHandler with HelpAble {
 				val lgr = getLogger
 				val pretendSessID = -99L
 				val actRef = findHelpActRef(pretendSessID)
-				val emptyEvt = WE_Empty
+				val emptyEvt = WE_Empty() // parens distinguish apply-instance from hidden case-singleton
 				val dclkEvt = WE_DomClick("clkdDomID_tst_99")
 				implicit val timeout = Timeout(2.seconds)
 				lgr.info("Sending ask, creating future")

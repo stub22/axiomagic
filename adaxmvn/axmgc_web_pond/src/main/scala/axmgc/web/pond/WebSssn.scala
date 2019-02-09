@@ -3,6 +3,8 @@ package axmgc.web.pond
 import akka.actor.{Actor, ActorLogging, ActorRef, ActorSystem, Props}
 import scala.collection.mutable
 
+
+
 // Akka-Http does not include a built-in client HTTP session hookup.
 // One answer is:
 // https://github.com/softwaremill/akka-http-session
@@ -45,28 +47,33 @@ sealed abstract class WebEvent extends TWebEvent {
 case class WE_Empty() extends WebEvent
 case class WE_DomClick(domIdTxt : String) extends WebEvent
 
-trait TWebAnswer {
 
+trait AppSsnnBoss {
+	// Functional definition of a stateful web application
+	def absorbAndAnswer(inEvt : WebEvent) : WebAnswer
 }
-sealed abstract class WebAnswer extends TWebAnswer {
-	val myEvtInstMsec : Long = System.currentTimeMillis()
-}
-// case class WA_Empty() extends WebAnswer
-case class WA_Summary(summaryTxt : String) extends WebAnswer
-
-
-class AppSsnnBoss {
+class AppSsnnBoss_FakeImpl extends AppSsnnBoss {
 	private lazy val mySssMgr : FakeSssMgr = new FakeSssMgr()
 	private lazy val myUDM : FakeUserDataMgr = new FakeUserDataMgr()
+	def absorbAndAnswer(inEvt : WebEvent) : WebAnswer = {
+		new WA_Empty()
+	}
 }
-
+trait AppSsnnBoss_Fndr {
+	def findBoss : AppSsnnBoss
+}
+object AppSsnnBoss_Sngl extends AppSsnnBoss_Fndr {
+	private lazy val ourBossImpl = new AppSsnnBoss_FakeImpl
+	override def findBoss : AppSsnnBoss = ourBossImpl
+}
+// Note that WE_Empty and WE_Empty() are not the same, for match purposes.
+// WE_Empty is a companion object that can be treated as a value.
 class AppSsnnStMgr_ActImpl  extends Actor with ActorLogging {
-	override def receive = {
-		// We can't case-match on a superclass unless it has an unapply method
-		// in the companion Object.
-		case empt:  WE_Empty => {
-			log.warning("Trying empt")
-			rcvEmpty(sender, empt)
+	private def findAppSsnnBoss = AppSsnnBoss_Sngl.findBoss
+	override def receive : Receive = {
+		case wvb : WE_Empty => {
+			log.warning("Matched wee binding : " + wvb)
+			rcvEmpty(sender, wvb)
 		}
 		case dclk : WE_DomClick =>  {
 			log.warning("Trying dclk: " + dclk)
@@ -78,15 +85,26 @@ class AppSsnnStMgr_ActImpl  extends Actor with ActorLogging {
 		}
 			*/
 	}
-	def rcvEmpty(sndr : ActorRef, empt : WE_Empty)  = {
-		log.info("Processing empty inMsg: ", empt)
+	private def rcvEmpty(sndr : ActorRef, empt : WE_Empty)  = {
+		log.info("Processing empty inMsg: {}", empt)
+		val emptyAnswr = new WA_Empty()
+		sndr.tell(emptyAnswr, self)
 	}
-	def rcvDomClick(sndr : ActorRef, dclk : WE_DomClick) : Unit = {
+	private def rcvDomClick(sndr : ActorRef, dclk : WE_DomClick) : Unit = {
 		log.info("Processing domClick: {}", dclk)
-		val summTxt = "Dom Click rcvd" + dclk + " , thx.  Here's answer: ____ "
-		val answrSumm = WA_Summary(summTxt)
-		sndr.tell(answrSumm, self)
+		val answr = domClkDummyAnswer(dclk)
+		sndr.tell(answr, self)
 // 		"domClick-sentAnswrAlrdy"
+	}
+	private def absorbAndAnswerDomClick (dclk : WE_DomClick) : WebAnswer = {
+		val boss = findAppSsnnBoss
+		val answr = boss.absorbAndAnswer(dclk)
+		answr
+	}
+	private def domClkDummyAnswer(dclk : WE_DomClick) : WebAnswer = {
+		val summTxt = "Dom Click rcvd" + dclk + " , thx.  Here's answer: ____ "
+		val answrSumm = new WA_Empty() //  WA_Summary(summTxt)
+		answrSumm
 	}
 }
 
