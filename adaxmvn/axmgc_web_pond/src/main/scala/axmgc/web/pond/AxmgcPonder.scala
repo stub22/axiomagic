@@ -61,7 +61,7 @@ class AxmgPndr(actSysName : String, srvHostIntf : String, srvPort : Int) {
 				firstWepBoss
 			}
 		}
-		val route = routeMaker.makeRouteTree
+		val route = routeMaker.makeComboRoute //makeRouteTree
 
 		myLogger.info("The route is made: " + route)
 

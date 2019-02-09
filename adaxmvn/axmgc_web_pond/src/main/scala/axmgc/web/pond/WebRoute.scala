@@ -11,11 +11,9 @@ import akka.stream.scaladsl.Source
 import akka.util.ByteString
 import org.slf4j.{Logger, LoggerFactory}
 
-
 import scala.concurrent.Future
 import scala.concurrent.duration._
 import scala.util.{Failure, Success}
-
 
 import akka.pattern.ask
 import akka.util.Timeout
@@ -53,7 +51,7 @@ trait HelpAble {
 		tgtRef.tell(emptyEvt, sndrRef)
 	}
 }
-trait RouteMaker extends  SprayJsonSupport with CORSHandler with HelpAble {
+trait OurUrlPaths {
 	val pathA = "patha"
 	val pathB = "pathb"
 	val pathJsonPreDump = "json-pre-dump"
@@ -63,11 +61,13 @@ trait RouteMaker extends  SprayJsonSupport with CORSHandler with HelpAble {
 	val pathUseSource = "usrc"
 	val pathCssT01 = "t01.css"
 	val pathSssnTst = "sssntst"
+	val pgTplTst = "tpltst"
+}
+trait RouteMaker extends  SprayJsonSupport with CORSHandler with HelpAble with OurUrlPaths {
 
 	lazy val myTdatChnkr = new TdatChunker {}
 	lazy val myEntMkr = new HtEntMkr {}
 	lazy val myXEntMkr = new WebXml {}
-
 
 	def mkJsonTstEnt: HEStrict = {
 		val jsonDat = myTdatChnkr.getSomeJsonLD(true)
@@ -94,9 +94,25 @@ trait RouteMaker extends  SprayJsonSupport with CORSHandler with HelpAble {
 		val jsnPgEnt = mkJsonTstEnt
 		PgEntTpl(xhPgEnt, cssPgEnt, jsnPgEnt, if (chainBk) Some (pgEvalCtx) else None)
 	}
+	def pgTplXml(ptxt_id : String): HEStrict = {
+		val pet = makeEntsForPgAcc(ptxt_id)
+		pet.xhEnt
+	}
+	private def makeEvtSrcRt : dslServer.Route = {
+		val evtSrcRtMkr = new WebEvtSrc {}
+		val evtSrcRt = evtSrcRtMkr.mkEvtSrcRt
+		evtSrcRt
+	}
+	def makeComboRoute : dslServer.Route = {
+		val mainRt = makeRouteTree
+		val evtSrcRt = makeEvtSrcRt
+		val comboRt = mainRt ~ evtSrcRt
+		comboRt
+	}
+
 	// Remember, the "whens" of route exec are cmplx!
 	def makeRouteTree: dslServer.Route = {
-		parameterMap { paramMap =>
+		val mainRt = parameterMap { paramMap =>
 			path(pathA) {
 				get {
 					val pageTxt = "<h1>Say hello to akka-http</h1>"
@@ -144,6 +160,9 @@ trait RouteMaker extends  SprayJsonSupport with CORSHandler with HelpAble {
 					val cssEnt = myEntMkr.makeDummyCssEnt()
 					cssEnt
 				}
+			} ~ path(pgTplTst) {
+				val pttXml = pgTplXml("pg_tpl_tst_id")
+				complete(pttXml)
 			} ~ path(pathSssnTst) {
 				val lgr = getLogger
 				val pretendSessID = -99L
@@ -168,27 +187,9 @@ trait RouteMaker extends  SprayJsonSupport with CORSHandler with HelpAble {
 						complete(failEnt)
 					}
 				}
-				/*
-				val rsltFut = askFut.map {
-
-				}
-				askFut.onComplete {
-					case WA_Summary(sumTxt) => {
-						complete {
-							lgr.info("Received summary text back: " + sumTxt)
-							val rsltTxt = "<h2>ansSum=" + sumTxt + "</h2>"
-							val trEnt = myEntMkr.makeHtmlEntity(rsltTxt)
-						}
-					}
-					case other => {
-
-					}
-				}
-				// val usrFut: Future[Users] = (userRegistryActor ? qryMsg).mapTo[Users]
-				// sendEmptyWebEvt(pretendSessID, self)
-				*/
 			}
 		}
+		mainRt
 	}
 }
 
