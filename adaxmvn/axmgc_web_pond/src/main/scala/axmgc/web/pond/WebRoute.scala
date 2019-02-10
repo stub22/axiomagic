@@ -62,6 +62,8 @@ trait OurUrlPaths {
 	val pathCssT01 = "t01.css"
 	val pathSssnTst = "sssntst"
 	val pgTplTst = "tpltst"
+	val lstAllPaths : List[String] = pathA :: pathB :: pathJsonPreDump :: pathJsonLdMime ::
+			pathMore :: pathJsonPerson :: pathUseSource :: pathCssT01 :: pathSssnTst :: pgTplTst :: Nil
 }
 trait RouteMaker extends  SprayJsonSupport with CORSHandler with HelpAble with OurUrlPaths {
 
