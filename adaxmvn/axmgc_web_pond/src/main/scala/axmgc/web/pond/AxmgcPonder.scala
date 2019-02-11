@@ -63,7 +63,7 @@ class AxmgPndr(actSysName : String, srvHostIntf : String, srvPort : Int) {
 		}
 		val route = routeMaker.makeComboRoute //makeRouteTree
 
-		myLogger.info("The route is made: " + route)
+		myLogger.info("The combo-route is made: " + route)
 
 		launcher.launchWebServer(route, actrSys, srvHostIntf, srvPort)
 	}

@@ -1,0 +1,684 @@
+.icon {
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  stroke-width: 0;
+  stroke: currentColor;
+  fill: currentColor;
+}
+
+/* ==========================================
+Single-colored icons can be modified like so:
+.icon-name {
+  font-size: 32px;
+  color: red;
+}
+========================================== */
+
+.icon-comment-alt2-stroke {
+  width: 0.875em;
+}
+
+.icon-comment-alt2-fill {
+  width: 0.875em;
+}
+
+.icon-wrench {
+  width: 0.998046875em;
+}
+
+.icon-dial {
+  width: 1.00390625em;
+}
+
+.icon-share5 {
+  width: 0.998046875em;
+}
+
+.icon-document-alt-stroke {
+  width: 0.75em;
+}
+
+.icon-document-alt-fill {
+  width: 0.75em;
+}
+
+.icon-award-fill {
+  width: 0.5em;
+}
+
+.icon-award-stroke {
+  width: 0.5em;
+}
+
+.icon-beaker-alt {
+  width: 0.5em;
+}
+
+.icon-beaker2 {
+  width: 0.5em;
+}
+
+.icon-lightbulb2 {
+  width: 0.625em;
+}
+
+.icon-spin {
+  width: 0.875em;
+}
+
+.icon-undo2 {
+  width: 0.998046875em;
+}
+
+.icon-transfer {
+  width: 0.998046875em;
+}
+
+.icon-move-vertical {
+  width: 0.375em;
+}
+
+.icon-move-vertical-alt1 {
+  width: 0.375em;
+}
+
+.icon-microphone4 {
+  width: 0.75em;
+}
+
+.icon-play2 {
+  width: 0.75em;
+}
+
+.icon-pause3 {
+  width: 0.75em;
+}
+
+.icon-iphone {
+  width: 0.75em;
+}
+
+.icon-ampersand {
+  width: 0.58203125em;
+}
+
+.icon-info5 {
+  width: 0.5em;
+}
+
+.icon-question-mark {
+  width: 0.5em;
+}
+
+.icon-pilcrow {
+  width: 0.75em;
+}
+
+.icon-hash2 {
+  width: 0.875em;
+}
+
+.icon-list4 {
+  width: 1.142578125em;
+}
+
+.icon-list-nested {
+  width: 1.142578125em;
+}
+
+.icon-book6 {
+  width: 0.875em;
+}
+
+.icon-pen-alt2 {
+  width: 0.998046875em;
+}
+
+.icon-brush3 {
+  width: 0.998046875em;
+}
+
+.icon-brush-alt {
+  width: 0.998046875em;
+}
+
+.icon-eyedropper2 {
+  width: 0.998046875em;
+}
+
+.icon-layers-alt {
+  width: 0.998046875em;
+}
+
+.icon-layers3 {
+  width: 0.998046875em;
+}
+
+.icon-chart2 {
+  width: 0.998046875em;
+}
+
+.icon-chart-alt {
+  width: 0.9375em;
+}
+
+.icon-bars-alt {
+  width: 0.875em;
+}
+
+.icon-user8 {
+  width: 0.75em;
+}
+
+.icon-lock-stroke {
+  width: 0.75em;
+}
+
+.icon-lock-fill {
+  width: 0.75em;
+}
+
+.icon-unlock-stroke {
+  width: 0.75em;
+}
+
+.icon-unlock-fill {
+  width: 0.75em;
+}
+
+.icon-sun-stroke {
+  width: 0.998046875em;
+}
+
+.icon-sun-fill {
+  width: 0.998046875em;
+}
+
+.icon-rain {
+  width: 0.998046875em;
+}
+
+.icon-umbrella3 {
+  width: 0.998046875em;
+}
+
+.icon-map-pin-stroke {
+  width: 0.625em;
+}
+
+.icon-map-pin-fill {
+  width: 0.625em;
+}
+
+.icon-map-pin-alt {
+  width: 0.5em;
+}
+
+.icon-download4 {
+  width: 0.75em;
+}
+
+.icon-upload3 {
+  width: 0.75em;
+}
+
+.icon-fork {
+  width: 0.875em;
+}
+
+.icon-laptop5 {
+  width: 1.3125em;
+}
+
+.icon-desktop {
+  width: 1.21875em;
+}
+
+.icon-tablet5 {
+  width: 0.78125em;
+}
+
+.icon-phone10 {
+  width: 0.59375em;
+}
+
+.icon-document2 {
+  width: 0.75em;
+}
+
+.icon-documents {
+  width: 1.0625em;
+}
+
+.icon-search7 {
+  width: 1.03125em;
+}
+
+.icon-clipboard7 {
+  width: 0.875em;
+}
+
+.icon-newspaper4 {
+  width: 1.3125em;
+}
+
+.icon-notebook2 {
+  width: 0.84375em;
+}
+
+.icon-book-open2 {
+  width: 1.3125em;
+}
+
+.icon-browser2 {
+  width: 1.3125em;
+}
+
+.icon-calendar6 {
+  width: 1.0625em;
+}
+
+.icon-presentation {
+  width: 0.96875em;
+}
+
+.icon-pictures2 {
+  width: 1.03125em;
+}
+
+.icon-video3 {
+  width: 1.15625em;
+}
+
+.icon-camera13 {
+  width: 1.3125em;
+}
+
+.icon-printer6 {
+  width: 1.3125em;
+}
+
+.icon-toolbox {
+  width: 1.3125em;
+}
+
+.icon-briefcase5 {
+  width: 1.1875em;
+}
+
+.icon-wallet {
+  width: 1.1875em;
+}
+
+.icon-gift6 {
+  width: 1.3125em;
+}
+
+.icon-bargraph {
+  width: 1.125em;
+}
+
+.icon-grid4 {
+  width: 0.96875em;
+}
+
+.icon-focus {
+  width: 1.3125em;
+}
+
+.icon-adjustments {
+  width: 1.03125em;
+}
+
+.icon-ribbon {
+  width: 0.875em;
+}
+
+.icon-hourglass {
+  width: 0.65625em;
+}
+
+.icon-lock5 {
+  width: 0.875em;
+}
+
+.icon-megaphone {
+  width: 1.25em;
+}
+
+.icon-shield4 {
+  width: 0.84375em;
+}
+
+.icon-trophy3 {
+  width: 1.0625em;
+}
+
+.icon-flag8 {
+  width: 0.875em;
+}
+
+.icon-map6 {
+  width: 1.28125em;
+}
+
+.icon-puzzle3 {
+  width: 1.09375em;
+}
+
+.icon-basket2 {
+  width: 1.3125em;
+}
+
+.icon-envelope5 {
+  width: 1.1875em;
+}
+
+.icon-streetsign {
+  width: 0.90625em;
+}
+
+.icon-telescope {
+  width: 1.09375em;
+}
+
+.icon-gears {
+  width: 1.3125em;
+}
+
+.icon-paperclip5 {
+  width: 1.0625em;
+}
+
+.icon-pricetags {
+  width: 1.3125em;
+}
+
+.icon-lightbulb3 {
+  width: 0.6875em;
+}
+
+.icon-tools {
+  width: 0.96875em;
+}
+
+.icon-paintbrush {
+  width: 0.6875em;
+}
+
+.icon-circle-compass {
+  width: 0.71875em;
+}
+
+.icon-linegraph {
+  width: 1.3125em;
+}
+
+.icon-mic5 {
+  width: 0.46875em;
+}
+
+.icon-strategy {
+  width: 0.71875em;
+}
+
+.icon-beaker3 {
+  width: 0.84375em;
+}
+
+.icon-caution {
+  width: 1.09375em;
+}
+
+.icon-anchor3 {
+  width: 1.09375em;
+}
+
+.icon-profile-male {
+  width: 1.125em;
+}
+
+.icon-profile-female {
+  width: 1.125em;
+}
+
+.icon-bike {
+  width: 1.75em;
+}
+
+.icon-wine2 {
+  width: 0.71875em;
+}
+
+.icon-hotairballoon {
+  width: 0.875em;
+}
+
+.icon-globe4 {
+  width: 0.78125em;
+}
+
+.icon-genius {
+  width: 0.9375em;
+}
+
+.icon-map-pin2 {
+  width: 0.75em;
+}
+
+.icon-chat5 {
+  width: 1.3125em;
+}
+
+.icon-heart7 {
+  width: 1.15625em;
+}
+
+.icon-cloud7 {
+  width: 1.3125em;
+}
+
+.icon-upload5 {
+  width: 1.3125em;
+}
+
+.icon-download6 {
+  width: 1.3125em;
+}
+
+.icon-target7 {
+  width: 1.3125em;
+}
+
+.icon-alarmclock {
+  width: 0.9375em;
+}
+
+.icon-pictures4 {
+  width: 1.015625em;
+}
+
+.icon-time2 {
+  width: 1.21875em;
+}
+
+.icon-eye7 {
+  width: 1.09375em;
+}
+
+.icon-cloud8 {
+  width: 1.09375em;
+}
+
+.icon-upload7 {
+  width: 1.09375em;
+}
+
+.icon-download8 {
+  width: 1.09375em;
+}
+
+.icon-folder8 {
+  width: 1.091796875em;
+}
+
+.icon-gamepad3 {
+  width: 1.029296875em;
+}
+
+.icon-graduate {
+  width: 1.31640625em;
+}
+
+.icon-football {
+  width: 1.017578125em;
+}
+
+.icon-dglasses {
+  width: 1.40625em;
+}
+
+.icon-microwave {
+  width: 1.125em;
+}
+
+.icon-satellite2 {
+  width: 1.0390625em;
+}
+
+.icon-batman {
+  width: 1.21875em;
+}
+
+.icon-spaceinvaders {
+  width: 1.03125em;
+}
+
+.icon-bomb {
+  width: 1.140625em;
+}
+
+.icon-comments {
+  width: 1.07421875em;
+}
+
+.icon-volume9 {
+  width: 1.1171875em;
+}
+
+.icon-dollar2 {
+  width: 1.1875em;
+}
+
+.icon-cloudy {
+  width: 1.173828125em;
+}
+
+.icon-cloudy2 {
+  width: 1.099609375em;
+}
+
+.icon-bike2 {
+  width: 1.171875em;
+}
+
+.icon-bus {
+  width: 1.03125em;
+}
+
+.icon-ticket3 {
+  width: 1.25em;
+}
+
+.icon-ticket4 {
+  width: 1.25em;
+}
+
+.icon-ticket5 {
+  width: 1.21875em;
+}
+
+.icon-radio5 {
+  width: 1.03125em;
+}
+
+.icon-navigation3 {
+  width: 1.03125em;
+}
+
+.icon-switch6 {
+  width: 1.111328125em;
+}
+
+.icon-images {
+  width: 1.125em;
+}
+
+.icon-connection {
+  width: 1.25em;
+}
+
+.icon-books {
+  width: 1.125em;
+}
+
+.icon-library {
+  width: 1.0625em;
+}
+
+.icon-price-tags {
+  width: 1.25em;
+}
+
+.icon-history {
+  width: 1.0625em;
+}
+
+.icon-keyboard4 {
+  width: 1.125em;
+}
+
+.icon-bubbles {
+  width: 1.125em;
+}
+
+.icon-bubbles2 {
+  width: 1.125em;
+}
+
+.icon-bubbles3 {
+  width: 1.125em;
+}
+
+.icon-bubbles4 {
+  width: 1.125em;
+}
+
+.icon-users4 {
+  width: 1.125em;
+}
+
+.icon-menu22 {
+  width: 1.375em;
+}
+
+.icon-menu32 {
+  width: 1.375em;
+}
+
+.icon-menu4 {
+  width: 1.375em;
+}
+
+.icon-volume-high {
+  width: 1.0625em;
+}
+
+.icon-embed2 {
+  width: 1.25em;
+}
+
+.icon-youtube22 {
+  width: 2.5087890625em;
+}

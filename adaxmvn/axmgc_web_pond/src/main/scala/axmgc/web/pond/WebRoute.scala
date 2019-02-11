@@ -51,7 +51,7 @@ trait HelpAble {
 		tgtRef.tell(emptyEvt, sndrRef)
 	}
 }
-trait OurUrlPaths {
+trait OurUrlPaths extends WebResBind {
 	val pathA = "patha"
 	val pathB = "pathb"
 	val pathJsonPreDump = "json-pre-dump"
@@ -64,6 +64,8 @@ trait OurUrlPaths {
 	val pgTplTst = "tpltst"
 	val lstAllPaths : List[String] = pathA :: pathB :: pathJsonPreDump :: pathJsonLdMime ::
 			pathMore :: pathJsonPerson :: pathUseSource :: pathCssT01 :: pathSssnTst :: pgTplTst :: Nil
+
+	val xyz123 = "hey"
 }
 trait RouteMaker extends  SprayJsonSupport with CORSHandler with HelpAble with OurUrlPaths {
 
@@ -105,15 +107,22 @@ trait RouteMaker extends  SprayJsonSupport with CORSHandler with HelpAble with O
 		val evtSrcRt = evtSrcRtMkr.mkEvtSrcRt
 		evtSrcRt
 	}
+	private def makeWbRscRt : dslServer.Route = {
+		val wrrMkr = new WebRsrcRouteMkr {}
+		val wrRt = wrrMkr.makeWbRscRt(getLogger)
+		wrRt
+	}
 	def makeComboRoute : dslServer.Route = {
-		val mainRt = makeRouteTree
+		val featTstRt = makeFeatTstRoute
+		val wbRscRt = makeWbRscRt
+		getLogger.info("Made wbRscRt: " + wbRscRt)
 		val evtSrcRt = makeEvtSrcRt
-		val comboRt = mainRt ~ evtSrcRt
+		val comboRt = wbRscRt ~ featTstRt ~ evtSrcRt
 		comboRt
 	}
 
 	// Remember, the "whens" of route exec are cmplx!
-	def makeRouteTree: dslServer.Route = {
+	def makeFeatTstRoute: dslServer.Route = {
 		val mainRt = parameterMap { paramMap =>
 			path(pathA) {
 				get {
@@ -177,6 +186,7 @@ trait RouteMaker extends  SprayJsonSupport with CORSHandler with HelpAble with O
 				val askFut = actRef.ask(emptyEvt)
 				// Here "onComplete" is an akka-http directive (not the same-named method of the future),
 				// which creates a route.
+				// https://doc.akka.io/docs/akka-http/current/routing-dsl/directives/future-directives/onComplete.html
 				onComplete(askFut) {
 					case Success(r) => {
 						val rsltTxt = "<h2>ans=[" + r.toString + "]</h2>"

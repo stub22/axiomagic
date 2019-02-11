@@ -4,6 +4,7 @@ import akka.http.scaladsl.model.HttpEntity
 import scala.xml.{Elem => XElem, Node => XNode, NodeSeq => XNodeSeq, Null => XNull, Attribute => XAttr, UnprefixedAttribute => XUAttr}
 
 class WebXml extends XmlEntMkr {
+	val svgHlpr = new WebSvg {}
 	def mergeXhtml (xeHead : XElem, xeBody : XElem) : XElem = {
 		<html>
 			{xeHead}
@@ -17,6 +18,7 @@ class WebXml extends XmlEntMkr {
 	}
 	def mkTstBdy : XElem = {
 		<body>
+
 			<div>
 				<span>WebXml made this here body, and made it real good.</span>
 			</div>
@@ -24,6 +26,11 @@ class WebXml extends XmlEntMkr {
 				{mkLnkA ("/patha", "link to /patha", None, Some("aaclz othr"))}
 				<span>SPC</span>
 				{mkLnkA ("/pathb", "link to /pathb", Some("lpb_idv"), Some("bbclz"))}
+			</div>
+			<div>
+				{svgHlpr.mkDivWithSvgIcon("access_alarms")}
+				{svgHlpr.mkDivWithSvgIcon("mood-happy-outline")}
+				{svgHlpr.mkDivWithSvgIcon("zoomout")}
 			</div>
 		</body>
 	}
@@ -45,8 +52,6 @@ class WebXml extends XmlEntMkr {
 		val elWthClz = maybeAppendAttr(elWthId, "class", clz_opt)
 		elWthClz
 	}
-
-
 
 	def getXHPageEnt : HttpEntity.Strict = {
 		val headXE = mkTstHd

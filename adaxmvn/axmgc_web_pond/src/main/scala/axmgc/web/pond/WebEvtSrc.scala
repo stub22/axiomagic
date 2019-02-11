@@ -21,6 +21,9 @@ https://doc.akka.io/docs/akka-http/current/sse-support.html
  */
 trait WebEvtSrc {
 
+// Warning:  As of 2018, EventSource is not supported by Microsoft browsers.
+// https://stackoverflow.com/questions/24498141/is-there-a-microsoft-equivalent-for-html5-server-sent-events/
+// https://stackoverflow.com/questions/29648747/does-the-edge-browser-support-html5-server-side-events
 
 	def mkEvtSrcRt: dslServer.Route = {
 import akka.http.scaladsl.marshalling.sse.EventStreamMarshalling._
