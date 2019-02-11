@@ -11,6 +11,7 @@ import akka.stream.scaladsl.Source
 import akka.util.ByteString
 import org.slf4j.{Logger, LoggerFactory}
 
+/*
 import scala.concurrent.Future
 import scala.concurrent.duration._
 import scala.util.{Failure, Success}
@@ -18,13 +19,13 @@ import scala.util.{Failure, Success}
 import akka.pattern.ask
 import akka.util.Timeout
 
-// https://stackoverflow.com/questions/37462717/akka-http-how-to-use-an-actor-in-a-request
 
 // import akka.util.duration._
 
 // import spray.json.{DefaultJsonProtocol
 import spray.json._
 import PersonJsonSupport._
+*/
 // type Route = RequestContext => Future[RouteResult]
 
 /**
@@ -53,40 +54,46 @@ trait OurUrlPaths extends WebResBind {
 }
 
 
+trait RouteWeaver extends  SprayJsonSupport with OurUrlPaths {
 
-trait RouteMaker extends  SprayJsonSupport with CORSHandler  with OurUrlPaths {
-
-	lazy val myTdatChnkr = new TdatChunker {}
-	lazy val myHtEntMkr = new HtEntMkr {}
-	lazy val myXEntMkr = new WebXml {}
-	val mySlf4JLog = LoggerFactory.getLogger(this.getClass)
+	protected lazy val myTdatChnkr = new TdatChunker {}
+	protected lazy val myHtEntMkr = new HtEntMkr {}
+	protected lazy val myXEntMkr = new WebXml {}
+	protected val mySlf4JLog = LoggerFactory.getLogger(this.getClass)
 
 	protected def rmFindHlpActRef(sessID: Long): ActorRef
 
-	lazy val myWtplMkr = new WebTupleMaker {
+	protected lazy val myWtplMkr = new WebTupleMaker {
 		override protected def getTdatChnkr: TdatChunker = myTdatChnkr
 		override protected def getHtEntMkr: HtEntMkr = myHtEntMkr
 		override protected def getWebXml: WebXml = myXEntMkr
 	}
-	lazy val myWtRtMkr = new WTRouteMaker {
+	protected lazy val myWtRtMkr = new WTRouteMaker {
 		override protected def getWbTplMkr: WebTupleMaker = myWtplMkr
 	}
 	lazy val myWbActrXltr = new WbEvtIngestor {
 		override def weiFindHlpActRef(sessID: Long): ActorRef = rmFindHlpActRef(sessID)
 		override def getHtEntMkr: HtEntMkr = myHtEntMkr
 	}
-	lazy val myWERM = new WbEvtRtMkr {
+	lazy val myIngstRtMkr = new IngestRtMkr {
 		override protected def getIngestor: WbEvtIngestor = myWbActrXltr
 	}
+	lazy val myWbRsrcRtMkr = new WebRsrcRouteMkr {}
+	lazy val htEvtSrcRtMkr = new HttpEventSrcRtMkr {}
 
-	private def makeEvtSrcRt : dslServer.Route = {
-		val evtSrcRtMkr = new WebEvtSrc {}
-		val evtSrcRt = evtSrcRtMkr.mkEvtSrcRt
+	lazy val myFTRtMkr = new FeatTstRtMkr {
+		override protected def getHtEntMkr: HtEntMkr = myHtEntMkr
+
+		override protected def getTdatChnkr: TdatChunker = myTdatChnkr
+	}
+
+	private def makeHttpEvtSrcRt : dslServer.Route = {
+
+		val evtSrcRt = htEvtSrcRtMkr.mkEvtSrcRt
 		evtSrcRt
 	}
 	private def makeWbRscRt : dslServer.Route = {
-		val wrrMkr = new WebRsrcRouteMkr {}
-		val wrRt = wrrMkr.makeWbRscRt(mySlf4JLog)
+		val wrRt = myWbRsrcRtMkr.makeWbRscRt(mySlf4JLog)
 		wrRt
 	}
 	private def makeWTplRt : dslServer.Route = {
@@ -94,95 +101,16 @@ trait RouteMaker extends  SprayJsonSupport with CORSHandler  with OurUrlPaths {
 		wtplRt
 	}
 	def makeComboRoute : dslServer.Route = {
-		val featTstRt = makeFeatTstRoute
+		val featTstRt = myFTRtMkr.makeFeatTstRoute
 		val wbRscRt = makeWbRscRt
 		val wtplRt = makeWTplRt
-		val evtSrcRt = makeEvtSrcRt
-		val comboRt = wbRscRt ~ wtplRt ~ featTstRt ~ evtSrcRt
+		val ingstRt = myIngstRtMkr.makeIngstRt(mySlf4JLog)
+		val httpEvtSrcRt = makeHttpEvtSrcRt
+		val comboRt = wbRscRt ~ wtplRt ~ featTstRt ~ ingstRt ~ httpEvtSrcRt
 		comboRt
 	}
-
-	// Remember, the "whens" of route exec are cmplx!
-	def makeFeatTstRoute: dslServer.Route = {
-		val mainRt = parameterMap { paramMap =>
-			path(pathA) {
-				get {
-					val pageTxt = "<h1>Say hello to akka-http</h1>"
-					val pageEnt = myHtEntMkr.makeHtmlEntity(pageTxt)
-					complete(pageEnt)
-				}
-			} ~ path(pathB) { // note tilde connects to next alternate route
-				get {
-					val dummyOld = "<h1>Say goooooodbye to akka-http</h1>"
-					val muchBesterTxt = myTdatChnkr.getSomeXhtml5()
-					val muchBesterEnt = myHtEntMkr.makeHtmlEntity(muchBesterTxt)
-					complete(muchBesterEnt) // HttpEntity(ContentTypes.`text/html(UTF-8)`, muchBesterTxt ))
-				}
-			} ~ path(pathJsonPreDump) {
-				val jsLdTxt = myTdatChnkr.getSomeJsonLD(true)
-				val htTxt = "<pre>" + jsLdTxt + "</pre>"
-				val htEnt = myHtEntMkr.makeHtmlEntity(htTxt)
-				complete(htEnt)
-
-
-			} ~ path(pathJsonLdMime) {
-				val jsonDat = myTdatChnkr.getSomeJsonLD(true)
-				val jsonEnt = myHtEntMkr.makeJsonEntity(jsonDat)
-				corsHandler (complete(jsonEnt))
-			} ~ path(pathJsonPerson) {
-				complete("nope")
-	/*
-				entity(as[Person]) { prsn => {
-					val msg = s"Person: ${prsn.name} - favorite number: ${prsn.favoriteNumber}"
-					println("person = " + prsn)
-					complete(msg)
-				}}
-	*/
-			} ~ path(pathUseSource) {
-				val streamingData = Source.repeat("hello \n").take(10).map(ByteString(_))
-				// render the response in streaming fashion:
-				val chnkdEnt = myHtEntMkr.makeChunked(streamingData)
-				val resp = HttpResponse(entity = chnkdEnt)
-				println("This usrc response gets constructed NOW!", resp)
-				complete(resp)
-			}  ~ path(pathCssT01) {
-				println ("Running the route of the css request, params=", paramMap)
-				complete {
-					println("Completing css request, params=", paramMap)
-					val cssEnt = myHtEntMkr.makeDummyCssEnt()
-					cssEnt
-				}
-			}  ~ path(pathSssnTst) {
-				val lgr = mySlf4JLog // getLogger
-				val pretendSessID = -99L
-				val actRef = rmFindHlpActRef(pretendSessID)
-				val emptyEvt = WE_Empty() // parens distinguish apply-instance from hidden case-singleton
-				val dclkEvt = WE_DomClick("clkdDomID_tst_99")
-				implicit val timeout = Timeout(2.seconds)
-				lgr.info("Sending ask, creating future")
-				// Ask pattern automatically creates a temp reply actor for us.
-				val askFut = actRef.ask(emptyEvt)
-				// Here "onComplete" is an akka-http directive (not the same-named method of the future),
-				// which creates a route.
-				// https://doc.akka.io/docs/akka-http/current/routing-dsl/directives/future-directives/onComplete.html
-				onComplete(askFut) {
-					case Success(r) => {
-						val rsltTxt = "<h2>ans=[" + r.toString + "]</h2>"
-						val rsltEnt = myHtEntMkr.makeHtmlEntity(rsltTxt)
-						complete(rsltEnt)
-					}
-					case Failure(e) => {
-						val failTxt = "<h2>err=[" + e.toString + "]</h2>"
-						val failEnt = myHtEntMkr.makeHtmlEntity(failTxt)
-						complete(failEnt)
-					}
-				}
-			}
-		}
-		mainRt
-	}
 }
-
+// Code copied and modified from example found at:
 // https://dzone.com/articles/handling-cors-in-akka-http
 
 import akka.http.scaladsl.model.headers._

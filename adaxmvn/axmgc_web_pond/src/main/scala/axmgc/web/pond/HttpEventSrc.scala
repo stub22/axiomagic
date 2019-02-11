@@ -15,11 +15,15 @@ import scala.concurrent.duration._
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter.ISO_LOCAL_TIME
 
+
 /*
 Started from example code in Akka-Http docs:
 https://doc.akka.io/docs/akka-http/current/sse-support.html
  */
-trait WebEvtSrc {
+
+trait HttpEventSrc
+
+trait HttpEventSrcRtMkr {
 
 // Warning:  As of 2018, EventSource is not supported by Microsoft browsers.
 // https://stackoverflow.com/questions/24498141/is-there-a-microsoft-equivalent-for-html5-server-sent-events/

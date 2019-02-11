@@ -13,6 +13,8 @@ import org.slf4j.{Logger, LoggerFactory}
 
 import scala.util.{Failure, Success}
 
+// https://stackoverflow.com/questions/37462717/akka-http-how-to-use-an-actor-in-a-request
+
 trait WebActrXlate
 
 trait WbEvtIngestor {
@@ -38,9 +40,9 @@ import akka.pattern.ask
 import scala.concurrent.duration._
 
 
-trait WbEvtRtMkr extends OurUrlPaths  {
+trait IngestRtMkr extends OurUrlPaths  {
 	protected def getIngestor : WbEvtIngestor
-	def makeWbTplRt (lgr : Logger) : dslServer.Route = {
+	def makeIngstRt (lgr : Logger) : dslServer.Route = {
 		val ingstr = getIngestor
 		val htEntMkr = ingstr.getHtEntMkr
 		val wevIngRt =

@@ -55,13 +55,13 @@ class AxmgPndr(actSysName : String, srvHostIntf : String, srvPort : Int) {
 		val actrSys = launcher.makeActorSys(actSysName)
 		val firstWepBoss : ActorRef = WbSssnStBossFactory.launchWebEventProc(actrSys, "frst01")
 		myLogger.info("Launched boss actor: " + firstWepBoss)
-		val routeMaker = new RouteMaker() {
+		val routeWvr = new RouteWeaver() {
 			override protected def rmFindHlpActRef(sessID: Long): ActorRef = {
 				myLogger.info("Returning boss actor:", firstWepBoss)
 				firstWepBoss
 			}
 		}
-		val route = routeMaker.makeComboRoute //makeRouteTree
+		val route = routeWvr.makeComboRoute //makeRouteTree
 
 		myLogger.info("The combo-route is made: " + route)
 

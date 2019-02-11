@@ -73,7 +73,7 @@ trait TRWAnswrApply {
 			case wapJsn: WAP_Json => {
 
 			}
-			case wapJsn: WAP_Trtl => {
+			case wapTrtl: WAP_Trtl => {
 
 			}
 
