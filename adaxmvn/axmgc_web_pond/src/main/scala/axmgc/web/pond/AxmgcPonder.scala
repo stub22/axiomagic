@@ -56,7 +56,7 @@ class AxmgPndr(actSysName : String, srvHostIntf : String, srvPort : Int) {
 		val firstWepBoss : ActorRef = WbSssnStBossFactory.launchWebEventProc(actrSys, "frst01")
 		myLogger.info("Launched boss actor: " + firstWepBoss)
 		val routeMaker = new RouteMaker() {
-			override protected def findHelpActRef(sessID: Long): ActorRef = {
+			override protected def rmFindHlpActRef(sessID: Long): ActorRef = {
 				myLogger.info("Returning boss actor:", firstWepBoss)
 				firstWepBoss
 			}

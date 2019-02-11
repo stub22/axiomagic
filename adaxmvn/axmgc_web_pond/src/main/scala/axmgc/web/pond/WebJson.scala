@@ -7,6 +7,10 @@ trait JsonEntMkr extends SprayJsonSupport {
 
 }
 
+trait JsonRtMkr {
+
+}
+
 
 case class Color(name: String, red: Int, green: Int, blue: Int)
 case class Money(currency: String, amount: BigDecimal)

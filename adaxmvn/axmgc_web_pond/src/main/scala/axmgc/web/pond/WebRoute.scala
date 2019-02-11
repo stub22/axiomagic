@@ -35,22 +35,6 @@ import PersonJsonSupport._
 
 trait WebRoute
 
-trait HelpAble {
-	lazy val myLogger : Logger = LoggerFactory.getLogger(this.getClass)
-	protected def getLogger : Logger = myLogger
-	protected def findHelpActRef(sessID : Long) : ActorRef
-
-	def sendWebEvt (tgtRef: ActorRef, sndrRef : ActorRef, wbEvt : WebEvent): Unit = {
-		tgtRef.tell(wbEvt, sndrRef)
-	}
-	def sendEmptyWebEvt(sessID: Long, sndrRef : ActorRef) : Unit = {
-		val tgtRef = findHelpActRef(sessID)
-		val emptyEvt = WE_Empty
-		// val future = tgtRef ? emptyEvt
-
-		tgtRef.tell(emptyEvt, sndrRef)
-	}
-}
 trait OurUrlPaths extends WebResBind {
 	val pathA = "patha"
 	val pathB = "pathb"
@@ -67,41 +51,34 @@ trait OurUrlPaths extends WebResBind {
 
 	val xyz123 = "hey"
 }
-trait RouteMaker extends  SprayJsonSupport with CORSHandler with HelpAble with OurUrlPaths {
+
+
+
+trait RouteMaker extends  SprayJsonSupport with CORSHandler  with OurUrlPaths {
 
 	lazy val myTdatChnkr = new TdatChunker {}
-	lazy val myEntMkr = new HtEntMkr {}
+	lazy val myHtEntMkr = new HtEntMkr {}
 	lazy val myXEntMkr = new WebXml {}
+	val mySlf4JLog = LoggerFactory.getLogger(this.getClass)
 
-	def mkJsonTstEnt: HEStrict = {
-		val jsonDat = myTdatChnkr.getSomeJsonLD(true)
-		val jsonEnt = myEntMkr.makeJsonEntity(jsonDat)
-		jsonEnt
-	}
-	// Option to chain Ctx-Tpl-Ctx-Tpl... means we must be prudent and chop to avoid hogging RAM.
+	protected def rmFindHlpActRef(sessID: Long): ActorRef
 
-	// Output from page-tuple calc.  These 3 ents all represent nestable key-value maps.
-	case class PgEntTpl(xhEnt : HEStrict, cssEnt : HEStrict, jsonEnt : HEStrict, opt_inCtx : Option[PgEvalCtx])
+	lazy val myWtplMkr = new WebTupleMaker {
+		override protected def getTdatChnkr: TdatChunker = myTdatChnkr
+		override protected def getHtEntMkr: HtEntMkr = myHtEntMkr
+		override protected def getWebXml: WebXml = myXEntMkr
+	}
+	lazy val myWtRtMkr = new WTRouteMaker {
+		override protected def getWbTplMkr: WebTupleMaker = myWtplMkr
+	}
+	lazy val myWbActrXltr = new WbEvtIngestor {
+		override def weiFindHlpActRef(sessID: Long): ActorRef = rmFindHlpActRef(sessID)
+		override def getHtEntMkr: HtEntMkr = myHtEntMkr
+	}
+	lazy val myWERM = new WbEvtRtMkr {
+		override protected def getIngestor: WbEvtIngestor = myWbActrXltr
+	}
 
-	// Inputs to the page-tuple calculation.
-	case class PgEvalCtx(ptxt_id : String, strtLocMsec : Long, opt_prvSssnTpl : Option[PgEntTpl])
-
-	// ptxt_id  contains    client sender block's Html-Dom ID, e.g. div@id.onclick
-	def makeEntsForPgAcc(ptxt_id : String) : PgEntTpl = {
-		val localMsec: Long = System.currentTimeMillis()
-		val pgEvalCtx = PgEvalCtx(ptxt_id, localMsec, None)
-		evalPage(pgEvalCtx, false)
-	}
-	def evalPage(pgEvalCtx : PgEvalCtx, chainBk : Boolean = false) : PgEntTpl = {
-		val xhPgEnt = myXEntMkr.getXHPageEnt
-		val cssPgEnt = myEntMkr.makeDummyCssEnt()
-		val jsnPgEnt = mkJsonTstEnt
-		PgEntTpl(xhPgEnt, cssPgEnt, jsnPgEnt, if (chainBk) Some (pgEvalCtx) else None)
-	}
-	def pgTplXml(ptxt_id : String): HEStrict = {
-		val pet = makeEntsForPgAcc(ptxt_id)
-		pet.xhEnt
-	}
 	private def makeEvtSrcRt : dslServer.Route = {
 		val evtSrcRtMkr = new WebEvtSrc {}
 		val evtSrcRt = evtSrcRtMkr.mkEvtSrcRt
@@ -109,15 +86,19 @@ trait RouteMaker extends  SprayJsonSupport with CORSHandler with HelpAble with O
 	}
 	private def makeWbRscRt : dslServer.Route = {
 		val wrrMkr = new WebRsrcRouteMkr {}
-		val wrRt = wrrMkr.makeWbRscRt(getLogger)
+		val wrRt = wrrMkr.makeWbRscRt(mySlf4JLog)
 		wrRt
+	}
+	private def makeWTplRt : dslServer.Route = {
+		val wtplRt = myWtRtMkr.makeWbTplRt(mySlf4JLog)
+		wtplRt
 	}
 	def makeComboRoute : dslServer.Route = {
 		val featTstRt = makeFeatTstRoute
 		val wbRscRt = makeWbRscRt
-		getLogger.info("Made wbRscRt: " + wbRscRt)
+		val wtplRt = makeWTplRt
 		val evtSrcRt = makeEvtSrcRt
-		val comboRt = wbRscRt ~ featTstRt ~ evtSrcRt
+		val comboRt = wbRscRt ~ wtplRt ~ featTstRt ~ evtSrcRt
 		comboRt
 	}
 
@@ -127,26 +108,26 @@ trait RouteMaker extends  SprayJsonSupport with CORSHandler with HelpAble with O
 			path(pathA) {
 				get {
 					val pageTxt = "<h1>Say hello to akka-http</h1>"
-					val pageEnt = myEntMkr.makeHtmlEntity(pageTxt)
+					val pageEnt = myHtEntMkr.makeHtmlEntity(pageTxt)
 					complete(pageEnt)
 				}
 			} ~ path(pathB) { // note tilde connects to next alternate route
 				get {
 					val dummyOld = "<h1>Say goooooodbye to akka-http</h1>"
 					val muchBesterTxt = myTdatChnkr.getSomeXhtml5()
-					val muchBesterEnt = myEntMkr.makeHtmlEntity(muchBesterTxt)
+					val muchBesterEnt = myHtEntMkr.makeHtmlEntity(muchBesterTxt)
 					complete(muchBesterEnt) // HttpEntity(ContentTypes.`text/html(UTF-8)`, muchBesterTxt ))
 				}
 			} ~ path(pathJsonPreDump) {
 				val jsLdTxt = myTdatChnkr.getSomeJsonLD(true)
 				val htTxt = "<pre>" + jsLdTxt + "</pre>"
-				val htEnt = myEntMkr.makeHtmlEntity(htTxt)
+				val htEnt = myHtEntMkr.makeHtmlEntity(htTxt)
 				complete(htEnt)
 
 
 			} ~ path(pathJsonLdMime) {
 				val jsonDat = myTdatChnkr.getSomeJsonLD(true)
-				val jsonEnt = myEntMkr.makeJsonEntity(jsonDat)
+				val jsonEnt = myHtEntMkr.makeJsonEntity(jsonDat)
 				corsHandler (complete(jsonEnt))
 			} ~ path(pathJsonPerson) {
 				complete("nope")
@@ -160,7 +141,7 @@ trait RouteMaker extends  SprayJsonSupport with CORSHandler with HelpAble with O
 			} ~ path(pathUseSource) {
 				val streamingData = Source.repeat("hello \n").take(10).map(ByteString(_))
 				// render the response in streaming fashion:
-				val chnkdEnt = myEntMkr.makeChunked(streamingData)
+				val chnkdEnt = myHtEntMkr.makeChunked(streamingData)
 				val resp = HttpResponse(entity = chnkdEnt)
 				println("This usrc response gets constructed NOW!", resp)
 				complete(resp)
@@ -168,16 +149,13 @@ trait RouteMaker extends  SprayJsonSupport with CORSHandler with HelpAble with O
 				println ("Running the route of the css request, params=", paramMap)
 				complete {
 					println("Completing css request, params=", paramMap)
-					val cssEnt = myEntMkr.makeDummyCssEnt()
+					val cssEnt = myHtEntMkr.makeDummyCssEnt()
 					cssEnt
 				}
-			} ~ path(pgTplTst) {
-				val pttXml = pgTplXml("pg_tpl_tst_id")
-				complete(pttXml)
-			} ~ path(pathSssnTst) {
-				val lgr = getLogger
+			}  ~ path(pathSssnTst) {
+				val lgr = mySlf4JLog // getLogger
 				val pretendSessID = -99L
-				val actRef = findHelpActRef(pretendSessID)
+				val actRef = rmFindHlpActRef(pretendSessID)
 				val emptyEvt = WE_Empty() // parens distinguish apply-instance from hidden case-singleton
 				val dclkEvt = WE_DomClick("clkdDomID_tst_99")
 				implicit val timeout = Timeout(2.seconds)
@@ -190,12 +168,12 @@ trait RouteMaker extends  SprayJsonSupport with CORSHandler with HelpAble with O
 				onComplete(askFut) {
 					case Success(r) => {
 						val rsltTxt = "<h2>ans=[" + r.toString + "]</h2>"
-						val rsltEnt = myEntMkr.makeHtmlEntity(rsltTxt)
+						val rsltEnt = myHtEntMkr.makeHtmlEntity(rsltTxt)
 						complete(rsltEnt)
 					}
 					case Failure(e) => {
 						val failTxt = "<h2>err=[" + e.toString + "]</h2>"
-						val failEnt = myEntMkr.makeHtmlEntity(failTxt)
+						val failEnt = myHtEntMkr.makeHtmlEntity(failTxt)
 						complete(failEnt)
 					}
 				}

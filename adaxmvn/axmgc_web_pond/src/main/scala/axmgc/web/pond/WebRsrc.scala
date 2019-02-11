@@ -69,6 +69,39 @@ pathEndOrSingleSlash: is equivalent to rawPathPrefix(PathEnd) or rawPathPrefix(S
 	}
 }
 
+trait IconNmSrc {
+	val tstIcNmLns =
+		"""
+local_bar
+screen_lock_portrait
+folder-add
+battery-75
+zoom-out
+wb_cloudy
+target8
+image_aspect_ratio
+crop_free
+document-stroke
+filter_center_focus
+chart-line
+windows8
+radio4
+signal_wifi_off
+heart5
+		"""
+
+/*
+stripMargin(marginChar: Char): String
+For every line in this string:
+Strip a leading prefix consisting of blanks or control characters followed by
+marginChar from the line.  WHERE marginChar defaults to `|`
+
+ */
+	val someIconNms : Seq[String] = tstIcNmLns.toString.split("\n").toSeq
+			.map(_.trim)
+			.filter(_ != "")
+
+}
 	/*
 val route =
   path("a") {

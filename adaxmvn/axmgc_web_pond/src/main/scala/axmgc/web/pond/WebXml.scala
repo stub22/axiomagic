@@ -28,9 +28,9 @@ class WebXml extends XmlEntMkr {
 				{mkLnkA ("/pathb", "link to /pathb", Some("lpb_idv"), Some("bbclz"))}
 			</div>
 			<div>
-				{svgHlpr.mkDivWithSvgIcon("access_alarms")}
-				{svgHlpr.mkDivWithSvgIcon("mood-happy-outline")}
-				{svgHlpr.mkDivWithSvgIcon("zoomout")}
+				{svgHlpr.mkDblDivWithSvgIcon("access_alarms")}
+				{svgHlpr.mkDblDivWithSvgIcon("mood-happy-outline")}
+				{svgHlpr.mkDblDivWithSvgIcon("zoomout")}
 			</div>
 		</body>
 	}
