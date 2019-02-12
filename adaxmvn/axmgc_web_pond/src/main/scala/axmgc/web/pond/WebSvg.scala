@@ -46,16 +46,17 @@ trait WebSvg extends WebResBind {
 		val f = lst_icoTl.map(icoTl => mkDblDivWithSvgIcon(icoTl))
 		f // Nil
 	}
-	def wrapInDiv(ndLst : Seq[XElem], prntID : String) : XElem = {
-		<div id={prntID}>{ndLst}</div>
+	def wrapInDiv(ndLst : Seq[XElem], prntID : String, prntClzs : String) : XElem = {
+		<div id={prntID} class={prntClzs}>{ndLst}</div>
 	}
 	def testNmLst : Seq[String] = myIcnmSrc.someIconNms
 	def mkDDSTstBlk : XElem = {
 		val icNmSeq = myIcnmSrc.someIconNms
 		val icNmCnt = icNmSeq.length
 
+		val pclzs = "grdCnt"
 		val svgDblDivs = mkManySvgDivs(icNmSeq)
-		val wrpDv = wrapInDiv(svgDblDivs, "bunchaSVGDvs_01")
+		val wrpDv = wrapInDiv(svgDblDivs, "bunchaSVGDvs_01", pclzs)
 		wrpDv
 	}
 

@@ -16,6 +16,10 @@ trait WebResBind {
 	val fldrPth_wdat = ptok_wdat
 	val fldrPth_styl = fldrPth_wdat + FLD_SEP + ptok_styl
 	val fldrPth_ivct = fldrPth_wdat + FLD_SEP + ptok_ivct
+
+	val urlPth_styIcn = FLD_SEP + fldrPth_styl +  FLD_SEP + "icmbg_sty.css"
+	val urlPth_styDem = FLD_SEP + fldrPth_styl +  FLD_SEP + "icmbg_dem.css"
+
 }
 
 trait WebRsrcRouteMkr extends WebResBind {

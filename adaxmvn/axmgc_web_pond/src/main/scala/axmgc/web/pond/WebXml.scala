@@ -3,7 +3,7 @@ import akka.http.scaladsl.model.HttpEntity
 
 import scala.xml.{Elem => XElem, Node => XNode, NodeSeq => XNodeSeq, Null => XNull, Attribute => XAttr, UnprefixedAttribute => XUAttr}
 
-class WebXml extends XmlEntMkr {
+class WebXml extends XmlEntMkr with WebResBind  {
 	val svgHlpr = new WebSvg {}
 	def mergeXhtml (xeHead : XElem, xeBody : XElem) : XElem = {
 		<html>
@@ -13,7 +13,9 @@ class WebXml extends XmlEntMkr {
 	}
 	def mkTstHd : XElem = {
 		<head>
-			<title>WebXml made this title</title>
+			<title>WebXml Generated header contains this title</title>
+			<link rel="stylesheet" href={urlPth_styIcn}></link>
+			<link rel="stylesheet" href={urlPth_styDem}></link>
 		</head>
 	}
 	def mkTstBdy : XElem = {
