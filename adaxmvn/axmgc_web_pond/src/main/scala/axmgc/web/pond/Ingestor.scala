@@ -15,8 +15,6 @@ import scala.util.{Failure, Success}
 
 // https://stackoverflow.com/questions/37462717/akka-http-how-to-use-an-actor-in-a-request
 
-trait WebActrXlate
-
 trait WbEvtIngestor {
 	lazy val myLogSlf4J : Logger = LoggerFactory.getLogger(this.getClass)
 	protected def getLogger : Logger = myLogSlf4J
@@ -46,7 +44,7 @@ trait IngestRtMkr extends OurUrlPaths  {
 		val ingstr = getIngestor
 		val htEntMkr = ingstr.getHtEntMkr
 		val wevIngRt =
-			path(pathSssnTst + "_xp") {
+			path(pathIngstTst) {
 				// val lgr = getLogger
 				val pretendSessID = -99L
 				val actRef = ingstr.weiFindHlpActRef(pretendSessID)

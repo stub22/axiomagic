@@ -45,10 +45,12 @@ trait OurUrlPaths extends WebResBind {
 	val pathJsonPerson = "jpers"
 	val pathUseSource = "usrc"
 	val pathCssT01 = "t01.css"
-	val pathSssnTst = "sssntst"
+	val pathIngstTst = "ingst"
 	val pgTplTst = "tpltst"
+	val pathHttpEvtSrc = "evtSrcT01"
+
 	val lstAllPaths : List[String] = pathA :: pathB :: pathJsonPreDump :: pathJsonLdMime ::
-			pathMore :: pathJsonPerson :: pathUseSource :: pathCssT01 :: pathSssnTst :: pgTplTst :: Nil
+			pathMore :: pathJsonPerson :: pathUseSource :: pathCssT01 :: pathIngstTst :: pgTplTst :: Nil
 
 	val xyz123 = "hey"
 }

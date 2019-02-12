@@ -32,6 +32,13 @@ class WebXml extends XmlEntMkr {
 				{svgHlpr.mkDblDivWithSvgIcon("mood-happy-outline")}
 				{svgHlpr.mkDblDivWithSvgIcon("zoomout")}
 			</div>
+			<div>
+				<span>Test Icon Names: </span><br/>
+				<span>{svgHlpr.testNmLst}</span>
+			</div>
+			<div>
+				{svgHlpr.mkDDSTstBlk}
+			</div>
 		</body>
 	}
 	private def maybeAppendAttr(elem : XElem, attrName : String, attrVal_opt : Option[String]) : XElem = {

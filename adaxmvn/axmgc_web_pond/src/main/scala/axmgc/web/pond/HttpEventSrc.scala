@@ -23,7 +23,7 @@ https://doc.akka.io/docs/akka-http/current/sse-support.html
 
 trait HttpEventSrc
 
-trait HttpEventSrcRtMkr {
+trait HttpEventSrcRtMkr extends OurUrlPaths  {
 
 // Warning:  As of 2018, EventSource is not supported by Microsoft browsers.
 // https://stackoverflow.com/questions/24498141/is-there-a-microsoft-equivalent-for-html5-server-sent-events/
@@ -32,7 +32,7 @@ trait HttpEventSrcRtMkr {
 	def mkEvtSrcRt: dslServer.Route = {
 import akka.http.scaladsl.marshalling.sse.EventStreamMarshalling._
 
-		path("evtSrcT01") {
+		path(pathHttpEvtSrc) {
 			get {
 				complete {
 					Source

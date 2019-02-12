@@ -15,6 +15,9 @@ trait WebSvg extends WebResBind {
 	private def mkIcoNmFl (tail: String) = icoNmPrfx + tail
 	private def mkIcoHref(tail: String) : String = pthIco3290 + "#" + mkIcoNmFl(tail)
 	private def mkIcoClzs(tail: String) : String =  svgBaseClzNms + mkIcoNmFl(tail)
+
+	private lazy val myIcnmSrc = new IconNmSrc {}
+
 	def mkDblDivWithSvgIcon(icoTstTl : String) : XElem = {
 		val ddsElem =
 			// <div>
@@ -39,21 +42,19 @@ trait WebSvg extends WebResBind {
 			*/
 		ddsElem
 	}
-	def mkManySvgDivs(lst_icoTl : List[String]) : List[XElem] = {
+	def mkManySvgDivs(lst_icoTl : Seq[String]) : Seq[XElem] = {
 		val f = lst_icoTl.map(icoTl => mkDblDivWithSvgIcon(icoTl))
 		f // Nil
 	}
-	def wrapInDiv(ndLst : List[XElem], prntID : String) : XElem = {
+	def wrapInDiv(ndLst : Seq[XElem], prntID : String) : XElem = {
 		<div id={prntID}>{ndLst}</div>
 	}
+	def testNmLst : Seq[String] = myIcnmSrc.someIconNms
 	def mkDDSTstBlk : XElem = {
-		val icnmSrc = new IconNmSrc {}
-		val icNmSeq = icnmSrc.someIconNms
+		val icNmSeq = myIcnmSrc.someIconNms
 		val icNmCnt = icNmSeq.length
 
-		// val lst_rowCanA =
-		val lst_icoTl = Nil
-		val svgDblDivs = mkManySvgDivs(lst_icoTl)
+		val svgDblDivs = mkManySvgDivs(icNmSeq)
 		val wrpDv = wrapInDiv(svgDblDivs, "bunchaSVGDvs_01")
 		wrpDv
 	}
