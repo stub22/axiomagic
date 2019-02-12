@@ -54,7 +54,7 @@ trait WebSvg extends WebResBind {
 		val icNmSeq = myIcnmSrc.someIconNms
 		val icNmCnt = icNmSeq.length
 
-		val pclzs = "grdCnt"
+		val pclzs = "grdCnt" // Defined in ictst_grid.css or other.
 		val svgDblDivs = mkManySvgDivs(icNmSeq)
 		val wrpDv = wrapInDiv(svgDblDivs, "bunchaSVGDvs_01", pclzs)
 		wrpDv

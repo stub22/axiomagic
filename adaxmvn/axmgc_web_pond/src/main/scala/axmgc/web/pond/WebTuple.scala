@@ -19,8 +19,13 @@ trait WebTupleMaker extends HtEntMkr {
 	protected def getWebXml : WebXml
 	// Option to chain Ctx-Tpl-Ctx-Tpl... means we must be prudent and chop to avoid hogging RAM.
 
-	// Output from page-tuple calc.  These 3 ents all represent nestable key-value maps.
-	case class PgEntTpl(xhEnt : HEStrict, cssEnt : HEStrict, jsonEnt : HEStrict, opt_inCtx : Option[PgEvalCtx])
+	// Output from page-tuple calc.
+	// These 3 optional ents each represent a nestabl, client-fetchable key-value map.
+	// Their collection into this tuple indicates that they are meant to be consistent
+	// for a client that fetches them in either unified or separate HTTP request operations.
+	// The opt_inCtx allows us to memoize the prior-state and input-req.
+	case class PgEntTpl(xhEnt_opt : Option[HEStrict], cssEnt_opt : Option[HEStrict],
+						jsonEnt_opt : Option[HEStrict], opt_inCtx : Option[PgEvalCtx])
 
 	// Inputs to the page-tuple calculation.
 	case class PgEvalCtx(ptxt_id : String, strtLocMsec : Long, opt_prvSssnTpl : Option[PgEntTpl])
@@ -34,16 +39,16 @@ trait WebTupleMaker extends HtEntMkr {
 	def evalPage(pgEvalCtx : PgEvalCtx, chainBk : Boolean = false) : PgEntTpl = {
 		// So far this is a mere simulation of making all required page elements in one swoop.
 		val xentMkr = getWebXml // XEntMkr
-		val xhPgEnt = xentMkr.getXHPageEnt
+		val xhPgEnt_opt = Some(xentMkr.getXHPageEnt)
 		val htEntMkr = getHtEntMkr
-		val cssPgEnt = htEntMkr.makeDummyCssEnt()
-		val jsnPgEnt = mkJsonTstEnt
+		val cssPgEnt_opt = Some(htEntMkr.makeDummyCssEnt())
+		val jsnPgEnt_opt = Some(mkJsonTstEnt)
 		val chnBkCtx_opt = if (chainBk) Some (pgEvalCtx) else None
-		PgEntTpl(xhPgEnt, cssPgEnt, jsnPgEnt, chnBkCtx_opt)
+		PgEntTpl(xhPgEnt_opt, cssPgEnt_opt, jsnPgEnt_opt, chnBkCtx_opt)
 	}
 	def pgTplXml(ptxt_id : String): HEStrict = {
 		val pet = makeEntsForPgAcc(ptxt_id)
-		pet.xhEnt
+		pet.xhEnt_opt.get
 	}
 	def mkJsonTstEnt: HEStrict = {
 		val tdatChnkr = getTdatChnkr

@@ -14,8 +14,12 @@ class WebXml extends XmlEntMkr with WebResBind  {
 	def mkTstHd : XElem = {
 		<head>
 			<title>WebXml Generated header contains this title</title>
+
+			<meta name="viewport" content="width=device-width, initial-scale=1"></meta>
+
 			<link rel="stylesheet" href={urlPth_styIcn}></link>
 			<link rel="stylesheet" href={urlPth_styDem}></link>
+			<link rel="stylesheet" href={urlPth_styGrd}></link>
 		</head>
 	}
 	def mkTstBdy : XElem = {

@@ -19,6 +19,7 @@ trait WebResBind {
 
 	val urlPth_styIcn = FLD_SEP + fldrPth_styl +  FLD_SEP + "icmbg_sty.css"
 	val urlPth_styDem = FLD_SEP + fldrPth_styl +  FLD_SEP + "icmbg_dem.css"
+	val urlPth_styGrd = FLD_SEP + fldrPth_styl +  FLD_SEP + "ictst_grid.css"
 
 }
 
