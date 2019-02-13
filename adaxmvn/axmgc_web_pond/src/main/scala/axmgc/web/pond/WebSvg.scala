@@ -20,31 +20,20 @@ trait WebSvg extends WebResBind {
 
 	def mkDblDivWithSvgIcon(icoTstTl : String) : XElem = {
 		val ddsElem =
-			// <div>
-				<div class="glyph fs1">
-					<div class="clearfix pbs">
-						<svg class={mkIcoClzs(icoTstTl)}>
-							<use xlink:href={mkIcoHref(icoTstTl)}>
-							</use>
-						</svg>
-						<span class="name"> {mkIcoNmFl(icoTstTl)}</span>
-					</div>
+			<div class="glyph fs1">
+				<div class="clearfix pbs">
+					<svg class={mkIcoClzs(icoTstTl)}>
+						<use xlink:href={mkIcoHref(icoTstTl)}>
+						</use>
+					</svg>
+					<span class="name"> {mkIcoNmFl(icoTstTl)}</span>
 				</div>
-			// </div>
-			/*	Example output:
-				<div class="glyph fs1">
-					<div class="clearfix pbs">
-						<svg class="icon icon-access_alarms">
-							<use xlink:href="symbol-defs.svg#icon-access_alarms">
-							</use>
-						</svg>
-						<span class="name"> icon-access_alarms</span>
-			*/
+			</div>
 		ddsElem
 	}
 	def mkManySvgDivs(lst_icoTl : Seq[String]) : Seq[XElem] = {
 		val f = lst_icoTl.map(icoTl => mkDblDivWithSvgIcon(icoTl))
-		f // Nil
+		f
 	}
 	def wrapInDiv(ndLst : Seq[XElem], prntID : String, prntClzs : String) : XElem = {
 		<div id={prntID} class={prntClzs}>{ndLst}</div>
@@ -64,11 +53,9 @@ trait WebSvg extends WebResBind {
 }
 
 /*
-    <link rel="stylesheet" href="icombig32/style.css">
 
 <head>
     <title>SVG-Ext adapted</title>
-    <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="icombig32/demo-files/demo.css">
     <link rel="stylesheet" href="icombig32/style.css">

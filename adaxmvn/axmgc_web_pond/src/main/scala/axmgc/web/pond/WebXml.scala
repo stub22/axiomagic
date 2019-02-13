@@ -16,6 +16,7 @@ class WebXml extends XmlEntMkr with WebResBind  {
 			<title>WebXml Generated header contains this title</title>
 
 			<meta name="viewport" content="width=device-width, initial-scale=1"></meta>
+			<meta charset="utf-8"></meta>
 
 			<link rel="stylesheet" href={urlPth_styIcn}></link>
 			<link rel="stylesheet" href={urlPth_styDem}></link>
@@ -23,8 +24,8 @@ class WebXml extends XmlEntMkr with WebResBind  {
 		</head>
 	}
 	def mkTstBdy : XElem = {
-		<body>
-
+		val tmpJS = new TmpJscrptHolder {}
+		val bdyElem = <body id="wx_tst_bdy_id" onload="attchHndlrsAtId('wx_tst_bdy_id')">
 			<div>
 				<span>WebXml made this here body, and made it real good.</span>
 			</div>
@@ -45,7 +46,11 @@ class WebXml extends XmlEntMkr with WebResBind  {
 			<div>
 				{svgHlpr.mkDDSTstBlk}
 			</div>
+			<script>
+			// comment hiding begin-cdat {tmpJS.myEvntTstScr_cdata}
+			</script>
 		</body>
+		bdyElem
 	}
 	private def maybeAppendAttr(elem : XElem, attrName : String, attrVal_opt : Option[String]) : XElem = {
 		// Can we use "MetaData" .next stuff to control attribute ordering?
@@ -76,5 +81,62 @@ class WebXml extends XmlEntMkr with WebResBind  {
 		val xhEnt = makeXmlEntity (rootXE, ctyp)
 		xhEnt
 	}
+}
+
+trait TmpJscrptHolder {
+	lazy val myEvntTstScr_cdata = new scala.xml.PCData(myEvntTstScr_raw)
+	//  <![CDATA[
+	// 	]]>
+	val myEvntTstScr_raw =
+		"""//another comment after bgn-cdat then LINE-BREAK:
+		  |function routeEvt(evt) {
+		  |    // alert('Ancestor got click, evtTgt=' + event.target)
+		  |    // Seems that target for keypress is always the body...
+		  |    var evtTyp = evt.type
+		  |    var evtTgt = evt.target
+		  |    var etID = evtTgt.id
+		  |    var currTgt = evt.currentTarget
+		  |    var ctID = currTgt.id
+		  |    var dbgYes = (! evtTyp.includes("mouse"))
+		  |    if (dbgYes) {
+		  |    		var dbgTxt = "routeEvt{type=" + evtTyp + ", target=" + evtTgt + ", etID=" + etID + ", currTgt=" + currTgt + ", ctID=" + ctID + "}"
+		  |    		console.log(dbgTxt)
+		  |    }
+		  |    var prevC = evtTgt.style.color
+		  |    var nextC =  makeRandomColor()
+		  |    if (dbgYes) {
+		  |    		var clrDbg = "changing color from " + prevC + " to " + nextC
+		  |    		console.log(clrDbg)
+		  |    }
+		  |    evtTgt.style.color = nextC
+		  |	   evtTgt.style.fill = nextC
+		  |}
+		  |
+		  |function makeRandomColor(){
+		  |// https://stackoverflow.com/questions/1484506/random-color-generator
+		  |    var c = '';
+		  |    while (c.length < 6) {
+		  |        c += (Math.random()).toString(16).substr(-6).substr(-1)
+		  |    }
+		  |    return '#'+c;
+		  |}
+		  |
+		  |
+		  |function attchHndlrs(domElmt) {
+		  |    var ourEvtNms = ['click', 'mouseover', 'mouseout', 'mousemove', 'keypress']
+		  |    // https://javascript.info/bubbling-and-capturing
+		  |    // Optional 3rd arg is boolean, where true => capture-handler, but dflt=false => bubble handler
+		  |    // is preferred.
+		  |    console.log("handler names are: ", ourEvtNms)
+		  |    console.log("attaching handlers to element: ", domElmt)
+		  |    ourEvtNms.forEach(function(nm) {
+		  |        domElmt.addEventListener(nm, routeEvt)
+		  |    })
+		  |}
+		  |function attchHndlrsAtId(domID) {
+		  |		console.log("looking up dom el for event handlers at: ", domID)
+		  |    var domEl = document.getElementById(domID)
+		  |    attchHndlrs(domEl)
+		  |}//comment hiding end-cdat""".stripMargin
 
 }
