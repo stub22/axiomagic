@@ -19,9 +19,10 @@ object TstOntDmps {
 
 	def main(args: Array[String]) {
 		setupLogging
-		myTontApp.launch
+		myTontApp.chkOnt
+		// myTontApp.launch
 		myS4JLogger.warn("END of .main()")
-		println("println: .main() says goodbye, but actors are possibly still running.")
+		println("println: .main() says goodbye") // , but actors are possibly still running.")
 	}
 	// TODO:  Reconcile Akka logging with SLf4J logging, Log4J, Jena
 	private def setupLogging : Unit = {
@@ -61,5 +62,11 @@ class TstOntApp(myActSysNm : String) extends WebServerLauncher {
 		}
 		val dmprRt = dmprRtMkr.makeDmprTstRt
 		launchWebServer(dmprRt, actSys, srvIntf, srvPort)
+	}
+	def chkOnt : Unit = {
+		val cf  = new ChkFibo {
+			override def getS4JLog: Logger = myS4JLogger
+		}
+		cf.chkMdlStats
 	}
 }

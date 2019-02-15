@@ -17,6 +17,11 @@
             <artifactId>axiomagic.web.pond</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.topbraid</groupId>
+            <artifactId>shacl</artifactId>
+            <version>1.1.0</version>
+        </dependency>
 <!--
         <dependency>
             <groupId>org.scala-lang</groupId>
