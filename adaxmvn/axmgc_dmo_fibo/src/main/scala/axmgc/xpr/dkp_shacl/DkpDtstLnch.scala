@@ -25,6 +25,7 @@ object DkpDtstLnch {
 		val srvIntf = "localhost"
 		val srvPort = 8117
 	}
+
 }
 
 class DkpDtstApp {
@@ -35,5 +36,8 @@ class DkpDtstApp {
 	def runTstBatch : Unit = {
 		val rprt = myShaclTst.mkVldRprtTxt
 		myAppLggr.info("Validation Report\n=====================\n : {}", rprt)
+		myAppLggr.info("=====================\nChecking ont dat\n===================")
+
+		myShaclTst.checkShaclOntDat
 	}
 }
