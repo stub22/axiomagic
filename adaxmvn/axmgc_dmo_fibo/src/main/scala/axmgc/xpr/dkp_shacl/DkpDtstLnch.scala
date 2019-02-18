@@ -1,6 +1,5 @@
 package axmgc.xpr.dkp_shacl
 
-import axmgc.dmo.fin.ontdmp.TstOntDmps.printSomeMsgs
 import axmgc.web.pond.WebServerLauncher
 import org.slf4j.{Logger, LoggerFactory}
 import org.apache.log4j.{BasicConfigurator, Level => Log4JLevel, Logger => Log4JLogger}
