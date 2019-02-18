@@ -36,9 +36,9 @@ trait WebServerLauncher {
 	private def runUntilNewlineThenExit(actSys: ActorSystem, bindFut : ConcFut[Http.ServerBinding]) : Unit = {
 		// needed for the future flatMap/onComplete in the end
 		implicit val executionContext = actSys.dispatcher
-		myLogger.info("Presssss RETURN to stop...")
+		myLogger.info("To stop program, press ENTER twice.")
 		StdIn.readLine() // let it run until user presses return
-		myLogger.info("Got user return, starting unbind")
+		myLogger.info("Got user ENTER, starting unbind")
 		bindFut
 				.flatMap(_.unbind()) // trigger unbinding from the port
 				.onComplete(_ => actSys.terminate()) // and shutdown when done

@@ -28,7 +28,7 @@ trait FeatTstRtMkr extends CORSHandler  with OurUrlPaths {
 	def makeFeatTstRoute: dslServer.Route = {
 		val htEntMkr = getHtEntMkr
 		val tdatChnkr = getTdatChnkr
-		val mainRt = parameterMap { paramMap =>
+		val mainRt = parameterMap { paramMap: Map[String, String] =>
 			path(pathA) {
 				get {
 					val pageTxt = "<h1> HTML string, wrapped in akka-http Entity</h1>"

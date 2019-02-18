@@ -12,6 +12,18 @@ import org.slf4j.{Logger, LoggerFactory}
 
 trait  WebTuple
 
+trait WebRqPrms {
+	protected def fetchParamMap : Map[String, String]
+	lazy private val myParamMap = fetchParamMap
+	private def getPValTxtOpt (keyName : String) :  Option[String] = myParamMap.get(keyName)
+
+	def getPathParam (keyName : String) : Option[String] = {
+		getPValTxtOpt(keyName)
+	}
+	def getPVal_UriTxt (keyName : String) : String = ???
+	def getPVal_QNameTxt (keyName : String) : String = ???
+	def getPVal_ScalaInt (keyName : String) : Int = ???
+}
 trait WebTupleMaker extends HtEntMkr {
 	// protected def getXEntMkr : XmlEntMkr
 	protected def getTdatChnkr : TdatChunker
@@ -28,12 +40,12 @@ trait WebTupleMaker extends HtEntMkr {
 						jsonEnt_opt : Option[HEStrict], opt_inCtx : Option[PgEvalCtx])
 
 	// Inputs to the page-tuple calculation.
-	case class PgEvalCtx(ptxt_id : String, strtLocMsec : Long, opt_prvSssnTpl : Option[PgEntTpl])
+	case class PgEvalCtx(ptxt_id : String, strtLocMsec : Long, wrqPrms :WebRqPrms, opt_prvSssnTpl : Option[PgEntTpl])
 
 	// ptxt_id  contains    client sender block's Html-Dom ID, e.g. div@id.onclick
-	def makeEntsForPgAcc(ptxt_id : String) : PgEntTpl = {
+	def makeEntsForPgAcc(ptxt_id : String, wrqPrms :WebRqPrms) : PgEntTpl = {
 		val localMsec: Long = System.currentTimeMillis()
-		val pgEvalCtx = PgEvalCtx(ptxt_id, localMsec, None)
+		val pgEvalCtx = PgEvalCtx(ptxt_id, localMsec, wrqPrms, None)
 		evalPage(pgEvalCtx, false)
 	}
 	def evalPage(pgEvalCtx : PgEvalCtx, chainBk : Boolean = false) : PgEntTpl = {
@@ -46,8 +58,11 @@ trait WebTupleMaker extends HtEntMkr {
 		val chnBkCtx_opt = if (chainBk) Some (pgEvalCtx) else None
 		PgEntTpl(xhPgEnt_opt, cssPgEnt_opt, jsnPgEnt_opt, chnBkCtx_opt)
 	}
-	def pgTplXml(ptxt_id : String): HEStrict = {
-		val pet = makeEntsForPgAcc(ptxt_id)
+	def pgTplXml(ptxt_id : String, rqParamMap: Map[String, String]): HEStrict = {
+		val wrqParams = new WebRqPrms {
+			override protected def fetchParamMap: Map[String, String] = rqParamMap
+		}
+		val pet = makeEntsForPgAcc(ptxt_id, wrqParams)
 		pet.xhEnt_opt.get
 	}
 	def mkJsonTstEnt: HEStrict = {
@@ -63,10 +78,11 @@ trait WTRouteMaker extends OurUrlPaths {
 	protected def getWbTplMkr : WebTupleMaker
 	def makeWbTplRt (lgr : Logger) : dslServer.Route = {
 		val wbTplMkr = getWbTplMkr
-		val tplRt = path(pgTplTst) {
-			val pttXml = wbTplMkr.pgTplXml("pg_tpl_tst_id")
+
+		val tplRt = parameterMap { rqParams : Map[String, String] => path(pgTplTst) {
+			val pttXml = wbTplMkr.pgTplXml("pg_tpl_tst_id", rqParams)
 			complete(pttXml)
-		} // ~
+		}} // ~
 		tplRt
 	}
 }

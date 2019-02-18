@@ -3,10 +3,7 @@ package axmgc.dmo.fin.ontdmp
 import akka.http.scaladsl.{Http, server => dslServer}
 import dslServer.Directives.{complete, entity, get, path, _}
 import dslServer.Directive0
-import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
-import akka.http.scaladsl.model.{HttpEntity, HttpResponse, StatusCodes}
 import akka.http.scaladsl.model.HttpEntity.{Strict => HEStrict}
-import akka.stream.scaladsl.Source
 import axmgc.web.pond.{HtEntMkr, TdatChunker, WebTupleMaker, WebXml}
 
 trait DumperWebRoutes // Marker for file - only
@@ -15,7 +12,8 @@ trait DumperWebFeat {
 	val pthTok_dhlo = "dhlo"
 	val pthTok_dgo = "dgo"
 
-	def goAndRespondFully : HEStrict
+	// go == "perform now" = do whatever work and return
+	def goAndRespondFully(rqParamMap: Map[String, String]) : HEStrict
 }
 
 trait DmpWbRtMkr {
@@ -25,14 +23,16 @@ trait DmpWbRtMkr {
 	def makeDmprTstRt  : dslServer.Route = {
 		val webFeat = getDumperWebFeat
 		val hloPth = webFeat.pthTok_dhlo
-		val dwfRt = path(hloPth) {
-			// val pttXml = wbTplMkr.pgTplXml("pg_tpl_tst_id")
-			complete("Raw hlo from feature object: " + webFeat)
-		} ~ path(webFeat.pthTok_dgo) {
-			val rspEnt = webFeat.goAndRespondFully
-			complete(rspEnt) // "dgo went and responded...")
-		} // ~
-		dwfRt
+		val dmprMainRt = parameterMap { rqParamMap: Map[String, String] =>
+			path(hloPth) {
+				// val pttXml = wbTplMkr.pgTplXml("pg_tpl_tst_id")
+				complete("Raw hlo from feature object: " + webFeat)
+			} ~ path(webFeat.pthTok_dgo) {
+				val rspEnt = webFeat.goAndRespondFully(rqParamMap)
+				complete(rspEnt) // "dgo went and responded...")
+			} // ~
+		}
+		dmprMainRt
 	}
 }
 
@@ -47,8 +47,8 @@ trait DumperTupleBridge extends DumperWebFeat {
 		override protected def getWebXml: WebXml = myXEntMkr
 	}
 
-	override def goAndRespondFully : HEStrict = {
-		val pgTplXmlEnt = myWtplMkr.pgTplXml("dtb_out_domID")
+	override def goAndRespondFully(rqParams: Map[String, String]) : HEStrict = {
+		val pgTplXmlEnt = myWtplMkr.pgTplXml("dtb_out_domID", rqParams)
 		pgTplXmlEnt
 	}
 }

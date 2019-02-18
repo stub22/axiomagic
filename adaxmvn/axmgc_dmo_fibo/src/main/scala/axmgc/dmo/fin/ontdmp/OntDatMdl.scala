@@ -18,10 +18,10 @@ trait ChkFibo {
 		val mdl = RDFDataMgr.loadModel(path)
 		mdl
 	}
-	lazy val myMdl = loadFiboGrphMdl
+	lazy protected val myFiboOntMdl = loadFiboGrphMdl
 	def chkMdlStats : Unit = {
-
-		val mdl = myMdl
+		//
+		val mdl = myFiboOntMdl
 		val size = mdl.size()
 		myLog.info("Mdl size = {}", size)
 		dmpPrfxs
@@ -32,15 +32,15 @@ trait ChkFibo {
 	}
 	import scala.collection.JavaConverters._
 	private def dmpPrfxs : Unit = {
-		val numPrfxs = myMdl.numPrefixes
+		val numPrfxs = myFiboOntMdl.numPrefixes
 		myLog.info("Num prefixes: {}", numPrfxs)
-		val prfxMap : java.util.Map[String, String] = myMdl.getNsPrefixMap
+		val prfxMap : java.util.Map[String, String] = myFiboOntMdl.getNsPrefixMap
 		val sclPrfxMp = prfxMap.asScala
 		sclPrfxMp.foreach(entry => myLog.debug("k=" + entry._1 + ", v=" + entry._2))
 // 		sclPrfxMp.foldLeft("", (k,v) => )
 
 	}
-/*
+/* --- Copied Javadoc for:
 NsIterator listNameSpaces()
 (You probably don't want this method; more likely you want the PrefixMapping methods that Model supports.)
 List the namespaces used by predicates and types in the model.
@@ -52,7 +52,7 @@ The namespaces returned are those of
  */
 	private def dumpNSs : Int = {
 		var nsCnt = 0;
-		val nsIt = myMdl.listNameSpaces()
+		val nsIt = myFiboOntMdl.listNameSpaces()
 		while (nsIt.hasNext) {
 			val ns = nsIt.nextNs()
 			myLog.info("Found NS: {}", ns)
@@ -63,7 +63,7 @@ The namespaces returned are those of
 	}
 	private def countSubjs : Int = {
 		var subjCnt = 0;
-		val subjIt = myMdl.listSubjects()
+		val subjIt = myFiboOntMdl.listSubjects()
 		while (subjIt.hasNext) {
 			val subjRes = subjIt.nextResource()
 			if ((subjCnt < 1000) && ((subjCnt % 100) < 10)) {
@@ -75,20 +75,19 @@ The namespaces returned are those of
 		subjCnt
 	}
 	// first import all necessary types from package `collection.mutable`
-	import collection.mutable.{ HashMap => MutHashMap, MultiMap => MutMultiMap, Set => MutSet , TreeSet => MutTreeSet, HashSet => MutHashSet}
+	import collection.mutable.{ HashMap => MutHashMap, MultiMap => MutMultiMap, Set => MutSet , HashSet => MutHashSet}
 
 	// to create a `MultiMap` the easiest way is to mixin it into a normal
 	// `Map` instance
 	val mm = new MutHashMap[Int, MutSet[String]] with MutMultiMap[Int, String]
 	private def visitImports : Unit = {
-		// owl:imports
-		// val imprtrs = new scala.collection.mutable.ListBuffer[JenaResource]
+		// Visits all the owl:imports statements in the onto graph, saving the triples into a multivalued-map.
 		val imprtMMM = new MutHashMap[JenaResource, MutSet[JenaResource]] with MutMultiMap[JenaResource, JenaResource]
 		val imprtTgts = new MutHashSet[JenaResource]
 		val owlUriTxt = "http://www.w3.org/2002/07/owl#"
-		val prop_owlImport = myMdl.getProperty(owlUriTxt, "imports")
+		val prop_owlImport = myFiboOntMdl.getProperty(owlUriTxt, "imports")
 		myLog.info("Owl import property: {}", prop_owlImport)
-		val stmtIt = myMdl.listStatements(null, prop_owlImport, null)
+		val stmtIt = myFiboOntMdl.listStatements(null, prop_owlImport, null)
 		var imprtStmtCnt = 0
 		while (stmtIt.hasNext) {
 			val stmt = stmtIt.nextStatement()
@@ -96,10 +95,12 @@ The namespaces returned are those of
 			val subjRes = stmt.getSubject
 			val objRes = stmt.getResource
 			imprtMMM.addBinding(subjRes, objRes)
+			// val chkd = imprtMMM.
 			imprtTgts += objRes
 			imprtStmtCnt += 1
 		}
 		// val outList = imprtrs.toList
+		// TODO:  Use format strings to make nicer output
 		myLog.info("Import multi-map: {}", imprtMMM)
 		myLog.info("Import targets set: {}", imprtTgts)
 		val imprtTgtTxt = imprtTgts.map(_.getURI).toSeq.sorted
@@ -115,7 +116,7 @@ The namespaces returned are those of
 		val omSpec3 : OntModelSpec = OntModelSpec.RDFS_MEM
 		val omSpec4 = OntModelSpec.OWL_DL_MEM_RULE_INF
 
-		val ontMdl1 = JenaModelFactory.createOntologyModel(omSpec1, myMdl)
+		val ontMdl1 = JenaModelFactory.createOntologyModel(omSpec1, myFiboOntMdl)
 		val ontSz_1 = ontMdl1.size()
 		myLog.info("ontMdl1 size = {}", ontSz_1)
 		ontSz_1
