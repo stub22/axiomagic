@@ -1,7 +1,7 @@
 package axmgc.web.pond
 
 import akka.actor.{ActorRef, ActorSystem}
-import akka.http.scaladsl.server.Directives.{path, _}
+// import akka.http.scaladsl.server.Directives.{path, _}
 import akka.http.scaladsl.{Http, server => dslServer}
 import akka.stream.ActorMaterializer
 
@@ -17,33 +17,37 @@ import org.slf4j.{Logger, LoggerFactory}
 
 
 trait WebServerLauncher {
-	lazy val myLogger : Logger = LoggerFactory.getLogger(classOf[AxmgPndr])
+	lazy val mySL4JLog : Logger = LoggerFactory.getLogger(this.getClass)
 	def makeActorSys (actSysNm : String) : ActorSystem = {
 		val actrSys: ActorSystem = ActorSystem(actSysNm)
 		actrSys
 	}
 
-	def launchWebServer (route: dslServer.Route, actSys : ActorSystem, srvIntf : String, portNum: Int) : Unit = {
+	def launchWebServer (route: dslServer.Route, actSys : ActorSystem, srvIntf : String,
+						 portNum: Int, flg_blockUntilNewlineThenExit : Boolean = true) : Unit = {
 		implicit val actrSys : ActorSystem = actSys
 		implicit val actrMtrlzr = ActorMaterializer()
 
 		val bindingFuture : ConcFut[Http.ServerBinding] =
 					Http().bindAndHandle(route, srvIntf, portNum)
-		myLogger.info("Server online at http://" + srvIntf + ":" + portNum)
-		runUntilNewlineThenExit(actrSys, bindingFuture)
+		mySL4JLog.info("Server online at http://" + srvIntf + ":" + portNum)
+		if (flg_blockUntilNewlineThenExit) {
+			mySL4JLog.info("DEV TEST MODE: launchWebServer() will block until console newline, then will exit!")
+			runUntilNewlineThenExit(actrSys, bindingFuture)
+		}
 	}
 
 	private def runUntilNewlineThenExit(actSys: ActorSystem, bindFut : ConcFut[Http.ServerBinding]) : Unit = {
 		// needed for the future flatMap/onComplete in the end
 		implicit val executionContext = actSys.dispatcher
-		myLogger.info("To stop program, press ENTER twice.")
-		StdIn.readLine() // let it run until user presses return
-		myLogger.info("Got user ENTER, starting unbind")
+		mySL4JLog.info("To stop program, press ENTER twice.  This thread will block until you do.")
+		StdIn.readLine() // Block here until user presses return (sometimes twice helps).
+		mySL4JLog.info("Got user ENTER, starting unbind")
 		bindFut
 				.flatMap(_.unbind()) // trigger unbinding from the port
 				.onComplete(_ => actSys.terminate()) // and shutdown when done
-		myLogger.info("We finished setting up the terminator, but it may not have completed yet.")
-		myLogger.info("END of runUntilNewlineThenExit");
+		mySL4JLog.info("We finished setting up the terminator, but it may not have completed yet.")
+		mySL4JLog.info("END of runUntilNewlineThenExit");
 	}
 
 }

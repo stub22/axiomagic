@@ -6,6 +6,7 @@ import org.apache.jena.graph.{Graph => JenaGraph}
 import org.apache.jena.rdf.model.{Model => JenaModel}
 import org.apache.jena.riot.system.RiotLib
 import org.apache.jena.riot.{JsonLDWriteContext, RDFDataMgr, RDFFormat, WriterGraphRIOT}
+import org.slf4j.{Logger, LoggerFactory}
 
 /**
   * @author stub22
@@ -46,13 +47,15 @@ class SomeDataStuff {
 	}
 }
 trait TdatChunker {
+	protected lazy val myS4JLog : Logger = LoggerFactory.getLogger(this.getClass)
+
 	def getSomeJsonLD(useBui : Boolean) : String = {
 		val sds = new SomeDataStuff()
 		val mdl = sds.loadThatModel(useBui)
 		val mdmp = mdl.toString
-		System.out.println("Loaded: " + mdmp)
+		myS4JLog.debug("Loaded: {}", mdmp)
 		val jldTxt = sds.writeModelToJsonLDString_Pretty(mdl)
-		System.out.println("Formatted: " + jldTxt)
+		myS4JLog.debug("Formatted: {}", jldTxt)
 		jldTxt
 	}
 

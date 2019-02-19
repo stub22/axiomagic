@@ -5,6 +5,7 @@ import dslServer.Directives.{complete, entity, get, path, _}
 import dslServer.Directive0
 import akka.http.scaladsl.model.HttpEntity.{Strict => HEStrict}
 import axmgc.web.pond.{HtEntMkr, TdatChunker, WebTupleMaker, WebXml}
+import org.slf4j.{Logger, LoggerFactory}
 
 trait DumperWebRoutes // Marker for file - only
 
@@ -37,6 +38,7 @@ trait DmpWbRtMkr {
 }
 
 trait DumperTupleBridge extends DumperWebFeat {
+	protected lazy val myS4JLog = LoggerFactory.getLogger(this.getClass)
 	protected lazy val myTdatChnkr = new TdatChunker {}
 	protected lazy val myHtEntMkr = new HtEntMkr {}
 	protected lazy val myXEntMkr = new WebXml {}
@@ -48,7 +50,9 @@ trait DumperTupleBridge extends DumperWebFeat {
 	}
 
 	override def goAndRespondFully(rqParams: Map[String, String]) : HEStrict = {
+		myS4JLog.info("goAndRespondFully got paramMap: {}", rqParams)
 		val pgTplXmlEnt = myWtplMkr.pgTplXml("dtb_out_domID", rqParams)
+		myS4JLog.debug("goAndRespondFully built response entity: {}", pgTplXmlEnt)
 		pgTplXmlEnt
 	}
 }

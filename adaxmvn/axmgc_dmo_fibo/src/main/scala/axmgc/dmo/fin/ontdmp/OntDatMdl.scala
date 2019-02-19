@@ -13,6 +13,8 @@ trait ChkFibo {
 	def getS4JLog : Logger
 	private lazy val myLog = getS4JLog
 	val path_fiboOnt = "gdat/fibo_ont/fibo_2018Q4_all_4MB.ttl"
+	val owlBaseUriTxt = "http://www.w3.org/2002/07/owl#"
+	val propLocalName_owlImports = "imports"
 	private def loadFiboGrphMdl() : JenaModel = {
 		val path = path_fiboOnt
 		val mdl = RDFDataMgr.loadModel(path)
@@ -40,16 +42,6 @@ trait ChkFibo {
 // 		sclPrfxMp.foldLeft("", (k,v) => )
 
 	}
-/* --- Copied Javadoc for:
-NsIterator listNameSpaces()
-(You probably don't want this method; more likely you want the PrefixMapping methods that Model supports.)
-List the namespaces used by predicates and types in the model.
-This method is really intended for use by the RDF/XML writer, which needs to know these namespaces to generate
-correct and vaguely pretty XML.
-The namespaces returned are those of
-(a) every URI used as a property in the model and
-(b) those of every URI that appears as the object of an rdf:type statement.
- */
 	private def dumpNSs : Int = {
 		var nsCnt = 0;
 		val nsIt = myFiboOntMdl.listNameSpaces()
@@ -84,9 +76,9 @@ The namespaces returned are those of
 		// Visits all the owl:imports statements in the onto graph, saving the triples into a multivalued-map.
 		val imprtMMM = new MutHashMap[JenaResource, MutSet[JenaResource]] with MutMultiMap[JenaResource, JenaResource]
 		val imprtTgts = new MutHashSet[JenaResource]
-		val owlUriTxt = "http://www.w3.org/2002/07/owl#"
-		val prop_owlImport = myFiboOntMdl.getProperty(owlUriTxt, "imports")
-		myLog.info("Owl import property: {}", prop_owlImport)
+
+		val prop_owlImport = myFiboOntMdl.getProperty(owlBaseUriTxt, propLocalName_owlImports)
+		myLog.debug("Owl import property: {}", prop_owlImport)
 		val stmtIt = myFiboOntMdl.listStatements(null, prop_owlImport, null)
 		var imprtStmtCnt = 0
 		while (stmtIt.hasNext) {
@@ -100,7 +92,7 @@ The namespaces returned are those of
 			imprtStmtCnt += 1
 		}
 		// val outList = imprtrs.toList
-		// TODO:  Use format strings to make nicer output
+		// TODO:  Use format strings to make clearer output
 		myLog.info("Import multi-map: {}", imprtMMM)
 		myLog.info("Import targets set: {}", imprtTgts)
 		val imprtTgtTxt = imprtTgts.map(_.getURI).toSeq.sorted
@@ -140,5 +132,15 @@ The namespaces returned are those of
 6797 [main] DEBUG axmgc.dmo.fin.ontdmp.TstOntApp  - TgtURI: http://www.omg.org/spec/LCC/Languages/LanguageRepresentation/
 6797 [main] DEBUG axmgc.dmo.fin.ontdmp.TstOntApp  - TgtURI: http://www.omg.org/techprocess/ab/SpecificationMetadata/
 6797 [main] DEBUG axmgc.dmo.fin.ontdmp.TstOntApp  - TgtURI: http://www.w3.org/2004/02/skos/core
-
+ */
+/* --- Copied Javadoc from:
+// https://jena.apache.org/documentation/javadoc/jena/org/apache/jena/rdf/model/Model.html#listNameSpaces--
+NsIterator listNameSpaces()
+(You probably don't want this method; more likely you want the PrefixMapping methods that Model supports.)
+List the namespaces used by predicates and types in the model.
+This method is really intended for use by the RDF/XML writer, which needs to know these namespaces to generate
+correct and vaguely pretty XML.
+The namespaces returned are those of
+(a) every URI used as a property in the model and
+(b) those of every URI that appears as the object of an rdf:type statement.
  */
