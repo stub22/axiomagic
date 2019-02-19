@@ -1,14 +1,10 @@
 package axmgc.web.pond
-// import akka.actor.ActorRef
-import akka.http.scaladsl.{Http, server => dslServer}
-import dslServer.Directives.{complete, entity, get, path, _}
-import dslServer.Directive0
-// import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
-// import akka.http.scaladsl.model.{HttpEntity, HttpResponse, StatusCodes}
+
+import akka.http.scaladsl.{server => dslServer}
+import dslServer.Directives.{complete, entity, get, path, parameterMap} // , _}
+// import dslServer.Directive0  // == Directive[Unit] used when Future returns Unit
 import akka.http.scaladsl.model.HttpEntity.{Strict => HEStrict}
-// import akka.stream.scaladsl.Source
-// import akka.util.ByteString
-import org.slf4j.{Logger, LoggerFactory}
+import org.slf4j.{Logger}
 
 trait  WebTuple
 
@@ -28,6 +24,10 @@ trait WebRqPrms {
 		val pmapDump = myParamMap.toString()
 		s"WebRqParams[$pmapDump]"
 	}
+	def getParamPairs : Seq[(String, String)] = {
+		val sortedKeys = myParamMap.keys.toSeq.sorted
+		sortedKeys.map(k => (k, myParamMap.get(k).get))
+	}
 }
 trait IntrnlPonderRslt {
 	def getRqPrms : WebRqPrms
@@ -35,6 +35,7 @@ trait IntrnlPonderRslt {
 		val rqParamsDump = getRqPrms.dumpAsTxt
 		s"IntrnlPonderRslt[\n${rqParamsDump}\n]"
 	}
+	def getOrderedRsltPairs : Seq[(String, String)]
 }
 trait WebTupleMaker extends HtEntMkr {
 
@@ -67,11 +68,10 @@ trait WebTupleMaker extends HtEntMkr {
 	}
 	def evalFullPageNow(pgEvalCtx : PgEvalCtx, chainBk : Boolean = false) : PgEntTpl = {
 		// So far this merely a simulation of making all required page elements in one swoop.
-		val intrnlRslt = new IntrnlPonderRslt {
-			override def getRqPrms: WebRqPrms = pgEvalCtx.wrqPrms
-		}
+		val wrqPrms = pgEvalCtx.wrqPrms
+		val intrnlRslt_opt : Option[IntrnlPonderRslt] = doPageWork(wrqPrms)
 		val xentMkr = getWebXml
-		val outEnt = xentMkr.getXHPageEnt(Some(intrnlRslt))
+		val outEnt = xentMkr.getXHPageEnt(intrnlRslt_opt)
 		val xhPgEnt_opt = Some(outEnt)
 		val htEntMkr = getHtEntMkr
 		val cssPgEnt_opt = Some(htEntMkr.makeDummyCssEnt())

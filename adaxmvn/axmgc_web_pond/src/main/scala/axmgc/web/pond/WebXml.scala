@@ -53,11 +53,19 @@ class WebXml extends XmlEntMkr with WebResBind  {
 		bdyElem
 	}
 	def mkRealBdy(ipr : IntrnlPonderRslt) : XElem = {
+		val iprPairs = ipr.getOrderedRsltPairs
+		val iprEls = iprPairs.map(mkPairElem(_))
 		val bdyElem = <body id="wx_real_bdy_id" onload="attchHndlrsAtId('wx_tst_bdy_id')">
 			<div>Did somebody ask for a REAL body?</div>
 			<div>IntrnlPonderRslt Dump:<br/>{ipr.dumpAsTxt}</div>
+			<div>{iprEls}</div>
 		</body>
 		bdyElem
+	}
+	def mkPairElem (pair : (String, String)) : XElem = {
+		<div>
+			<span>key='{pair._1}'</span><span> , </span><span>val='{pair._2}'</span>
+		</div>
 	}
 
 	private def maybeAppendAttr(elem : XElem, attrName : String, attrVal_opt : Option[String]) : XElem = {
