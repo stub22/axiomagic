@@ -69,6 +69,8 @@ trait RouteWeaver extends  SprayJsonSupport with OurUrlPaths {
 		override protected def getTdatChnkr: TdatChunker = myTdatChnkr
 		override protected def getHtEntMkr: HtEntMkr = myHtEntMkr
 		override protected def getWebXml: WebXml = myXEntMkr
+
+		override protected def doPageWork(rqPrms: WebRqPrms): Option[IntrnlPonderRslt] = None
 	}
 	protected lazy val myWtRtMkr = new WTRouteMaker {
 		override protected def getWbTplMkr: WebTupleMaker = myWtplMkr

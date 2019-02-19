@@ -24,18 +24,27 @@ trait WebRqPrms {
 	def getPVal_QNameTxt (keyName : String) : String = ???
 	def getPVal_ScalaInt (keyName : String) : Int = ???
 }
+trait IntrnlPonderRslt {
+	// protected def getRqPrms : WebRqPrms
+	def dumpAsTxt : String = "$$$ dumped IPR $$$"
+}
 trait WebTupleMaker extends HtEntMkr {
-	// protected def getXEntMkr : XmlEntMkr
+
 	protected def getTdatChnkr : TdatChunker
 	protected def getHtEntMkr : HtEntMkr
 	protected def getWebXml : WebXml
+
+	protected def doPageWork(rqPrms : WebRqPrms) : Option[IntrnlPonderRslt]
+
 	// Option to chain Ctx-Tpl-Ctx-Tpl... means we must be prudent and chop to avoid hogging RAM.
 
 	// Output from page-tuple calc.
-	// These 3 optional ents each represent a nestabl, client-fetchable key-value map.
-	// Their collection into this tuple indicates that they are meant to be consistent
+	// These 3 optional ents each represent a separate, nestable, client-fetchable key-value map.
+	// (XML, CSS, JSON) each match that conceptual description.
+	// The multiformat aggregation into this tuple indicates the parts are meant to be consistent
 	// for a client that fetches them in either unified or separate HTTP request operations.
-	// The opt_inCtx allows us to memoize the prior-state and input-req.
+	// The opt_inCtx allows us to memoize the prior-state and input-req history, if desired.
+	// (Not yet proven to be practically important, but may be an important tie-in point soon).
 	case class PgEntTpl(xhEnt_opt : Option[HEStrict], cssEnt_opt : Option[HEStrict],
 						jsonEnt_opt : Option[HEStrict], opt_inCtx : Option[PgEvalCtx])
 
@@ -43,15 +52,18 @@ trait WebTupleMaker extends HtEntMkr {
 	case class PgEvalCtx(ptxt_id : String, strtLocMsec : Long, wrqPrms :WebRqPrms, opt_prvSssnTpl : Option[PgEntTpl])
 
 	// ptxt_id  contains    client sender block's Html-Dom ID, e.g. div@id.onclick
-	def makeEntsForPgAcc(ptxt_id : String, wrqPrms :WebRqPrms) : PgEntTpl = {
+	def makeEntsForPgAcc(ptxt_id : String, wrqPrms : WebRqPrms) : PgEntTpl = {
 		val localMsec: Long = System.currentTimeMillis()
 		val pgEvalCtx = PgEvalCtx(ptxt_id, localMsec, wrqPrms, None)
-		evalPage(pgEvalCtx, false)
+		evalFullPageNow(pgEvalCtx, false)
 	}
-	def evalPage(pgEvalCtx : PgEvalCtx, chainBk : Boolean = false) : PgEntTpl = {
+	def evalFullPageNow(pgEvalCtx : PgEvalCtx, chainBk : Boolean = false) : PgEntTpl = {
+		val wrqPrms : WebRqPrms = pgEvalCtx.wrqPrms
+		val intrnlRslt = new IntrnlPonderRslt {}
 		// So far this is a mere simulation of making all required page elements in one swoop.
 		val xentMkr = getWebXml // XEntMkr
-		val xhPgEnt_opt = Some(xentMkr.getXHPageEnt)
+		val outEnt = xentMkr.getXHPageEnt(Some(intrnlRslt))
+		val xhPgEnt_opt = Some(outEnt)
 		val htEntMkr = getHtEntMkr
 		val cssPgEnt_opt = Some(htEntMkr.makeDummyCssEnt())
 		val jsnPgEnt_opt = Some(mkJsonTstEnt)

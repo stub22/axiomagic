@@ -1,7 +1,7 @@
 package axmgc.web.pond
 import akka.http.scaladsl.model.HttpEntity
 
-import scala.xml.{Elem => XElem, Node => XNode, NodeSeq => XNodeSeq, Null => XNull, Attribute => XAttr, UnprefixedAttribute => XUAttr}
+import scala.xml.{Attribute => XAttr, Elem => XElem, Node => XNode, NodeSeq => XNodeSeq, Null => XNull, UnprefixedAttribute => XUAttr}
 
 class WebXml extends XmlEntMkr with WebResBind  {
 	val svgHlpr = new WebSvg {}
@@ -23,7 +23,7 @@ class WebXml extends XmlEntMkr with WebResBind  {
 			<link rel="stylesheet" href={urlPth_styGrd}></link>
 		</head>
 	}
-	def mkTstBdy : XElem = {
+	def mkDmmyBdy : XElem = {
 		val tmpJS = new TmpJscrptHolder {}
 		val bdyElem = <body id="wx_tst_bdy_id" onload="attchHndlrsAtId('wx_tst_bdy_id')">
 			<div>
@@ -52,6 +52,14 @@ class WebXml extends XmlEntMkr with WebResBind  {
 		</body>
 		bdyElem
 	}
+	def mkRealBdy(ipr : IntrnlPonderRslt) : XElem = {
+		val bdyElem = <body id="wx_real_bdy_id" onload="attchHndlrsAtId('wx_tst_bdy_id')">
+			<div>Did somebody ask for a REAL body?</div>
+			<div>IntrnlPonderRslt Dump:<br/>{ipr.dumpAsTxt}</div>
+		</body>
+		bdyElem
+	}
+
 	private def maybeAppendAttr(elem : XElem, attrName : String, attrVal_opt : Option[String]) : XElem = {
 		// Can we use "MetaData" .next stuff to control attribute ordering?
 		// https://www.scala-lang.org/api/2.12.4/scala-xml/scala/xml/MetaData.html
@@ -71,9 +79,9 @@ class WebXml extends XmlEntMkr with WebResBind  {
 		elWthClz
 	}
 
-	def getXHPageEnt : HttpEntity.Strict = {
+	def getXHPageEnt(opt_Rslt : Option[IntrnlPonderRslt]) : HttpEntity.Strict = {
 		val headXE = mkTstHd
-		val bodyXE = mkTstBdy
+		val bodyXE : XElem = opt_Rslt.map(mkRealBdy).getOrElse(mkDmmyBdy)
 		val rootXE = mergeXhtml(headXE, bodyXE)
 		// Default output entity mime-type is xml, which browser don't wanna render.
 		// So we set mime-type to html, which seems OK so far.
