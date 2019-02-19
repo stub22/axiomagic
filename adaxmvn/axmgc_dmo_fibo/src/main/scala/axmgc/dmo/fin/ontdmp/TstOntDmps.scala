@@ -38,13 +38,16 @@ object TstOntDmps  {
 class TstOntApp(myActSysNm : String) extends WebServerLauncher {
 	protected lazy val myS4JLog : Logger = LoggerFactory.getLogger(this.getClass)
 	protected lazy val myActorSys = makeActorSys(myActSysNm)
+	private lazy val myOntChkr  = new ChkFibo {
+		override def getS4JLog: Logger = myS4JLog
+	}
 
 	def launchWebSvc(svcHostName : String, svcPort : Int, flg_blockUntilEnterKey: Boolean = true) : Unit = {
 
 		// TODO:  Return a future supporting clean shutdown
 		myS4JLog.info("Launching app with actrSysNm={}", myActSysNm)
 		val actSys = myActorSys
-		myS4JLog.debug("Got actorSys handle: {}", actSys)
+		myS4JLog.debug("Found actorSys handle: {}", actSys)
 
 		val dmprTpblBrdg: DumperWebFeat = new DumperTupleBridge {}
 		val dmprRtMkr = new DmpWbRtMkr {
@@ -54,9 +57,6 @@ class TstOntApp(myActSysNm : String) extends WebServerLauncher {
 		launchWebServer(dmprRt, actSys, svcHostName, svcPort, flg_blockUntilEnterKey)
 	}
 	def chkOntStatsAndPrintToLog : Unit = {
-		val cf  = new ChkFibo {
-			override def getS4JLog: Logger = myS4JLog
-		}
-		cf.chkMdlStats
+		myOntChkr.chkMdlStats
 	}
 }

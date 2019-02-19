@@ -59,7 +59,9 @@ trait DumperTupleBridge extends DumperWebFeat {
 	}
 
 	private def doRealPageWork (rqPrms: WebRqPrms): Option[IntrnlPonderRslt] = {
-		val myRslt = new IntrnlPonderRslt {}
+		val myRslt = new IntrnlPonderRslt {
+			override def getRqPrms: WebRqPrms = rqPrms
+		}
 		Some(myRslt)
 	}
 }

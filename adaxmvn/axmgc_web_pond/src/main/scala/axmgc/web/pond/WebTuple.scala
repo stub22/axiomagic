@@ -1,13 +1,13 @@
 package axmgc.web.pond
-import akka.actor.ActorRef
+// import akka.actor.ActorRef
 import akka.http.scaladsl.{Http, server => dslServer}
 import dslServer.Directives.{complete, entity, get, path, _}
 import dslServer.Directive0
-import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
-import akka.http.scaladsl.model.{HttpEntity, HttpResponse, StatusCodes}
+// import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
+// import akka.http.scaladsl.model.{HttpEntity, HttpResponse, StatusCodes}
 import akka.http.scaladsl.model.HttpEntity.{Strict => HEStrict}
-import akka.stream.scaladsl.Source
-import akka.util.ByteString
+// import akka.stream.scaladsl.Source
+// import akka.util.ByteString
 import org.slf4j.{Logger, LoggerFactory}
 
 trait  WebTuple
@@ -23,10 +23,18 @@ trait WebRqPrms {
 	def getPVal_UriTxt (keyName : String) : String = ???
 	def getPVal_QNameTxt (keyName : String) : String = ???
 	def getPVal_ScalaInt (keyName : String) : Int = ???
+
+	def dumpAsTxt : String = {
+		val pmapDump = myParamMap.toString()
+		s"WebRqParams[$pmapDump]"
+	}
 }
 trait IntrnlPonderRslt {
-	// protected def getRqPrms : WebRqPrms
-	def dumpAsTxt : String = "$$$ dumped IPR $$$"
+	def getRqPrms : WebRqPrms
+	def dumpAsTxt : String = {
+		val rqParamsDump = getRqPrms.dumpAsTxt
+		s"IntrnlPonderRslt[\n${rqParamsDump}\n]"
+	}
 }
 trait WebTupleMaker extends HtEntMkr {
 
@@ -58,10 +66,11 @@ trait WebTupleMaker extends HtEntMkr {
 		evalFullPageNow(pgEvalCtx, false)
 	}
 	def evalFullPageNow(pgEvalCtx : PgEvalCtx, chainBk : Boolean = false) : PgEntTpl = {
-		val wrqPrms : WebRqPrms = pgEvalCtx.wrqPrms
-		val intrnlRslt = new IntrnlPonderRslt {}
-		// So far this is a mere simulation of making all required page elements in one swoop.
-		val xentMkr = getWebXml // XEntMkr
+		// So far this merely a simulation of making all required page elements in one swoop.
+		val intrnlRslt = new IntrnlPonderRslt {
+			override def getRqPrms: WebRqPrms = pgEvalCtx.wrqPrms
+		}
+		val xentMkr = getWebXml
 		val outEnt = xentMkr.getXHPageEnt(Some(intrnlRslt))
 		val xhPgEnt_opt = Some(outEnt)
 		val htEntMkr = getHtEntMkr
