@@ -111,39 +111,6 @@ trait ChkFibo extends FiboVocab with StmtXtractFuncs {
 	}
 }
 trait BadOldChkrGoAway extends ChkFibo {
-	import collection.mutable.{ HashMap => MutHashMap, MultiMap => MutMultiMap, Set => MutSet , HashSet => MutHashSet}
-
-	// val mm = new MutHashMap[Int, MutSet[String]] with MutMultiMap[Int, String]
-	private def visitOwlImprts : Unit = {
-		// Visits all the owl:imports statements in the onto graph, saving the triples into a multivalued-map.
-		val imprtMMM = new MutHashMap[JenaRsrc, MutSet[JenaRsrc]] with MutMultiMap[JenaRsrc, JenaRsrc]
-		val imprtTgts = new MutHashSet[JenaRsrc]
-
-		val prop_owlImport = myFiboOntMdl.getProperty(baseUriTxt_owl, propLN_owlImports)
-		myLog.debug("Owl import property: {}", prop_owlImport)
-		val stmtIt = myFiboOntMdl.listStatements(null, prop_owlImport, null)
-		var imprtStmtCnt = 0
-		while (stmtIt.hasNext) {
-			val stmt = stmtIt.nextStatement()
-			myLog.trace("Found importer: {}", stmt)
-			val subjRes = stmt.getSubject
-			val objRes = stmt.getResource
-			imprtMMM.addBinding(subjRes, objRes)
-			// val chkd = imprtMMM.
-			imprtTgts += objRes
-			imprtStmtCnt += 1
-		}
-		// val outList = imprtrs.toList
-		// TODO:  Use format strings to make clearer output
-		myLog.info("Import multi-map: {}", imprtMMM)
-		myLog.info("Import targets set: {}", imprtTgts)
-		val imprtTgtTxt = imprtTgts.map(_.getURI).toSeq.sorted
-		imprtTgtTxt.foreach({myLog.debug("TgtURI: {}", _)})
-		myLog.info("Import stmt count: {}", imprtStmtCnt)
-		myLog.info("Unique imported URI  count: {}", imprtTgts.size)
-		myLog.info("Count after sort (should be same) {}", imprtTgtTxt.size)
-
-	}
 
 	private def visitProps : Long = {
 		val omSpec1 : OntModelSpec =  OntModelSpec.OWL_MEM_RDFS_INF
