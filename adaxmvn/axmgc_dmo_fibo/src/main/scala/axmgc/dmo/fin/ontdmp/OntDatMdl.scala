@@ -32,10 +32,10 @@ trait MdlDmpFncs extends FiboVocab with StmtXtractFuncs  {
 		getS4JLog.info("jenaMdl size = {}", size)
 		dmpPrfxs(jenaMdl)
 		dumpNSs(jenaMdl)
-		betterOIVisitor(jenaMdl)
+		visitOwlImports(jenaMdl)
 		visitRdfTypes(jenaMdl)
-		countSubjs(jenaMdl)
-		// visitProps
+		visitSubjRsrcs(jenaMdl)
+		dumpTypeHistogram(jenaMdl)
 	}
 
 	private def dmpPrfxs(jenaMdl : JenaMdl): Unit = {
@@ -43,7 +43,13 @@ trait MdlDmpFncs extends FiboVocab with StmtXtractFuncs  {
 		myLog.info("Num prefixes: {}", numPrfxs)
 		val prfxMap: java.util.Map[String, String] = jenaMdl.getNsPrefixMap
 		val sclPrfxMp = prfxMap.asScala
-		sclPrfxMp.foreach(entry => myLog.debug("k=" + entry._1 + ", v=" + entry._2))
+		var prfxIdx = 0
+		sclPrfxMp.foreach(entry => {
+			if ((prfxIdx < 20) || (prfxIdx % 20 == 0)) {
+				myLog.info("Prefix [{}] = {}", prfxIdx, entry)
+			}
+			prfxIdx += 1
+		})
 	}
 
 	private def dumpNSs(jenaMdl : JenaMdl) : Int = {
@@ -51,14 +57,14 @@ trait MdlDmpFncs extends FiboVocab with StmtXtractFuncs  {
 		val nsIt = jenaMdl.listNameSpaces()
 		while (nsIt.hasNext) {
 			val ns = nsIt.nextNs()
-			myLog.info("Found NS: {}", ns)
+			myLog.info("Found NS [{}]: {}", nsCnt, ns)
 			nsCnt += 1
 		}
-		myLog.info("Found {} namespaces", nsCnt)
+		myLog.info("Found {} 'namespaces', using the idiosyncratic and disreputable method:  model.listNameSpaces() ", nsCnt)
 		nsCnt
 	}
 
-	private def countSubjs(jenaMdl : JenaMdl): Int = {
+	private def visitSubjRsrcs(jenaMdl : JenaMdl): Int = {
 		var subjCnt = 0;
 		val subjIt = jenaMdl.listSubjects()
 		while (subjIt.hasNext) {
@@ -72,26 +78,32 @@ trait MdlDmpFncs extends FiboVocab with StmtXtractFuncs  {
 		subjCnt
 	}
 
-	private def betterOIVisitor(jenaMdl : JenaMdl): Unit = {
+	private def visitOwlImports(jenaMdl : JenaMdl): Unit = {
 		val prop_owlImport: JenaProp = jenaMdl.getProperty(baseUriTxt_owl, propLN_owlImports)
-		val imap: Map[JenaRsrc, Traversable[JenaRsrc]] = pullRsrcArcsAtProp(prop_owlImport)
-		dumpGroupSummary(imap, "'owl:imports'")
-		val redundTgts : Seq[JenaRsrc] = imap.values.flatten.toSeq
-		val redundantTgtUris: Seq[String] = redundTgts.map(_.getURI)
-		myLog.info("Redundant tgt uri count (same as binding count, right?!): {}", redundantTgtUris.size)
-		val uniqTgtUris: Seq[String] = redundantTgtUris.distinct
-		myLog.info("Uniq tgt uri count: {}", uniqTgtUris.size)
-		myLog.info("Uniq tgt uris: {}", uniqTgtUris)
-		// For owl:imports, the target URI often has no local name.
-		val redundLocalNames : Seq[String] = redundTgts.map(_.getLocalName)
-		val uniqLocNams = redundLocalNames.distinct
-		myLog.info("Uniq local name count: {}", uniqLocNams.size)
-		myLog.info("Uniq local names: {}", uniqLocNams)
+		val bindMap: Map[JenaRsrc, Traversable[JenaRsrc]] = pullRsrcArcsAtProp(prop_owlImport, false)
+		dumpGroupSummary(bindMap, "'owl:imports'")
+		dumpUniqTgts(bindMap)
 	}
 	private def visitRdfTypes(jenaMdl : JenaMdl) : Unit = {
 		val prop_rdfType: JenaProp = jenaMdl.getProperty(baseUriTxt_rdf, propLN_rdfType)
-		val imap: Map[JenaRsrc, Traversable[JenaRsrc]] = pullRsrcArcsAtProp(prop_rdfType)
-		dumpGroupSummary(imap, "'rdf:type'")
+		val bindMap: Map[JenaRsrc, Traversable[JenaRsrc]] = pullRsrcArcsAtProp(prop_rdfType, false)
+		dumpGroupSummary(bindMap, "'rdf:type'")
+		dumpUniqTgts(bindMap)
+	}
+	private def dumpTypeHistogram(jenaMdl : JenaMdl) : Unit = {
+		val prop_rdfType: JenaProp = jenaMdl.getProperty(baseUriTxt_rdf, propLN_rdfType)
+		val bindMap: Map[JenaRsrc, Traversable[JenaRsrc]] = pullRsrcArcsAtProp(prop_rdfType, true)
+		// dumpGroupSummary(bindMap, "typeHisto")
+		val srtdKys = bindMap.keys.toSeq.sortBy(_.getURI)
+		val sampleSize = 3
+		var keyCnt = 0
+		srtdKys.foreach(kyRsrc => {
+			keyCnt += 1
+			val vLst = bindMap.get(kyRsrc).getOrElse(Nil)
+			val vLstFront = vLst.take(sampleSize)
+			val dmpd = s"key ${keyCnt} [${kyRsrc}] bound to ${vLst.size} values.  First ${sampleSize} are: ${vLstFront}"
+			myLog.info(dmpd)
+		})
 	}
 	// private def doDump(currCnt, initSeg, mod)
 	private def dumpGroupSummary(bindMap: Map[JenaRsrc, Traversable[JenaRsrc]], groupLabel : String): Unit = {
@@ -99,23 +111,36 @@ trait MdlDmpFncs extends FiboVocab with StmtXtractFuncs  {
 		val skipWidth = 25
 		val sampleSize = 3
 		var bindCnt = 0
-		var subjCnt = 0
+		var keyCnt = 0
 		myLog.info("==========================================================================")
 		myLog.info("Dumping stats for group = {}, bind map has width: {}", groupLabel, bindMap.size)
 		bindMap.foreach(pair => {
-			val subj = pair._1
-			val objLst = pair._2
-			val objLstLen = objLst.size
-			subjCnt += 1
-			bindCnt += objLstLen
-			if (subjCnt <= initSegLen || (subjCnt % skipWidth == 0)) {
-				val objLstBegin = objLst.take(sampleSize)
-				val dmpd = s"Subj ${subjCnt} [${subj}] bound to ${objLstLen} objects.  First ${sampleSize} are: ${objLstBegin}"
+			val keyRsrc = pair._1
+			val vLst = pair._2
+			val vLstLen = vLst.size
+			keyCnt += 1
+			bindCnt += vLstLen
+			if (keyCnt <= initSegLen || (keyCnt % skipWidth == 0)) {
+				val objLstBegin = vLst.take(sampleSize)
+				val dmpd = s"key ${keyCnt} [${keyRsrc}] bound to ${vLstLen} values.  First ${sampleSize} are: ${objLstBegin}"
 				myLog.info(dmpd)
 			}
 		})
 		myLog.info("Finished dumping stats for group={}, binding count total: {}", groupLabel,  bindCnt)
 		myLog.info("==========================================================================")
+	}
+	private def dumpUniqTgts(bindMap: Map[JenaRsrc, Traversable[JenaRsrc]]): Unit = {
+		val redundTgts : Seq[JenaRsrc] = bindMap.values.flatten.toSeq
+		val redundantTgtUris: Seq[String] = redundTgts.map(_.getURI)
+		myLog.info("Redundant tgt uri count (same as binding count, right?!): {}", redundantTgtUris.size)
+		val uniqTgtUris: Seq[String] = redundantTgtUris.distinct.sorted
+		myLog.info("Uniq tgt uri count: {}", uniqTgtUris.size)
+		myLog.info("Uniq tgt uris: {}", uniqTgtUris)
+		// For owl:imports, the target URI often has no local name.
+		val redundLocalNames : Seq[String] = redundTgts.map(_.getLocalName)
+		val uniqLocNams = redundLocalNames.distinct.sorted
+		myLog.info("Uniq local name count: {}", uniqLocNams.size)
+		myLog.info("Uniq local names: {}", uniqLocNams)
 	}
 }
 trait BadOldChkrGoAway extends ChkFibo {

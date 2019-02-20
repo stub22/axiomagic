@@ -17,7 +17,7 @@ trait StmtXtractFuncs {
 	// 	val pullFunc = new Function[]
 
 	// Presumes that all o-bjects (in our graph {s,mdlPrp,o}) are Rsrc (not Literals)
-	def pullRsrcArcsAtProp (mdlPrp: JenaProp) : Map[JenaRsrc, Traversable[JenaRsrc]] = {
+	def pullRsrcArcsAtProp (mdlPrp: JenaProp, flipDir : Boolean) : Map[JenaRsrc, Traversable[JenaRsrc]] = {
 		val jenaMdl : JenaMdl = mdlPrp.getModel
 		val stmtIt = jenaMdl.listStatements(null, mdlPrp, null)
 		// val mutMp = new MutHashMap[JenaRsrc, JenaRsrc]
@@ -25,8 +25,8 @@ trait StmtXtractFuncs {
 		val smp : Iterable[(JenaRsrc, JenaRsrc)] = pairsJL.asScala  // .toMap
 		val bnchMap = new MutHashMap[JenaRsrc, List[JenaRsrc]]
 		smp.foreach(pair => {
-			val sbj : JenaRsrc = pair._1
-			val obj : JenaRsrc = pair._2
+			val sbj : JenaRsrc = if (!flipDir) pair._1 else pair._2
+			val obj : JenaRsrc = if (!flipDir) pair._2 else pair._1
 			val oldList : List[JenaRsrc] = bnchMap.get(sbj).getOrElse(Nil)
 			val revList = obj :: oldList
 			bnchMap.put(sbj, revList)
