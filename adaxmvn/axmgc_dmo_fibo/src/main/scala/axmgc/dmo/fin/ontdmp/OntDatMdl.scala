@@ -2,47 +2,52 @@ package axmgc.dmo.fin.ontdmp
 
 import org.apache.jena.graph.{Graph => JenaGraph}
 import org.apache.jena.ontology.OntModelSpec
-import org.apache.jena.rdf.model.{Model => JenaModel, ModelFactory => JenaModelFactory, Resource => JenaResource}
+import org.apache.jena.rdf.model.{RDFNode, StmtIterator, Statement => JenaStmt, Model => JenaMdl, ModelFactory => JenaMdlFctry, Property => JenaProp, Resource => JenaRsrc}
 import org.apache.jena.riot.system.RiotLib
 import org.apache.jena.riot.{JsonLDWriteContext, RDFDataMgr, RDFFormat, WriterGraphRIOT}
 import org.slf4j.{Logger, LoggerFactory}
+import scala.collection.JavaConverters._
 
 trait OntDatMdl
 
-trait ChkFibo {
-	def getS4JLog : Logger
-	private lazy val myLog = getS4JLog
-	val path_fiboOnt = "gdat/fibo_ont/fibo_2018Q4_all_4MB.ttl"
-	val owlBaseUriTxt = "http://www.w3.org/2002/07/owl#"
-	val propLocalName_owlImports = "imports"
-	private def loadFiboGrphMdl() : JenaModel = {
+trait ChkFibo extends FiboVocab with StmtXtractFuncs {
+	def getS4JLog: Logger
+
+	protected lazy val myLog = getS4JLog
+
+	private def loadFiboGrphMdl(): JenaMdl = {
 		val path = path_fiboOnt
 		val mdl = RDFDataMgr.loadModel(path)
 		mdl
 	}
+
 	lazy protected val myFiboOntMdl = loadFiboGrphMdl
-	def chkMdlStats : Unit = {
+
+	def chkMdlStats: Unit = {
 		//
 		val mdl = myFiboOntMdl
 		val size = mdl.size()
 		myLog.info("Mdl size = {}", size)
 		dmpPrfxs
 		dumpNSs
-		visitImports
+		betterOIVisitor(mdl)
+		visitRdfTypes(mdl)
+		// visitOwlImprts
 		countSubjs
 		// visitProps
 	}
-	import scala.collection.JavaConverters._
-	private def dmpPrfxs : Unit = {
+
+	private def dmpPrfxs: Unit = {
 		val numPrfxs = myFiboOntMdl.numPrefixes
 		myLog.info("Num prefixes: {}", numPrfxs)
-		val prfxMap : java.util.Map[String, String] = myFiboOntMdl.getNsPrefixMap
+		val prfxMap: java.util.Map[String, String] = myFiboOntMdl.getNsPrefixMap
 		val sclPrfxMp = prfxMap.asScala
 		sclPrfxMp.foreach(entry => myLog.debug("k=" + entry._1 + ", v=" + entry._2))
-// 		sclPrfxMp.foldLeft("", (k,v) => )
+		// 		sclPrfxMp.foldLeft("", (k,v) => )
 
 	}
-	private def dumpNSs : Int = {
+
+	private def dumpNSs: Int = {
 		var nsCnt = 0;
 		val nsIt = myFiboOntMdl.listNameSpaces()
 		while (nsIt.hasNext) {
@@ -53,7 +58,8 @@ trait ChkFibo {
 		myLog.info("Found {} namespaces", nsCnt)
 		nsCnt
 	}
-	private def countSubjs : Int = {
+
+	private def countSubjs: Int = {
 		var subjCnt = 0;
 		val subjIt = myFiboOntMdl.listSubjects()
 		while (subjIt.hasNext) {
@@ -66,18 +72,54 @@ trait ChkFibo {
 		myLog.info("Found {} subjects", subjCnt)
 		subjCnt
 	}
-	// first import all necessary types from package `collection.mutable`
+
+	private def betterOIVisitor(jenaMdl : JenaMdl): Unit = {
+		val prop_owlImport: JenaProp = jenaMdl.getProperty(baseUriTxt_owl, propLN_owlImports)
+		val imap: Map[JenaRsrc, Traversable[JenaRsrc]] = pullRsrcArcsAtProp(prop_owlImport)
+		dumpGroupSummary(imap, "'owl:imports'")
+		val redundTgts : Seq[JenaRsrc] = imap.values.flatten.toSeq
+		val redundantTgtUris: Seq[String] = redundTgts.map(_.getURI)
+		myLog.info("Redundant tgt uri count (same as binding count, right?!): {}", redundantTgtUris.size)
+		val uniqTgtUris: Seq[String] = redundantTgtUris.distinct
+		myLog.info("Uniq tgt uri count: {}", uniqTgtUris.size)
+		myLog.info("Uniq tgt uris: {}", uniqTgtUris)
+		// For owl:imports, the target URI often has no local name.
+		val redundLocalNames : Seq[String] = redundTgts.map(_.getLocalName)
+		val uniqLocNams = redundLocalNames.distinct
+		myLog.info("Uniq local name count: {}", uniqLocNams.size)
+		myLog.info("Uniq local names: {}", uniqLocNams)
+	}
+	private def visitRdfTypes(jenaMdl : JenaMdl) : Unit = {
+		val prop_rdfType: JenaProp = jenaMdl.getProperty(baseUriTxt_rdf, propLN_rdfType)
+		val imap: Map[JenaRsrc, Traversable[JenaRsrc]] = pullRsrcArcsAtProp(prop_rdfType)
+		dumpGroupSummary(imap, "'rdf:type'")
+	}
+	private def dumpGroupSummary(bindMap: Map[JenaRsrc, Traversable[JenaRsrc]], groupLabel : String): Unit = {
+		var bindCnt = 0
+		myLog.info("==========================================================================")
+		myLog.info("Dumping stats for group = {}, bind map has width: {}", groupLabel, bindMap.size)
+		bindMap.foreach(pair => {
+			val subj = pair._1
+			val objLst = pair._2
+			val objLstLen = objLst.size
+			val dmpd = s"Subj ${subj} bound to ${objLstLen} objects."
+			bindCnt += objLstLen
+			myLog.info(dmpd)
+		})
+		myLog.info("Finished dumping stats for group={}, binding count total: {}", groupLabel,  bindCnt)
+		myLog.info("==========================================================================")
+	}
+}
+trait BadOldChkrGoAway extends ChkFibo {
 	import collection.mutable.{ HashMap => MutHashMap, MultiMap => MutMultiMap, Set => MutSet , HashSet => MutHashSet}
 
-	// to create a `MultiMap` the easiest way is to mixin it into a normal
-	// `Map` instance
-	val mm = new MutHashMap[Int, MutSet[String]] with MutMultiMap[Int, String]
-	private def visitImports : Unit = {
+	// val mm = new MutHashMap[Int, MutSet[String]] with MutMultiMap[Int, String]
+	private def visitOwlImprts : Unit = {
 		// Visits all the owl:imports statements in the onto graph, saving the triples into a multivalued-map.
-		val imprtMMM = new MutHashMap[JenaResource, MutSet[JenaResource]] with MutMultiMap[JenaResource, JenaResource]
-		val imprtTgts = new MutHashSet[JenaResource]
+		val imprtMMM = new MutHashMap[JenaRsrc, MutSet[JenaRsrc]] with MutMultiMap[JenaRsrc, JenaRsrc]
+		val imprtTgts = new MutHashSet[JenaRsrc]
 
-		val prop_owlImport = myFiboOntMdl.getProperty(owlBaseUriTxt, propLocalName_owlImports)
+		val prop_owlImport = myFiboOntMdl.getProperty(baseUriTxt_owl, propLN_owlImports)
 		myLog.debug("Owl import property: {}", prop_owlImport)
 		val stmtIt = myFiboOntMdl.listStatements(null, prop_owlImport, null)
 		var imprtStmtCnt = 0
@@ -102,13 +144,13 @@ trait ChkFibo {
 		myLog.info("Count after sort (should be same) {}", imprtTgtTxt.size)
 
 	}
+
 	private def visitProps : Long = {
 		val omSpec1 : OntModelSpec =  OntModelSpec.OWL_MEM_RDFS_INF
-		// val omSpec2 : OntModelSpec =  OntModelSpec.OWL_MEM_LITE
 		val omSpec3 : OntModelSpec = OntModelSpec.RDFS_MEM
 		val omSpec4 = OntModelSpec.OWL_DL_MEM_RULE_INF
 
-		val ontMdl1 = JenaModelFactory.createOntologyModel(omSpec1, myFiboOntMdl)
+		val ontMdl1 = JenaMdlFctry.createOntologyModel(omSpec1, myFiboOntMdl)
 		val ontSz_1 = ontMdl1.size()
 		myLog.info("ontMdl1 size = {}", ontSz_1)
 		ontSz_1
@@ -118,6 +160,7 @@ trait ChkFibo {
 		// owl: <http://www.w3.org/2002/07/owl#>
 		0
 	}
+
 }
 
 /*
