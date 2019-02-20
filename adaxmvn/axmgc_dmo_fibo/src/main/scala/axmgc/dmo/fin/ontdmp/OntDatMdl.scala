@@ -10,46 +10,45 @@ import scala.collection.JavaConverters._
 
 trait OntDatMdl
 
-trait ChkFibo extends FiboVocab with StmtXtractFuncs {
-	def getS4JLog: Logger
-
-	protected lazy val myLog = getS4JLog
+trait ChkFibo extends FiboVocab with MdlDmpFncs {
 
 	private def loadFiboGrphMdl(): JenaMdl = {
 		val path = path_fiboOnt
 		val mdl = RDFDataMgr.loadModel(path)
 		mdl
 	}
-
 	lazy protected val myFiboOntMdl = loadFiboGrphMdl
+	def dumpFiboMdlStatsToLog(): Unit = {
+		dumpSomeModelStatsToLog(myFiboOntMdl)
+	}
 
-	def chkMdlStats: Unit = {
-		//
-		val mdl = myFiboOntMdl
-		val size = mdl.size()
-		myLog.info("Mdl size = {}", size)
-		dmpPrfxs
-		dumpNSs
-		betterOIVisitor(mdl)
-		visitRdfTypes(mdl)
-		// visitOwlImprts
-		countSubjs
+}
+trait MdlDmpFncs extends FiboVocab with StmtXtractFuncs  {
+	protected def getS4JLog: Logger
+	protected lazy val myLog : Logger = getS4JLog
+
+	def dumpSomeModelStatsToLog(jenaMdl : JenaMdl): Unit = {
+		val size = jenaMdl.size()
+		getS4JLog.info("jenaMdl size = {}", size)
+		dmpPrfxs(jenaMdl)
+		dumpNSs(jenaMdl)
+		betterOIVisitor(jenaMdl)
+		visitRdfTypes(jenaMdl)
+		countSubjs(jenaMdl)
 		// visitProps
 	}
 
-	private def dmpPrfxs: Unit = {
-		val numPrfxs = myFiboOntMdl.numPrefixes
+	private def dmpPrfxs(jenaMdl : JenaMdl): Unit = {
+		val numPrfxs = jenaMdl.numPrefixes
 		myLog.info("Num prefixes: {}", numPrfxs)
-		val prfxMap: java.util.Map[String, String] = myFiboOntMdl.getNsPrefixMap
+		val prfxMap: java.util.Map[String, String] = jenaMdl.getNsPrefixMap
 		val sclPrfxMp = prfxMap.asScala
 		sclPrfxMp.foreach(entry => myLog.debug("k=" + entry._1 + ", v=" + entry._2))
-		// 		sclPrfxMp.foldLeft("", (k,v) => )
-
 	}
 
-	private def dumpNSs: Int = {
+	private def dumpNSs(jenaMdl : JenaMdl) : Int = {
 		var nsCnt = 0;
-		val nsIt = myFiboOntMdl.listNameSpaces()
+		val nsIt = jenaMdl.listNameSpaces()
 		while (nsIt.hasNext) {
 			val ns = nsIt.nextNs()
 			myLog.info("Found NS: {}", ns)
@@ -59,13 +58,13 @@ trait ChkFibo extends FiboVocab with StmtXtractFuncs {
 		nsCnt
 	}
 
-	private def countSubjs: Int = {
+	private def countSubjs(jenaMdl : JenaMdl): Int = {
 		var subjCnt = 0;
-		val subjIt = myFiboOntMdl.listSubjects()
+		val subjIt = jenaMdl.listSubjects()
 		while (subjIt.hasNext) {
 			val subjRes = subjIt.nextResource()
-			if ((subjCnt < 1000) && ((subjCnt % 100) < 10)) {
-				myLog.info("Found subj-res: {}", subjRes)
+			if ((subjCnt < 700) && ((subjCnt % 100) < 7)) {
+				myLog.info("Found subj-res[{}]: {}", subjCnt, subjRes)
 			}
 			subjCnt += 1
 		}
@@ -94,17 +93,26 @@ trait ChkFibo extends FiboVocab with StmtXtractFuncs {
 		val imap: Map[JenaRsrc, Traversable[JenaRsrc]] = pullRsrcArcsAtProp(prop_rdfType)
 		dumpGroupSummary(imap, "'rdf:type'")
 	}
+	// private def doDump(currCnt, initSeg, mod)
 	private def dumpGroupSummary(bindMap: Map[JenaRsrc, Traversable[JenaRsrc]], groupLabel : String): Unit = {
+		val initSegLen = 10
+		val skipWidth = 25
+		val sampleSize = 3
 		var bindCnt = 0
+		var subjCnt = 0
 		myLog.info("==========================================================================")
 		myLog.info("Dumping stats for group = {}, bind map has width: {}", groupLabel, bindMap.size)
 		bindMap.foreach(pair => {
 			val subj = pair._1
 			val objLst = pair._2
 			val objLstLen = objLst.size
-			val dmpd = s"Subj ${subj} bound to ${objLstLen} objects."
+			subjCnt += 1
 			bindCnt += objLstLen
-			myLog.info(dmpd)
+			if (subjCnt <= initSegLen || (subjCnt % skipWidth == 0)) {
+				val objLstBegin = objLst.take(sampleSize)
+				val dmpd = s"Subj ${subjCnt} [${subj}] bound to ${objLstLen} objects.  First ${sampleSize} are: ${objLstBegin}"
+				myLog.info(dmpd)
+			}
 		})
 		myLog.info("Finished dumping stats for group={}, binding count total: {}", groupLabel,  bindCnt)
 		myLog.info("==========================================================================")

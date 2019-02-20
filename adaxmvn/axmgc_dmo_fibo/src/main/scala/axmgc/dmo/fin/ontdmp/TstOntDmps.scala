@@ -39,7 +39,10 @@ class TstOntApp(myActSysNm : String) extends WebServerLauncher {
 	protected lazy val myS4JLog : Logger = LoggerFactory.getLogger(this.getClass)
 	protected lazy val myActorSys = makeActorSys(myActSysNm)
 	private lazy val myOntChkr  = new ChkFibo {
-		override def getS4JLog: Logger = myS4JLog
+		override protected def getS4JLog: Logger = myS4JLog
+	}
+	def chkOntStatsAndPrintToLog : Unit = {
+		myOntChkr.dumpFiboMdlStatsToLog()
 	}
 
 	def launchWebSvc(svcHostName : String, svcPort : Int, flg_blockUntilEnterKey: Boolean = true) : Unit = {
@@ -55,8 +58,5 @@ class TstOntApp(myActSysNm : String) extends WebServerLauncher {
 		}
 		val dmprRt = dmprRtMkr.makeDmprTstRt
 		launchWebServer(dmprRt, actSys, svcHostName, svcPort, flg_blockUntilEnterKey)
-	}
-	def chkOntStatsAndPrintToLog : Unit = {
-		myOntChkr.chkMdlStats
 	}
 }
