@@ -1,13 +1,16 @@
 # axiomagic meta-ui 
-Axiomagic is an open source meta-system for interactive exploration.<br/>
+Axiomagic is an open source meta-system for interactive exploration.
+
+## Uses 
+Axiomagic is intended for use in domain-specific browsers, calculators, simulators, and games.
+It has application in science, finance, and entertainment.
 
 ## Lineage
-AxMgc contains the latest (2018-19) work in authorable RDF system design by
-Stu B22 and pals.   
 
-This work builds on our previous projects, including [Glue-AI 1.x](http://glue.ai).  
+This work builds on models and designs from previous projects, including the [Glue-AI 1.x](http://glue.ai) constellation 
+from Stu B22 and pals.
 
-Axiomagic is the foundation of Glue-AI 2.0.
+Axiomagic is intended to be a thin layer of functions and tools, relying on the amazing capacity of today's open source components for server, cloud, browser, and edge devices.  However the applications built around Axmgc could be rich and sophsiticated, or simple tiny inquiries.
 
 ## Gritty Summary
  Axiomagic provides both Client (AxCli) and Server (AxSrv) components, which may be deployed in an embedded (AxEmb) setup.
