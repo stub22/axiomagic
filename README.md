@@ -12,8 +12,16 @@ from Stu B22 and pals.
 
 Axiomagic is intended to be a thin layer of functions and tools, relying on the amazing capacity of today's open source components for server, cloud, browser, and edge devices.  However the applications built around Axmgc could be rich and sophsiticated, or simple tiny inquiries.
 
+Some current open science experiments helping drive requirements for Axiomagic:
+#### Practical Motives
+ * https://gitlab.com/stub22/open-fin-onto - Open financial computing, grounded in FIBO and related ontologies
+ * https://gitlab.com/stub22/defogo - Wildfire analysis leveraging IoT and cloud
+#### Academic Motives
+ * https://gitlab.com/stub22/open-sci-cosmo - Gravitation at galactic scale
+ * https://gitlab.com/stub22/open-sci-proof - Models of variable axioms
+ 
 ## Gritty Summary
- Axiomagic provides both Client (AxCli) and Server (AxSrv) components, which may be deployed in an embedded (AxEmb) setup.
+ Axiomagic provides both Client (AxCli) and Server (AxSrv) components, which may be selectively combined into an embedded (AxEmb) setup.
  * AxCli
    *  GUI + network + NUI component suite for general application use.
    *  Primarily used in HTML5 + JS environments.
@@ -73,4 +81,4 @@ Our current prototype design uses aspects of primarily [Idris](https://www.idris
 The structures embedding these concepts are the main thrust of current research (as of 2019-Feb). 
 
 ## Support and Contact
-Gitter chatrooms here: https://gitter.im/glue-v2/axiomagic
+Gitter chatrooms: https://gitter.im/glue-v2/axiomagic
