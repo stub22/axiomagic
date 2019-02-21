@@ -1,16 +1,27 @@
 # axiomagic meta-ui 
-Axiomagic is an open source meta-system for interactive exploration.<br/>
+Axiomagic is an open source meta-system for interactive exploration.
+
+## Uses 
+Axiomagic is intended for use in domain-specific browsers, calculators, simulators, and games.
+It has application in science, finance, and entertainment.
 
 ## Lineage
-AxMgc contains the latest (2018-19) work in authorable RDF system design by
-Stu B22 and pals.   
 
-This work builds on our previous projects, including [Glue-AI 1.x](http://glue.ai).  
+This work builds on models and designs from previous projects, including the [Glue-AI 1.x](http://glue.ai) constellation 
+from Stu B22 and pals.
 
-Axiomagic is the foundation of Glue-AI 2.0.
+Axiomagic is intended to be a thin layer of functions and tools, relying on the amazing capacity of today's open source components for server, cloud, browser, and edge devices.  However the applications built around Axmgc could be rich and sophsiticated, or simple tiny inquiries.
 
+Some current open science experiments helping drive requirements for Axiomagic:
+#### Practical Motives
+ * https://gitlab.com/stub22/open-fin-onto - Open financial computing, grounded in FIBO and related ontologies
+ * https://gitlab.com/stub22/defogo - Wildfire analysis leveraging IoT and cloud
+#### Academic Motives
+ * https://gitlab.com/stub22/open-sci-cosmo - Gravitation at galactic scale
+ * https://gitlab.com/stub22/open-sci-proof - Models of variable axioms
+ 
 ## Gritty Summary
- Axiomagic provides both Client (AxCli) and Server (AxSrv) components, which may be deployed in an embedded (AxEmb) setup.
+ Axiomagic provides both Client (AxCli) and Server (AxSrv) components, which may be selectively combined into an embedded (AxEmb) setup.
  * AxCli
    *  GUI + network + NUI component suite for general application use.
    *  Primarily used in HTML5 + JS environments.
@@ -70,4 +81,4 @@ Our current prototype design uses aspects of primarily [Idris](https://www.idris
 The structures embedding these concepts are the main thrust of current research (as of 2019-Feb). 
 
 ## Support and Contact
-Gitter chatrooms here: https://gitter.im/glue-v2/axiomagic
+Gitter chatrooms: https://gitter.im/glue-v2/axiomagic
