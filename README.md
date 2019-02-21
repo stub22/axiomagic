@@ -1,6 +1,7 @@
 # axiomagic meta-ui 
 Axiomagic is an open source meta-system for interactive exploration.
-
+<br/><img src="docs/_screen_img/web_icon_demo_AA.png" alt="axiomagic screen shot"	title="demo screen shot" width="380" height="300" />
+<br/> <i> (This demo uses icons downloaded from icomoon.io) </i>
 ## Uses 
 Axiomagic is intended for use in domain-specific browsers, calculators, simulators, and games.
 It has application in science, finance, and entertainment.
