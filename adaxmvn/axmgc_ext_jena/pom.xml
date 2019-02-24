@@ -11,5 +11,13 @@
 
     <artifactId>axiomagic.ext.jena</artifactId>
 
-
+    <!--
+        So far this wrapper is empty and does nothing.  In the axmgc_web_pond project we import jena directly with:
+        <dependency>
+            <groupId>org.apache.jena</groupId>
+            <artifactId>apache-jena-libs</artifactId>
+            <type>pom</type>
+            <version>${jena.version}</version>
+        </dependency>
+    -->
 </project>

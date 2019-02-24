@@ -38,9 +38,12 @@ trait WebSvg extends WebResBind {
 	def wrapInDiv(ndLst : Seq[XElem], prntID : String, prntClzs : String) : XElem = {
 		<div id={prntID} class={prntClzs}>{ndLst}</div>
 	}
-	def testNmLst : Seq[String] = myIcnmSrc.someIconNms
+	def testNmLst : Seq[String] = {
+		// myIcnmSrc.someIconNms
+		myIcnmSrc.getShuffledIcoNms.take(18)
+	}
 	def mkDDSTstBlk : XElem = {
-		val icNmSeq = myIcnmSrc.someIconNms
+		val icNmSeq = testNmLst
 		val icNmCnt = icNmSeq.length
 
 		val pclzs = "grdCnt" // Defined in ictst_grid.css or other.

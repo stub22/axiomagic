@@ -101,8 +101,6 @@ class WebXml extends XmlEntMkr with WebResBind  {
 
 trait TmpJscrptHolder {
 	lazy val myEvntTstScr_cdata = new scala.xml.PCData(myEvntTstScr_raw)
-	//  <![CDATA[
-	// 	]]>
 	val myEvntTstScr_raw =
 		"""//another comment after bgn-cdat then LINE-BREAK:
 		  |function routeEvt(evt) {
@@ -156,3 +154,34 @@ trait TmpJscrptHolder {
 		  |}//comment hiding end-cdat""".stripMargin
 
 }
+
+/*
+<p id="tt_out">ticker output goes here</p>
+
+<button onclick="startTicker()">Start Ticker</button>
+<button onclick="stopTicker()">Stop Ticker</button>
+
+<script>
+var myTicker = null
+var myIntervalMsec = 1000
+function startTicker () {
+    if (myTicker == null) {
+        myTicker = window.setInterval(myTickFunc, myIntervalMsec);
+    } else {
+        console.log("Ticker already running, ignoring START rq")
+    }
+}
+function stopTicker () {
+    if (myTicker != null) {
+        window.clearInterval(myTicker)
+        myTicker = null;
+    } else {
+        console.log("Ticker isn't running, ignoring STOP rq")
+    }
+}
+function myTickFunc() {
+  var d = new Date();
+  document.getElementById("tt_out").innerHTML = d.toLocaleTimeString();
+}
+
+ */

@@ -75,7 +75,7 @@ pathEndOrSingleSlash: is equivalent to rawPathPrefix(PathEnd) or rawPathPrefix(S
 }
 
 trait IconNmSrc {
-	val tstIcNmLns =
+	private val tstIcNmLns =
 		"""
 local_bar
 screen_lock_portrait
@@ -102,9 +102,19 @@ Strip a leading prefix consisting of blanks or control characters followed by
 marginChar from the line.  WHERE marginChar defaults to `|`
 
  */
-	val someIconNms : Seq[String] = tstIcNmLns.toString.split("\n").toSeq
+	private val someIconNms : Seq[String] = tstIcNmLns.toString.split("\n").toSeq
 			.map(_.trim)
 			.filter(_ != "")
+
+
+	private lazy val myRsrcNms = new RsrcNms {}
+	// lazy val myRealIconNms =
+	private def loadIconNms() : Seq[String] = {
+		val nmLines : Seq[String] = myRsrcNms.readIcnNms
+		nmLines
+	}
+	lazy val myIconNms_sorted : Seq[String] = loadIconNms()
+	def getShuffledIcoNms : Seq[String] = scala.util.Random.shuffle(myIconNms_sorted)
 
 }
 	/*
