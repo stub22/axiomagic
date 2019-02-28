@@ -6,7 +6,7 @@ Axiomagic is an open source meta-system for interactive exploration.
 <br/> <i> (This demo uses icons downloaded from icomoon.io) </i>
 ## Uses 
 Axiomagic is intended for use in domain-specific browsers, calculators, simulators, and games.
-It has application in science, finance, and entertainment.
+<br/>It has application in science, finance, and entertainment.
 
 ## Lineage
 
@@ -15,7 +15,9 @@ from Stu B22 and pals.
 
 Axiomagic is intended to be a thin layer of functions and tools, relying on the amazing capacity of today's open source components for server, cloud, browser, and edge devices.  However the applications built around Axmgc could be rich and sophsiticated, or simple tiny inquiries.
 
-Some current open science experiments helping drive requirements for Axiomagic:
+Implementation Technology:  Scala, RDF, Akka, Idris, and many web components.
+
+Some current open science experiments helping drive our requirements for Axiomagic:
 #### Practical Motives
  * https://gitlab.com/stub22/open-fin-onto - Open financial computing, grounded in FIBO and related ontologies
  * https://gitlab.com/stub22/defogo - Wildfire analysis leveraging IoT and cloud
