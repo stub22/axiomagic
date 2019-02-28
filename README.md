@@ -3,7 +3,7 @@ Axiomagic is an open source meta-system for interactive exploration.
 <br/>Core components use Scala, Akka Http, RDF, and HTML/CSS/Javascript.
 <br/>Upstream functional generators (Idris, MMT) emit bounded, tunable, explainable smarts for runtime.
 <br/>Here is a screenshot of an experimental live-generated interactive Javascript+CSS page.
-<br/>TODO:  Replace with domain specific real content and milder contrast, yo:
+<br/>TODO:  Replace with real content and milder color contrast.
 <br/><img src="docs/_screen_img/web_icon_demo_AA.png" alt="axiomagic screen shot"	title="demo screen shot" width="380" height="300" />
 <br/> <i> (This experiment uses icons downloaded from icomoon.io) </i>
 ## Uses 
@@ -27,7 +27,7 @@ Some current open science experiments helping drive our requirements for Axiomag
  * https://gitlab.com/stub22/open-sci-cosmo - Gravitation at galactic scale
  * https://gitlab.com/stub22/open-sci-proof - Models of variable axioms (= the ultimate version of what we call "tuning")
  
-## Gritty Modules
+## Runtime Pacakaging
  Axiomagic provides both Client (AxCli) and Server (AxSrv) components, which may be selectively combined into an embedded (AxEmb) setup.
  * AxCli
    *  GUI + network + NUI component suite for general application use.
@@ -54,9 +54,9 @@ Features are added by creating equations, functions, mappings, templates, rules,
 These definitions commonly use parameters, which may be tweaked by users at runtime.
 The combination of formal mapping with playful tweaking is what we call FAF:
 
-**F.ormal A.djusting F.un**
+**F.ormal A.djustment F.un**
 
-Now you know why we make Axiomagic: to have fun with Ax-FAF!  
+Now you know why we make Axiomagic: to have fun times doing Ax-FAF!  
 But remember, we are also quite formal around here.
 
 The underlying open source components allow us to build apps as interlocking tapestries of:
