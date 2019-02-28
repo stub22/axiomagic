@@ -1,7 +1,7 @@
 # axiomagic tuning kit 
 Axiomagic is an open source meta-system for interactive exploration.
-<br/>Core components are built using Scala, Akka Http, RDF, and HTML/CSS/Javascript.
-<br/>Upstream provers/compilers/generators emit bounded, tunable, explainable smarts for runtime.
+<br/>Core components use Scala, Akka Http, RDF, and HTML/CSS/Javascript.
+<br/>Upstream functional generators (Idris, MMT) emit bounded, tunable, explainable smarts for runtime.
 <br/>Here is a screenshot of an experimental live-generated interactive Javascript+CSS test page:
 <br/><img src="docs/_screen_img/web_icon_demo_AA.png" alt="axiomagic screen shot"	title="demo screen shot" width="380" height="300" />
 <br/> <i> (This experiment uses icons downloaded from icomoon.io) </i>
