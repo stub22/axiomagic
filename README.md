@@ -1,5 +1,7 @@
 # axiomagic meta-ui 
 Axiomagic is an open source meta-system for interactive exploration.
+<br/>Core components are built using Scala, Akka Http, RDF, and HTML/CSS/Javascript.
+<br/>Here is a screenshot of an experimental dynamic page:
 <br/><img src="docs/_screen_img/web_icon_demo_AA.png" alt="axiomagic screen shot"	title="demo screen shot" width="380" height="300" />
 <br/> <i> (This demo uses icons downloaded from icomoon.io) </i>
 ## Uses 
