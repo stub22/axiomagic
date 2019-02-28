@@ -34,9 +34,9 @@ Some current open science experiments helping drive our requirements for Axiomag
    *  Optional MIDI connections for tweaking and switching of running components.
    *  Authentication and data privacy+portability integrations with WebId and [Solid](https://stub22.solid.community/). (link to stub22's community page)
  * AxSrv
-   *  RDF-mediated layered system for state, query, goal-seeking and planning.
+   *  RDF-mediated logic core for state, query, goal-seeking and planning.
    *  Apps authored using lab server components, tested by running AxCli GUI with local info streams.
-     * Publish apps as bundled deployments, connected to runtime cloud info streams.
+     * Publish apps as bundled deployments, attached to cloud sources for domain data.
    *  Laboratory webServer + dataRoute components use Akka + Scala, running on JVM, on Linux or MS-Win (untried on Mac).
    *  Deploy RDF-configured cloud functional components to Lambda and other cloud compute services.     
  * AxEmb
