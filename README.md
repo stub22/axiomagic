@@ -1,4 +1,4 @@
-# axiomagic meta-ui 
+# axiomagic tuning kit 
 Axiomagic is an open source meta-system for interactive exploration.
 <br/>Core components are built using Scala, Akka Http, RDF, and HTML/CSS/Javascript.
 <br/>Here is a screenshot of an experimental dynamic page:
