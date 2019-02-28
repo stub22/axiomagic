@@ -3,7 +3,7 @@ Axiomagic is an open source meta-system for interactive exploration.
 <br/>Core components use Scala, Akka Http, RDF, and HTML/CSS/Javascript.
 <br/>Upstream functional generators (Idris, MMT) emit bounded, tunable, explainable smarts for runtime.
 <br/>Here is a screenshot of an experimental live-generated interactive Javascript+CSS page.
-<br/>TODO:  Replace with domain specific real content and less glaring colors!
+<br/>TODO:  Replace with domain specific real content and milder contrast, yo:
 <br/><img src="docs/_screen_img/web_icon_demo_AA.png" alt="axiomagic screen shot"	title="demo screen shot" width="380" height="300" />
 <br/> <i> (This experiment uses icons downloaded from icomoon.io) </i>
 ## Uses 
@@ -65,7 +65,7 @@ The underlying open source components allow us to build apps as interlocking tap
 *  Server Agents: Akka via HTTP, WebSockets, generates custom HTML+data GUI per client
 *  Server Graphs:  SHACL, GraphQuery, SPARQL, TinkerPop/Gremlin
 *  Server Functions:  Scala, AWS-Lambda, and similar functions compiled via proof systems embodying modern type theory.  See "Research Direction" section below.
-<br/><b>WHERE</b>:  ClientGraphs and ServerGraphs are coherently supplied from upstream logic of our functional proof generators (Idris,  Haskell, deep Scala, univalence). 
+<br/><b>WHERE</b>:  ClientGraphs and ServerGraphs are coherently supplied from upstream logic of our functional proof generators (Idris {Haskell, Ocaml}, deep Scala, univalence). 
 
 ## Getting Started
 
