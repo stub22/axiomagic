@@ -13,6 +13,8 @@ import org.slf4j.{Logger, LoggerFactory}
   */
 
 class SomeDataStuff {
+	protected lazy val myS4JLog : Logger = LoggerFactory.getLogger(this.getClass)
+
 	val thatModelPath = "gdat/glp_dat_01_owl.ttl"
 	val buiTestPath = "gdat/box_ui_cfg_02.ttl"
 	def loadThatModel(useBui : Boolean) : JenaModel = {
@@ -20,7 +22,6 @@ class SomeDataStuff {
 		val mdl = RDFDataMgr.loadModel(path)
 		mdl
 	}
-
 	def writeModelToJsonLDString_Pretty (jm : JenaModel) : String = {
 		val grph : JenaGraph = jm.getGraph
 		val fmt : RDFFormat = RDFFormat.JSONLD_COMPACT_PRETTY
@@ -45,6 +46,7 @@ class SomeDataStuff {
 			outBAOS.close()
 		}
 	}
+
 }
 trait RsrcNms {
 	protected lazy val myS4JLog : Logger = LoggerFactory.getLogger(this.getClass)

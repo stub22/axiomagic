@@ -40,6 +40,11 @@ class WebXml extends XmlEntMkr with WebResBind  {
 				{svgHlpr.mkDblDivWithSvgIcon("zoomout")}
 			</div>
 			<div>
+				<p id="tt_out">ticker output goes here</p>
+				<button onclick="startTicker()">Start Ticker</button>
+				<button onclick="stopTicker()">Stop Ticker</button>
+			</div>
+			<div>
 				<span>Test Icon Names: </span><br/>
 				<span>{svgHlpr.testNmLst}</span>
 			</div>
@@ -151,37 +156,29 @@ trait TmpJscrptHolder {
 		  |		console.log("looking up dom el for event handlers at: ", domID)
 		  |    var domEl = document.getElementById(domID)
 		  |    attchHndlrs(domEl)
-		  |}//comment hiding end-cdat""".stripMargin
+		  |}
+		  |
+		  |var myTicker = null
+		  |var myIntervalMsec = 1000
+		  |function startTicker () {
+		  |    if (myTicker == null) {
+		  |        myTicker = window.setInterval(myTickFunc, myIntervalMsec);
+		  |    } else {
+		  |        console.log("Ticker already running, ignoring START rq")
+		  |    }
+		  |}
+		  |function stopTicker () {
+		  |    if (myTicker != null) {
+		  |        window.clearInterval(myTicker)
+		  |        myTicker = null;
+		  |    } else {
+		  |        console.log("Ticker isn't running, ignoring STOP rq")
+		  |    }
+		  |}
+		  |function myTickFunc() {
+		  |  var d = new Date();
+		  |  document.getElementById("tt_out").innerHTML = d.toLocaleTimeString();
+		  |}
+		  |//comment hiding end-cdat""".stripMargin
 
 }
-
-/*
-<p id="tt_out">ticker output goes here</p>
-
-<button onclick="startTicker()">Start Ticker</button>
-<button onclick="stopTicker()">Stop Ticker</button>
-
-<script>
-var myTicker = null
-var myIntervalMsec = 1000
-function startTicker () {
-    if (myTicker == null) {
-        myTicker = window.setInterval(myTickFunc, myIntervalMsec);
-    } else {
-        console.log("Ticker already running, ignoring START rq")
-    }
-}
-function stopTicker () {
-    if (myTicker != null) {
-        window.clearInterval(myTicker)
-        myTicker = null;
-    } else {
-        console.log("Ticker isn't running, ignoring STOP rq")
-    }
-}
-function myTickFunc() {
-  var d = new Date();
-  document.getElementById("tt_out").innerHTML = d.toLocaleTimeString();
-}
-
- */

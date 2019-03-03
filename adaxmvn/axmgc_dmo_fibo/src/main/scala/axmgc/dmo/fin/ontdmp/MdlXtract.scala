@@ -20,7 +20,6 @@ trait StmtXtractFuncs {
 	def pullRsrcArcsAtProp (mdlPrp: JenaProp, flipDir : Boolean) : Map[JenaRsrc, Traversable[JenaRsrc]] = {
 		val jenaMdl : JenaMdl = mdlPrp.getModel
 		val stmtIt = jenaMdl.listStatements(null, mdlPrp, null)
-		// val mutMp = new MutHashMap[JenaRsrc, JenaRsrc]
 		val pairsJL : java.util.List[(JenaRsrc, JenaRsrc)] = stmtIt.mapWith(stmt => pullRsrcPair_SO(stmt)).toList
 		val smp : Iterable[(JenaRsrc, JenaRsrc)] = pairsJL.asScala  // .toMap
 		val bnchMap = new MutHashMap[JenaRsrc, List[JenaRsrc]]
@@ -34,7 +33,7 @@ trait StmtXtractFuncs {
 		bnchMap.toMap
 	}
 	private def stmtIterToScLst (jenaStmtIt : StmtIterator) : List[JenaStmt] = jenaStmtIt.asScala.toList
-	private def stmtIterToScIter (jenaStmtIt : StmtIterator) : Iterator[JenaStmt] = jenaStmtIt.asScala
+	protected def stmtIterToScIter (jenaStmtIt : StmtIterator) : Iterator[JenaStmt] = jenaStmtIt.asScala
 
 	private def scStmtIterToMultiMap[VT] (scStmtIter : Iterator[JenaStmt],
 										  kvXtract : Function1[JenaStmt, (JenaRsrc,VT)]) : Map[JenaRsrc, List[VT]] = {
@@ -45,5 +44,18 @@ trait StmtXtractFuncs {
 	private def allBindingsForSubj(subjRes : JenaRsrc) : Map[JenaRsrc, List[RDFNode]] = ??? //
 	private def allUsesOfObj(objNode : RDFNode) : Map[JenaRsrc, List[JenaRsrc]] = ??? // Key = prop, val = list of subjs
 
+}
 
+trait MdlPrpSucker extends StmtXtractFuncs {
+	def tallyProps(mdl : JenaMdl) : Map[JenaProp, Int] = {
+		val allStmtsIt = mdl.listStatements()
+		val tallyMap = new MutHashMap[JenaProp, Int]()
+		stmtIterToScIter(allStmtsIt).foreach(stmt => {
+			val prop = stmt.getPredicate
+			val oldTally = tallyMap.get(prop).getOrElse(0)
+			val nextTally = oldTally + 1
+			tallyMap.put(prop, nextTally)
+		})
+		tallyMap.toMap
+	}
 }

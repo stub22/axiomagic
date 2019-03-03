@@ -13,6 +13,9 @@ trait WebRqPrms {
 	lazy private val myParamMap = fetchParamMap
 	private def getPValTxtOpt (keyName : String) :  Option[String] = myParamMap.get(keyName)
 
+	def getTextParam (keyName : String) : Option[String] = {
+		getPValTxtOpt(keyName)
+	}
 	def getPathParam (keyName : String) : Option[String] = {
 		getPValTxtOpt(keyName)
 	}

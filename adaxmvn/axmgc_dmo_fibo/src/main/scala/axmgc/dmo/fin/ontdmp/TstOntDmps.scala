@@ -2,6 +2,7 @@ package axmgc.dmo.fin.ontdmp
 
 import axmgc.web.lnch.FallbackLog4J
 import axmgc.web.pond.WebServerLauncher
+import org.apache.jena.riot.RDFDataMgr
 import org.slf4j.{Logger, LoggerFactory}
 
 object TstOntDmps  {
@@ -44,7 +45,6 @@ class TstOntApp(myActSysNm : String) extends WebServerLauncher {
 	def chkOntStatsAndPrintToLog : Unit = {
 		myOntChkr.dumpFiboMdlStatsToLog()
 	}
-
 	def launchWebSvc(svcHostName : String, svcPort : Int, flg_blockUntilEnterKey: Boolean = true) : Unit = {
 
 		// TODO:  Return a future supporting clean shutdown
