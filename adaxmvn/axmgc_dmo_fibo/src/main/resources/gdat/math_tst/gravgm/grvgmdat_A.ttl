@@ -1,0 +1,21 @@
+
+@prefix ggm: <http://axiomagic.fun/gravgm#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+ggm:ggonto
+  rdf:type owl:Ontology ;
+  rdfs:label "Onto for Grav-Game Test v. A" ;
+  owl:versionInfo "Created by hand as txt" ;
+.
+ggm:frmla_X01
+  rdf:type ggm:Formula ;
+  ggm:expr "x ^ 2" ;
+.
+ggm:frmla_Y02
+  rdf:type ggm:Formula ;
+  ggm:expr "y ^ 3" ;
+.

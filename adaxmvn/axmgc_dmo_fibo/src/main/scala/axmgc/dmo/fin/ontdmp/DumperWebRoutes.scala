@@ -74,9 +74,8 @@ trait DumperTupleBridge extends DumperWebFeat {
 		Some(myRslt)
 	}
 
-	lazy val myKbpediaOnt = new KBPediaOntoWrap {
-		override protected def getS4JLog: Logger = myS4JLog
-	}
+	lazy val myKbpediaOnt = new KBPediaOntoWrap {}
+
 	private def goNuts(np : String) = {
 		myS4JLog.info("goNuts got np: {}", np)
 		val kbpMdl = myKbpediaOnt.myMdl_KBPRC
