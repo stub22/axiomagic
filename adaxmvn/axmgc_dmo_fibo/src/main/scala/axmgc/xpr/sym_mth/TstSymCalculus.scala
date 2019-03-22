@@ -13,6 +13,9 @@ import org.matheclipse.parser.client.math.MathException
 trait TstSymFncs {
 	def mkSymjLst = 0
 	def doStuff : Unit = {
+
+		// ExprEvaluator uses relaxedSyntax == true, unless we plug in our own EvalEngine
+
 		val util = new ExprEvaluator(false, 100);
 
 		// solve 2 equations: Solve({x^2+11==y, x+y==-9}, {x,y})
@@ -59,6 +62,7 @@ object TstSymCalculus {
 	lazy val myFLog4J = new FallbackLog4J {}
 	val myFallbackLog4JLevel = org.apache.log4j.Level.INFO
 	val flg_setupFallbackLog4J = false // Set to false if log4j.properties is expected, e.g. from Jena.
+	val flg_runConsole = false
 	lazy val myS4JLogger : Logger = LoggerFactory.getLogger(classOf[TstSymFncs])
 
 	def main(args: Array[String]) {
@@ -71,10 +75,14 @@ object TstSymCalculus {
 		tstFncs.doStuff
 		tstFncs.doCalculus
 		myS4JLogger.warn("Testing ChkFormulas")
-		val chkFrmlas = new ChkFormulas {}
-		chkFrmlas.dumpStatsToLog
-		myS4JLogger.warn("Invoking org.matheclipse.core.eval.Console")
-		org.matheclipse.core.eval.Console.main(args)
+		val mthChkr = new ChkChkMth {}
+		mthChkr.dumpStatsToLog
+		mthChkr.testSomeExprs
+		mthChkr.testTrigFuncs
+		if (flg_runConsole) {
+			myS4JLogger.warn("Invoking org.matheclipse.core.eval.Console")
+			org.matheclipse.core.eval.Console.main(args)
+		}
 		myS4JLogger.warn("END of .main()")
 		println("println: .main() says goodbye") // , but actors are possibly still running
 
