@@ -6,6 +6,7 @@ import org.apache.jena.rdf.model.{Model => JenaMdl}
 import org.matheclipse.core.eval.{EvalEngine, MathMLUtilities, TeXUtilities}
 import org.matheclipse.core.interfaces.IExpr
 import org.matheclipse.core.parser.ExprParser
+import org.matheclipse.core.expression.F
 import java.io.StringWriter
 
 import org.slf4j.{Logger, LoggerFactory}
@@ -62,13 +63,24 @@ trait ChkFormulas extends MdlDmpFncs {
 			}
 		} else None
 	}
-	def evalExpr(expr : IExpr) : IExpr = {
+	def evalExpr(expr : IExpr) : Option[IExpr] = {
 		val eeng = getEvalEngine()
-		eeng.evaluate(expr);
+		val rsltOrNull : IExpr = eeng.evaluate(expr);
+		if (rsltOrNull != null) {
+			if (!rsltOrNull.equals(F.Null)) {
+				Some(rsltOrNull)
+			} else {
+				getS4JLog.info("Eval of {} produced result of type {}, which equals F.Null", expr.toString, rsltOrNull.getClass : Any)
+				None
+			}
+		} else {
+			getS4JLog.warn("Eval of {} produced java null", expr)
+			None
+		}
 	}
 	def parseEvalDump(inExprTxt : String) : Option[IExpr] = {
 		val parsed_opt : Option[IExpr] = parseExpr(inExprTxt)
-		val evaled_opt = parsed_opt.map(evalExpr(_))
+		val evaled_opt = parsed_opt.flatMap(evalExpr(_))
 		getS4JLog.info("Input={}, Parsed={}, Eval={}", inExprTxt, parsed_opt, evaled_opt)
 		evaled_opt
 	}
@@ -116,16 +128,43 @@ trait ChkChkMth extends ChkFormulas {
 		myMathMLUtil.toMathML(expr, stw)
 		stw.toString
 	}
+	def exportTeX(expr : IExpr) : String = {
+		val stw = new StringWriter
+		myTeXUtil.toTeX(expr, stw)
+		stw.toString
+	}
+
 	def parseEvalExport(inExprTxt : String) {
 		val parsed_opt : Option[IExpr] = parseExpr(inExprTxt)
-		val evaled_opt = parsed_opt.map(evalExpr(_))
-		val mathML = exportMathML(evaled_opt.get)
-		getS4JLog.info("Input={}, Parsed={}, Eval={}, Eval.MathML={}", inExprTxt, parsed_opt, evaled_opt, mathML)
-
+		if (parsed_opt.isDefined) {
+			val evaled_opt: Option[IExpr] = parsed_opt.flatMap(evalExpr(_))
+			if (evaled_opt.isDefined) {
+				val evalOutExpr = evaled_opt.get
+				if (evalOutExpr == null) {
+					getS4JLog.error("Huh?  EvalOutExpr is null for parsed_opt: {}", parsed_opt)
+				} else {
+					getS4JLog.info("EvalOutExpr.class = {}", evalOutExpr.getClass())
+				}
+				val evalMathML = exportMathML(evalOutExpr)
+				val evalTeX = exportTeX(evalOutExpr)
+				getS4JLog.info("Input={}, Parsed={}, Eval={}, Eval.MathML={}, Eval.TeX={}", inExprTxt, parsed_opt.get, evalOutExpr, evalMathML, evalTeX)
+			} else {
+				val prsdExpr = parsed_opt.get
+				val prsdMathML = exportMathML(prsdExpr)
+				val prsdTeX = exportTeX(prsdExpr)
+				getS4JLog.info("Input={}, Parsed={}, NO EVAL, Parsed.MathML={}, Parsed.TeX={}", inExprTxt, prsdExpr, prsdMathML, prsdTeX)
+			}
+		} else {
+			getS4JLog.warn("Parsing failed for input: {}", inExprTxt)
+		}
 	}
 	def testExports : Unit = {
 		parseEvalExport("Cos[1/4 * Pi]")
 		parseEvalExport("ArcTan[1.0]*4.0")
+		parseEvalExport("fov[v1_] := v1 ^ 3 - 1.08")
+		parseEvalExport("ftv[v1_, v2_] := v1 * v2 + 0.2")
+		parseEvalExport("fmv[v1_] := fov[v1] + ftv[v1, v1 / 2.0]")
+		parseEvalExport("fmv[10.0]")
 	}
 }
 /* Leaner, relaxed:
