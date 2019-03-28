@@ -27,6 +27,7 @@
         <module>axmgc_ext_jena</module>
         <module>axmgc_web_pond</module>
         <module>axmgc_dmo_fibo</module>
+        <module>axmgc_dmo_hvol</module>
     </modules>
 
 </project>

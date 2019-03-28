@@ -166,6 +166,18 @@ trait ChkChkMth extends ChkFormulas {
 		parseEvalExport("fmv[v1_] := fov[v1] + ftv[v1, v1 / 2.0]")
 		parseEvalExport("fmv[10.0]")
 	}
+	/*
+	Plotly 3D surface plot is part of their   "gl3d" bundle,
+	which relies on   gl-vis/gl-surface3d   which relies on  stack.gl
+
+	Appears that SVG is used in the 2D layout to set the viewport rectangle,
+	and then gl3d code is rendering onto that rectangle, bound via css-class
+	"gl-container"
+
+	 */
+	def testSvg : Unit = {
+
+	}
 }
 /* Leaner, relaxed:
 axpndr-stdout 7633    INFO [main] axmgc.xpr.sym_mth.TstSymCalculus$$anon$2 (LoadMath.scala:71) parseEvalDump - Input=Cos(3.14*0.5)+0.8, Parsed=Some(Cos(0.5*3.14)+0.8), Eval=Some(0.8007963267107333)

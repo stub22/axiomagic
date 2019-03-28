@@ -13,7 +13,7 @@ object TstSymCalculus {
 	val myFallbackLog4JLevel = org.apache.log4j.Level.INFO
 	val flg_setupFallbackLog4J = false // Set to false if log4j.properties is expected, e.g. from Jena.
 	val flg_tstRdfEmbed = false
-	val flg_runConsole = false
+	val flg_runConsole = true
 	val flg_preferMmaMode = true
 	lazy val myS4JLogger : Logger = LoggerFactory.getLogger(classOf[TstSymFncs])
 
