@@ -30,7 +30,22 @@ https://stackoverflow.com/questions/53315677/spark-java-saveastable-failes-with-
             <artifactId>spark-sql_2.12</artifactId>
             <version>2.4.0</version>
         </dependency>
-
+        <!-- Needs repo help -->
+        <dependency>
+            <groupId>org.nlogo</groupId>
+            <artifactId>netlogo</artifactId>
+            <version>6.0.4</version>
+        </dependency>
+        <!--
+        <dependency>
+            <groupId>org.jhotdraw</groupId>
+            <artifactId>jhotdraw</artifactId>
+            <version>6.0b1</version>
+            <scope>compile</scope>
+            <type>jar</type>
+        </dependency>
+        -->
+        <!--  yup -->
         <!--
         <dependency>
             <groupId>${project.groupId}</groupId>
@@ -39,7 +54,16 @@ https://stackoverflow.com/questions/53315677/spark-java-saveastable-failes-with-
         </dependency>
         -->
     </dependencies>
-
+    <repositories>
+        <repository>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+            <id>bintray-netlogo-NetLogo-JVM</id>
+            <name>bintray</name>
+            <url>http://dl.bintray.com/netlogo/NetLogo-JVM</url>
+        </repository>
+    </repositories>
     <build>
         <sourceDirectory>src/main/scala</sourceDirectory>
 	<!-- This ez-dmo prj does not need a "test" folder.
