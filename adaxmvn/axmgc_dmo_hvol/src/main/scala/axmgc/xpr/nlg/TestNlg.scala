@@ -1,48 +1,81 @@
 package axmgc.xpr.nlg
-import java.awt.EventQueue
 
-import org.nlogo.app.App
-import org.nlogo.headless.HeadlessWorkspace
-
+import org.nlogo.app.{App => NlgFullApp}
+import org.nlogo.lite.{AppletPanel, InterfaceComponent => NlgIntfc}
+import org.nlogo.headless.{HeadlessWorkspace => NlgHdlsWrk}
+import org.nlogo.workspace.{Controllable => NlgCntrlbl}
 
 object TestNlg {
 	def main(args: Array[String]) {
 		val workingDir = System.getProperty("user.dir");
 		println("user.dir=", workingDir)
 		val boss = new NlgBoss {}
-		// boss.runNetlogoFullGui(args)
-		boss.runNetlogoHeadless()
+		// boss.runNetlogoFullGui(args) // ClassNotFoundException: org.jhotdraw.framework.DrawingEditor
+		boss.runNetlogoMinGui() // Works and returns immediately.  But no exit-signals set up yet.
+		// boss.runNetlogoHeadless()
+		println("End of main at: " + java.util.Calendar.getInstance().getTime)
 	}
 }
 trait NlgBoss {
+	val fireTstMdlPth = "models/Sample Models/Earth Science/Fire.nlogo"
+	val rprtrBurned = "burned-trees"
 	val nope : org.nlogo.core.Model = null
 
 	// Starting with example code from here.
 	// https://github.com/NetLogo/NetLogo/wiki/Controlling-API
 	def runNetlogoHeadless(): Unit = {
-		val workspace = HeadlessWorkspace.newInstance
-		workspace.open("models/Sample Models/Earth Science/Fire.nlogo")
-		workspace.command("set density 62")
-		workspace.command("random-seed 0")
-		workspace.command("setup")
-		workspace.command("repeat 50 [ go ]")
-		println(workspace.report("burned-trees"))
+		val workspace = NlgHdlsWrk.newInstance
+		workspace.open(fireTstMdlPth)
+		earthFireCmds(workspace)
+		val cntBrntTrees : Object = workspace.report(rprtrBurned)
+		println("[report burned-trees] returns: ", cntBrntTrees, " java-class=" + cntBrntTrees.getClass)
+
 		workspace.dispose()
 	}
 	def runNetlogoFullGui(args : Array[String]) {
-		App.main(args)
-		wait {
-			App.app.open("models/Sample Models/Earth Science/Fire.nlogo")
+		// Fails due to lib conflict
+		NlgFullApp.main(args)
+		val ourApp = NlgFullApp.app
+		awtInvokeAndWait {
+			ourApp.open(fireTstMdlPth)
 		}
-		App.app.command("set density 62")
-		App.app.command("random-seed 0")
-		App.app.command("setup")
-		App.app.command("repeat 50 [ go ]")
-		println(App.app.report("burned-trees"))
+		earthFireCmds(ourApp)
+		println(ourApp.report(rprtrBurned))
 	}
-	def wait(block: => Unit) {
-		EventQueue.invokeAndWait(
-			new Runnable() { def run() { block } } )
+
+	def runNetlogoMinGui() {
+		val frame = new javax.swing.JFrame
+		val comp = new  NlgIntfc(frame) // Extends AppletPanel which implements .command(), but not NlgCntrlbl
+		val mdlPth = fireTstMdlPth
+		
+		awtInvokeAndWait {
+			frame.setSize(1000, 700)
+			frame.add(comp)
+			frame.setVisible(true)
+			comp.open(fireTstMdlPth)
+		}
+		println("Returned from awtInvokeAndWait")
+		// earthFireCmds(comp)   	// Problem:  NlgIntfc does not implement NlgCntrlbl
+		val cmdTgt : AppletPanel = comp  // AppletPanel is not NlgCntrlbl either, but it has .command()
+		appPanel_earthFireCmds(cmdTgt)
+		println(comp.report(rprtrBurned))
+	}
+	// Problem:  NlgIntfc does not implement NlgCntrlbl
+	def earthFireCmds(cmdTgt: NlgCntrlbl): Unit = {
+		cmdTgt.command("set density 62")
+		cmdTgt.command("random-seed 0")
+		cmdTgt.command("setup")
+		cmdTgt.command("repeat 50 [ go ]")
+	}
+	def appPanel_earthFireCmds(cmdTgt : AppletPanel) : Unit = {
+		cmdTgt.command("set density 62")
+		cmdTgt.command("random-seed 0")
+		cmdTgt.command("setup")
+		cmdTgt.command("repeat 50 [ go ]")
+	}
+	def awtInvokeAndWait(block: => Unit) {
+		val rnbl = new Runnable() { def run() { block } }
+		java.awt.EventQueue.invokeAndWait(rnbl)
 	}
 }
 /*
