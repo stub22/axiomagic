@@ -49,8 +49,11 @@ trait OurUrlPaths extends WebResBind {
 	val pgTplTst = "tpltst"
 	val pathHttpEvtSrc = "evtSrcT01"
 
+	val pathMenu = "axmenu"
+
 	val lstAllPaths : List[String] = pathA :: pathB :: pathJsonPreDump :: pathJsonLdMime ::
-			pathMore :: pathJsonPerson :: pathUseSource :: pathCssT01 :: pathIngstTst :: pgTplTst :: Nil
+			pathMore :: pathJsonPerson :: pathUseSource :: pathCssT01 :: pathIngstTst :: pgTplTst ::
+			pathMenu :: Nil
 
 	val xyz123 = "hey"
 }
@@ -104,15 +107,33 @@ trait RouteWeaver extends  SprayJsonSupport with OurUrlPaths {
 		val wtplRt = myWtRtMkr.makeWbTplRt(mySlf4JLog)
 		wtplRt
 	}
+	private def makeMenuRt : dslServer.Route = {
+		val menuXhtmlBlock = """<div>
+									<h2>Axiomagic Test Menu</h2>
+									<ol>
+										<li>Hey</li>
+										<li>Wow</li>
+									</ol>
+								</div>
+							"""
+		val htEntMkr = myHtEntMkr
+		val pageEnt = htEntMkr.makeHtmlEntity(menuXhtmlBlock)
+		path(pathMenu)	{
+			complete(pageEnt)
+		}
+	}
 	def makeComboRoute : dslServer.Route = {
 		val featTstRt = myFTRtMkr.makeFeatTstRoute
 		val wbRscRt = makeWbRscRt
 		val wtplRt = makeWTplRt
 		val ingstRt = myIngstRtMkr.makeIngstRt(mySlf4JLog)
 		val httpEvtSrcRt = makeHttpEvtSrcRt
-		val comboRt = wbRscRt ~ wtplRt ~ featTstRt ~ ingstRt ~ httpEvtSrcRt
+		val menuRt = makeMenuRt
+		val comboRt = wbRscRt ~ wtplRt ~ featTstRt ~ ingstRt ~ httpEvtSrcRt ~ menuRt
 		comboRt
 	}
+
+
 }
 // Code copied and modified from example found at:
 // https://dzone.com/articles/handling-cors-in-akka-http

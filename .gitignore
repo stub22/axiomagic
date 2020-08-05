@@ -1,5 +1,7 @@
 *.class
 *.log
-.idea
-target
 *.iml
+.idea/
+target/
+nlogo_models*/
+odoc_out*/

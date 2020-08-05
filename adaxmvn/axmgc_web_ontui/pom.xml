@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+		 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<parent>
+		<artifactId>axiomagic.root</artifactId>
+		<groupId>org.appdapter</groupId>
+		<version>2.0.0-SNAPSHOT</version>
+	</parent>
+	<modelVersion>4.0.0</modelVersion>
+
+	<artifactId>axiomagic.web.ontui</artifactId>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.scala-lang</groupId>
+			<artifactId>scala-library</artifactId>
+			<version>${scala.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.github.dgarijo</groupId>
+			<artifactId>Widoco</artifactId>
+			<version>v1.4.13</version>
+		</dependency>
+	</dependencies>
+
+	<repositories>
+		<repository>
+			<id>jitpack.io</id>
+			<url>https://jitpack.io</url>
+		</repository>
+	</repositories>
+
+	<build>
+		<sourceDirectory>src/main/scala</sourceDirectory>
+		<!-- This ez-dmo prj does not need a "test" folder.
+			<testSourceDirectory>src/test/scala</testSourceDirectory>
+		-->
+
+		<plugins>
+
+			<plugin>
+				<groupId>net.alchim31.maven</groupId>
+				<artifactId>scala-maven-plugin</artifactId>
+				<version>${scala.plugin.version}</version>
+			</plugin>
+		</plugins>
+
+	</build>
+
+</project>

@@ -11,6 +11,7 @@ import akka.stream.scaladsl.Source
 import akka.util.{ByteString, Timeout}
 import org.slf4j.{Logger, LoggerFactory}
 
+import scala.concurrent.Future
 import scala.util.{Failure, Success}
 
 // https://stackoverflow.com/questions/37462717/akka-http-how-to-use-an-actor-in-a-request
@@ -53,7 +54,7 @@ trait IngestRtMkr extends OurUrlPaths  {
 				implicit val timeout = Timeout(2.seconds)
 				lgr.info("Sending ask, creating future")
 				// Ask pattern automatically creates a temp reply actor for us.
-				val askFut = actRef.ask(emptyEvt)
+				val askFut: Future[Any] = actRef.ask(emptyEvt)
 				// Here "onComplete" is an akka-http directive (not the same-named method of the future),
 				// which creates a route.
 				// https://doc.akka.io/docs/akka-http/current/routing-dsl/directives/future-directives/onComplete.html

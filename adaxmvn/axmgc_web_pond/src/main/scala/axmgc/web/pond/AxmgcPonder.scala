@@ -1,6 +1,7 @@
 package axmgc.web.pond
 
 import akka.actor.{ActorRef, ActorSystem}
+import akka.http.scaladsl.server.Route
 // import akka.http.scaladsl.server.Directives.{path, _}
 import akka.http.scaladsl.{Http, server => dslServer}
 import akka.stream.ActorMaterializer
@@ -65,7 +66,7 @@ class AxmgPndr(actSysName : String, srvHostIntf : String, srvPort : Int) {
 				firstWepBoss
 			}
 		}
-		val route = routeWvr.makeComboRoute //makeRouteTree
+		val route: Route = routeWvr.makeComboRoute //makeRouteTree
 
 		myLogger.info("The combo-route is made: " + route)
 

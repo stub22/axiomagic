@@ -5,8 +5,6 @@ import org.slf4j.{Logger, LoggerFactory}
 
 trait KbpediaOnto
 
-
-
 trait KBPediaOntoWrap extends MdlDmpFncs {
 	protected lazy val myS4JLog : Logger = LoggerFactory.getLogger(this.getClass)
 	override protected def getS4JLog: Logger = myS4JLog

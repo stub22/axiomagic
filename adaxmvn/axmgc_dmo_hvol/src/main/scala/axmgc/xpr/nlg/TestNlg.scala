@@ -17,7 +17,9 @@ object TestNlg {
 	}
 }
 trait NlgBoss {
-	val fireTstMdlPth = "models/Sample Models/Earth Science/Fire.nlogo"
+	val nlogoFldr = "nlogo_models_gpl/" // "models/"
+	val fireTstMdlPth = nlogoFldr + "/Sample Models/Earth Science/Fire.nlogo"
+
 	val rprtrBurned = "burned-trees"
 	val nope : org.nlogo.core.Model = null
 
