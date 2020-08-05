@@ -1,10 +1,13 @@
 package axmgc.xpr.sym_mth
 
 import org.matheclipse.core.eval.ExprEvaluator
-import org.matheclipse.core.expression.F._
+import org.matheclipse.core.expression.F
+import org.matheclipse.core.expression.S._
 
 trait DontUseExprEval {
+
 	def doStuff : Unit = {
+
 
 		// ExprEvaluator uses relaxedSyntax == true, unless we plug in our own EvalEngine
 
@@ -21,7 +24,7 @@ trait DontUseExprEval {
 
 
 		// Integrate(sin(x)^5,x)
-		val rs3 = util.evaluate(Integrate(Power(Sin(x), 5), x));
+		val rs3 = util.evaluate(Integrate(F.Power(Sin(x), 5), x));
 		println(rs3);
 
 
@@ -40,7 +43,7 @@ trait DontUseExprEval {
 
 			scalaForm = util.toScalaForm("Integrate(sin(x)^5,x)");
 			println(scalaForm);
-			result = util.evaluate(Integrate(Power(Sin(x), 5), x));
+			result = util.evaluate(Integrate(F.Power(Sin(x), 5), x));
 			println(result);
 
 			// result = util.evaluate(NIntegrate(Cos(x), List(x, C0, Pi)));
@@ -49,4 +52,5 @@ trait DontUseExprEval {
 			case e: Exception => println("exception caught: " + e);
 		}
 	}
+
 }

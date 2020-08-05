@@ -6,9 +6,10 @@ import org.apache.jena.rdf.model.{Model => JenaMdl}
 import org.matheclipse.core.eval.{EvalEngine, MathMLUtilities, TeXUtilities}
 import org.matheclipse.core.interfaces.IExpr
 import org.matheclipse.core.parser.ExprParser
-import org.matheclipse.core.expression.F
+import org.matheclipse.core.expression.{F, S}
 import java.io.StringWriter
 
+import org.matheclipse.parser.client.FEConfig
 import org.slf4j.{Logger, LoggerFactory}
 
 trait LoadMath
@@ -67,7 +68,7 @@ trait ChkFormulas extends MdlDmpFncs {
 		val eeng = getEvalEngine()
 		val rsltOrNull : IExpr = eeng.evaluate(expr);
 		if (rsltOrNull != null) {
-			if (!rsltOrNull.equals(F.Null)) {
+			if (!rsltOrNull.equals(S.Null)) {
 				Some(rsltOrNull)
 			} else {
 				getS4JLog.info("Eval of {} produced result of type {}, which equals F.Null", expr.toString, rsltOrNull.getClass : Any)
@@ -105,7 +106,7 @@ trait ChkChkMth extends ChkFormulas {
 	def flag_lowerCaseSymbols : Boolean = false
 
 	private lazy val myEvEng : EvalEngine = {
-		org.matheclipse.core.basic.Config.PARSER_USE_LOWERCASE_SYMBOLS = flag_lowerCaseSymbols;  // This has a big effect on how exprs get interpreted.
+		FEConfig.PARSER_USE_LOWERCASE_SYMBOLS = flag_lowerCaseSymbols;  // This has a big effect on how exprs get interpreted.
 		val flag_relaxedSyn = flag_useRelaxedSyntax //  false => not relaxed == capitalization matters == more like Mathematica
 		new EvalEngine(flag_relaxedSyn)
 	}
