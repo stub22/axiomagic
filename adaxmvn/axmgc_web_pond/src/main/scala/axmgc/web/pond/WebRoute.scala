@@ -107,12 +107,24 @@ trait RouteWeaver extends  SprayJsonSupport with OurUrlPaths {
 		val wtplRt = myWtRtMkr.makeWbTplRt(mySlf4JLog)
 		wtplRt
 	}
+	private def mkLinkTxt(url: String, label: String) = s"""<a href="${url}">${label}</a>"""
 	private def makeMenuRt : dslServer.Route = {
-		val menuXhtmlBlock = """<div>
+		val menuXhtmlBlock = s"""<div>
 									<h2>Axiomagic Test Menu</h2>
 									<ol>
-										<li>Hey</li>
-										<li>Wow</li>
+			<li>Hey</li>
+			<li>Wow</li>
+			<li>${mkLinkTxt(pathA, pathA)}</li>
+			<li>${mkLinkTxt(pathB, pathB)}</li>
+			<li>${mkLinkTxt(pathJsonPreDump, pathJsonPreDump)}</li>
+			<li>${mkLinkTxt(pathJsonLdMime, pathJsonLdMime)}</li>
+			<li>${mkLinkTxt(pathMore, pathMore)}</li>
+			<li>${mkLinkTxt(pathJsonPerson, pathJsonPerson)}</li>
+			<li>${mkLinkTxt(pathUseSource, pathUseSource)}</li>
+			<li>${mkLinkTxt(pathCssT01, pathCssT01)}</li>
+			<li>${mkLinkTxt(pathIngstTst, pathIngstTst)}</li>
+			<li>${mkLinkTxt(pgTplTst, pgTplTst)}</li>
+			<li>${mkLinkTxt(pathHttpEvtSrc, pathHttpEvtSrc)}</li>
 									</ol>
 								</div>
 							"""
@@ -122,6 +134,7 @@ trait RouteWeaver extends  SprayJsonSupport with OurUrlPaths {
 			complete(pageEnt)
 		}
 	}
+
 	def makeComboRoute : dslServer.Route = {
 		val featTstRt = myFTRtMkr.makeFeatTstRoute
 		val wbRscRt = makeWbRscRt
@@ -129,6 +142,7 @@ trait RouteWeaver extends  SprayJsonSupport with OurUrlPaths {
 		val ingstRt = myIngstRtMkr.makeIngstRt(mySlf4JLog)
 		val httpEvtSrcRt = makeHttpEvtSrcRt
 		val menuRt = makeMenuRt
+
 		val comboRt = wbRscRt ~ wtplRt ~ featTstRt ~ ingstRt ~ httpEvtSrcRt ~ menuRt
 		comboRt
 	}
