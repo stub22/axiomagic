@@ -54,6 +54,31 @@ java.lang.NoClassDefFoundError: org/apache/logging/log4j/LogManager
 
             </exclusions>
         </dependency>
+        <!-- borkl == berleley-oracle -->
+        <!-- https://mvnrepository.com/artifact/com.oracle.kv/oracle-nosql-client -->
+        <dependency>
+            <groupId>com.oracle.kv</groupId>
+            <artifactId>oracle-nosql-client</artifactId>
+            <version>18.3.10</version>
+        </dependency>
+
+        <!-- Server 18.3.10 is latest in Maven-Central, depends on com.sleepycat.je 18.3.12
+        -->
+        <dependency>
+            <groupId>com.oracle.kv</groupId>
+            <artifactId>oracle-nosql-server</artifactId>
+            <version>18.3.10</version>
+        </dependency>
+<!--
+The oracle-server deps above automatically pull in berkeley DB v18.3.12
+ https://mvnrepository.com/artifact/com.sleepycat/je
+        <dependency>
+            <groupId>com.sleepycat</groupId>
+            <artifactId>je</artifactId>
+            <version>18.3.12</version>
+        </dependency>
+
+-->
 
     </dependencies>
 
