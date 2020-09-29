@@ -38,8 +38,8 @@ import PersonJsonSupport._
 trait WebRouteStuff
 
 trait OurUrlPaths extends WebResBind {
-	val pathA = "patha"
-	val pathB = "pathb"
+	val pathEW = "ent-wrap"
+	val pathPG = "pond-grid"
 	val pathJsonPreDump = "json-pre-dump"
 	val pathJsonLdMime = "json-ld-mime"
 	val pathMore = "moreHere"
@@ -52,7 +52,7 @@ trait OurUrlPaths extends WebResBind {
 
 	val pathMenu = "axmenu"
 
-	val lstAllPaths : List[String] = pathA :: pathB :: pathJsonPreDump :: pathJsonLdMime ::
+	val lstAllPaths : List[String] = pathEW :: pathPG :: pathJsonPreDump :: pathJsonLdMime ::
 			pathMore :: pathJsonPerson :: pathUseSource :: pathCssT01 :: pathIngstTst :: pgTplTst ::
 			pathMenu :: Nil
 
@@ -62,7 +62,7 @@ trait OurUrlPaths extends WebResBind {
 
 trait RouteWeaver extends  SprayJsonSupport with OurUrlPaths {
 
-	protected lazy val myTdatChnkr = new LDChunkerTest {}
+	protected lazy val myLDChnkr = new LDChunkerTest {}
 	protected lazy val myHtEntMkr = new HtEntMkr {}
 	protected lazy val myXEntMkr = new WebXml {}
 	protected val mySlf4JLog = LoggerFactory.getLogger(this.getClass)
@@ -70,7 +70,7 @@ trait RouteWeaver extends  SprayJsonSupport with OurUrlPaths {
 	protected def rmFindHlpActRef(sessID: Long): ActorRef
 
 	protected lazy val myWtplMkr = new WebTupleMaker {
-		override protected def getTdatChnkr: LDChunkerTest = myTdatChnkr
+		override protected def getLDChnkr: LDChunkerTest = myLDChnkr
 		override protected def getHtEntMkr: HtEntMkr = myHtEntMkr
 		override protected def getWebXml: WebXml = myXEntMkr
 
@@ -98,7 +98,7 @@ trait RouteWeaver extends  SprayJsonSupport with OurUrlPaths {
 	lazy val myFTRtMkr = new FeatTstRtMkr {
 		override protected def getHtEntMkr: HtEntMkr = myHtEntMkr
 
-		override protected def getTdatChnkr: LDChunkerTest = myTdatChnkr
+		override protected def getTdatChnkr: LDChunkerTest = myLDChnkr
 	}
 
 	private def makeHttpEvtSrcRt : dslServer.Route = {
@@ -121,8 +121,8 @@ trait RouteWeaver extends  SprayJsonSupport with OurUrlPaths {
 									<ol>
 			<li>Hey</li>
 			<li>Wow</li>
-			<li>${mkLinkTxt(pathA, pathA)}</li>
-			<li>${mkLinkTxt(pathB, pathB)}</li>
+			<li>${mkLinkTxt(pathEW, pathEW)}</li>
+			<li>${mkLinkTxt(pathPG, pathPG)}</li>
 			<li>${mkLinkTxt(pathJsonPreDump, pathJsonPreDump)}</li>
 			<li>${mkLinkTxt(pathJsonLdMime, pathJsonLdMime)}</li>
 			<li>${mkLinkTxt(pathMore, pathMore)}</li>

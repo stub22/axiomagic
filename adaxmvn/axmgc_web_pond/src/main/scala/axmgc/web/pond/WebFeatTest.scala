@@ -33,15 +33,16 @@ trait FeatTstRtMkr extends CORSHandler  with OurUrlPaths {
 		val tdatChnkr = getTdatChnkr
 		val pGrldr = new PondGriddler {}
 		val mainRt = parameterMap { paramMap: Map[String, String] =>
-			path(pathA) {
+			path(pathEW) {
 				get {
-					val pageTxt = "<h1> HTML string, wrapped in akka-http Entity</h1>"
+					val pageTxt = "<h1> HTML string, wrapped in akka-http Entity</h1><br/>" +
+							s"<h2>Defined in ${this}.makeFeatTstRoute</h2>"
 					val pageEnt = htEntMkr.makeHtmlEntity(pageTxt)
 					complete(pageEnt)
 				}
-			} ~ path(pathB) { // note tilde connects to next alternate route
+			} ~ path(pathPG) { // note tilde connects to next alternate route
 				get {
-					val dummyOld = "<h1>Say goooooodbye to akka-http</h1>"
+					// val dummyOld = "<h1>Say goooooodbye to akka-http</h1>"
 					val muchBesterTxt = pGrldr.getSomeXhtml5()
 					val muchBesterEnt = htEntMkr.makeHtmlEntity(muchBesterTxt)
 					complete(muchBesterEnt) // HttpEntity(ContentTypes.`text/html(UTF-8)`, muchBesterTxt ))

@@ -47,7 +47,7 @@ trait DumperTupleBridge extends DumperWebFeat {
 	protected lazy val myXEntMkr = new WebXml {}
 
 	protected lazy val myWtplMkr = new WebTupleMaker {
-		override protected def getTdatChnkr: LDChunkerTest = myTdatChnkr
+		override protected def getLDChnkr: LDChunkerTest = myTdatChnkr
 		override protected def getHtEntMkr: HtEntMkr = myHtEntMkr
 		override protected def getWebXml: WebXml = myXEntMkr
 

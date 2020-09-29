@@ -27,10 +27,11 @@ trait PondShower {
 		dummyJsonTxt
 	}
 	def getPondViewXhtml(pondID : String, frameTime : String) : Elem = {
-		val xmlViewOut = <div><span>[PondID = { pondID}, yep]</span></div>
+		val xmlViewOut = <div><span>[PondID = {pondID}, yep]</span></div>
 		xmlViewOut // .toString()
 	}
 
+	def getPondNick : String
 }
 trait RectUiFuncs {
 	// One pond gets one rect and VV
@@ -38,7 +39,7 @@ trait RectUiFuncs {
 	private def makePondDataDump(pShowers: Traversable[PondShower]) : List[Elem] = {
 		// List[String]
 		val shownXmlNodes: List[Elem] = pShowers.map(ps => {
-			val xmlElem: Elem = ps.getPondViewXhtml("pid", "now")
+			val xmlElem: Elem = ps.getPondViewXhtml(ps.getPondNick, "now")
 			xmlElem
 		}).toList
 		shownXmlNodes
@@ -57,7 +58,11 @@ trait PondGriddler {
 		// val gridMkr = new PondGrid {}
 		// val pshwrs = gridMkr.
 		val rui = new RectUiFuncs {}
-		val (pshwrA, pshwrB) = (new PondShower {},new PondShower {})
+		val (pshwrA, pshwrB) = (new PondShower {
+			override def getPondNick: String = "showerA"
+		}, new PondShower {
+			override def getPondNick: String = "showerB"
+		})
 		val pList : List[PondShower] = List(pshwrA, pshwrB)
 		val pondShowerDump = rui.makePondDataDump(rui.OF_JSON, pList)
 

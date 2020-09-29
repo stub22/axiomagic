@@ -44,7 +44,7 @@ trait IntrnlPonderRslt {
 }
 trait WebTupleMaker extends HtEntMkr {
 
-	protected def getTdatChnkr : LDChunkerTest
+	protected def getLDChnkr : LDChunkerTest
 	protected def getHtEntMkr : HtEntMkr
 	protected def getWebXml : WebXml
 
@@ -92,7 +92,7 @@ trait WebTupleMaker extends HtEntMkr {
 		pet.xhEnt_opt.get
 	}
 	def mkJsonTstEnt: HEStrict = {
-		val tdatChnkr = getTdatChnkr
+		val tdatChnkr = getLDChnkr
 		val jsonDat = tdatChnkr.getSomeJsonLD(true)
 		val htEntMkr = getHtEntMkr
 		val jsonEnt = htEntMkr.makeJsonEntity(jsonDat)
