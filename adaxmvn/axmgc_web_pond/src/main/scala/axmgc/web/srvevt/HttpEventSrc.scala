@@ -1,19 +1,16 @@
-package axmgc.web.pond
-
-import akka.http.scaladsl.{Http, server => dslServer}
-import dslServer.Directives.{complete, entity, get, path, _}
-
-
-import akka.NotUsed
-import akka.stream.scaladsl.Source
-
-import akka.http.scaladsl.Http
-import akka.http.scaladsl.unmarshalling.Unmarshal
-import akka.http.scaladsl.model.sse.ServerSentEvent
-import scala.concurrent.duration._
+package axmgc.web.srvevt
 
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter.ISO_LOCAL_TIME
+
+import akka.NotUsed
+import akka.http.scaladsl.model.sse.ServerSentEvent
+import akka.http.scaladsl.server.Directives.{complete, get, path}
+import akka.http.scaladsl.{server => dslServer}
+import akka.stream.scaladsl.Source
+import axmgc.web.pond.OurUrlPaths
+
+import scala.concurrent.duration._
 
 
 /*

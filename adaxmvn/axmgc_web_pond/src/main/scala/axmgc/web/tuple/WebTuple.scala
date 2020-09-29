@@ -1,11 +1,12 @@
-package axmgc.web.pond
+package axmgc.web.tuple
 
+import akka.http.scaladsl.server.Directives.{complete, parameterMap, path}
 import akka.http.scaladsl.{server => dslServer}
 import axmgc.web.ent.{HtEntMkr, WebXml}
-import dslServer.Directives.{complete, entity, get, parameterMap, path} // , _}
+import axmgc.web.pond.{OurUrlPaths, TdatChunker} // , _}
 // import dslServer.Directive0  // == Directive[Unit] used when Future returns Unit
 import akka.http.scaladsl.model.HttpEntity.{Strict => HEStrict}
-import org.slf4j.{Logger}
+import org.slf4j.Logger
 
 trait  WebTuple
 

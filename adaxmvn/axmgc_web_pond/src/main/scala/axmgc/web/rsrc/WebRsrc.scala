@@ -1,9 +1,9 @@
-package axmgc.web.pond
+package axmgc.web.rsrc
 
-import akka.http.scaladsl.{Http, server => dslServer}
-import dslServer.Directives.{complete, entity, get, path, _}
-import org.slf4j.Logger
-import dslServer.Directive0  // Que hace?
+import akka.http.scaladsl.server.Directives.{complete, get, path, _}
+import akka.http.scaladsl.{server => dslServer}
+
+import org.slf4j.Logger  // Que hace?
 
 trait WebRsrc // file-marker trait matching filename
 

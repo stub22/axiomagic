@@ -1,10 +1,10 @@
-package axmgc.web.pond
+package axmgc.web.ent
 
 /**
   * @author stub22
   */
 
-trait WebOut {}
+trait WebEntMkrs {}
 
 
 import akka.http.scaladsl.model._
@@ -50,6 +50,7 @@ trait HtEntMkr {
 }
 
 import akka.http.scaladsl.marshallers.xml.ScalaXmlSupport
+
 import scala.xml.NodeSeq
 
 trait XmlEntMkr extends HtEntMkr with ScalaXmlSupport {

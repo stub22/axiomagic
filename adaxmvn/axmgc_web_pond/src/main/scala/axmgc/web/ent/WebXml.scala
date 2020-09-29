@@ -1,7 +1,10 @@
-package axmgc.web.pond
- import akka.http.scaladsl.model.HttpEntity
+package axmgc.web.ent
 
-import scala.xml.{Attribute => XAttr, Elem => XElem, Node => XNode, NodeSeq => XNodeSeq, Null => XNull, UnprefixedAttribute => XUAttr}
+import akka.http.scaladsl.model.HttpEntity
+import axmgc.web.rsrc.{WebResBind, WebSvg}
+import axmgc.web.tuple.IntrnlPonderRslt
+
+import scala.xml.{Elem => XElem, Null => XNull, UnprefixedAttribute => XUAttr}
 
 class WebXml extends XmlEntMkr with WebResBind  {
 	val svgHlpr = new WebSvg {}

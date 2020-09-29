@@ -8,12 +8,10 @@ import scala.xml.Elem
   * @author stub22
   */
 
-class PondGrid {
-
-}
+private trait PondGrid
 
 trait PondShower {
-	private lazy val mySDS = new SomeDataStuff()
+	private lazy val mySDS = new RdfJsonLdAdapter()
 
 	private def loadDummyModel : JenaModel = {
 		val mdl = mySDS.loadThatModel(false)
@@ -36,7 +34,7 @@ trait PondShower {
 trait RectUiFuncs {
 	// One pond gets one rect and VV
 	val OF_JSON = "JSON"
-	def makePondDataDump(pShowers: Traversable[PondShower]) : List[Elem] = {
+	private def makePondDataDump(pShowers: Traversable[PondShower]) : List[Elem] = {
 		// List[String]
 		val shownXmlNodes: List[Elem] = pShowers.map(ps => {
 			val xmlElem: Elem = ps.getPondViewXhtml("pid", "now")

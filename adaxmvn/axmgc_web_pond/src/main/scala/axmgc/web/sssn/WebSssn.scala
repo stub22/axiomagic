@@ -1,6 +1,7 @@
-package axmgc.web.pond
+package axmgc.web.sssn
 
 import akka.actor.{Actor, ActorLogging, ActorRef, ActorSystem, Props}
+import axmgc.web.answr.{WA_Empty, WebAnswer}
 import org.slf4j.{Logger, LoggerFactory}
 
 import scala.collection.mutable

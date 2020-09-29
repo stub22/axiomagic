@@ -12,7 +12,9 @@ import org.slf4j.{Logger, LoggerFactory}
   * @author stub22
   */
 
-class SomeDataStuff {
+private trait LinkedDataStuff
+
+class RdfJsonLdAdapter {
 	protected lazy val myS4JLog : Logger = LoggerFactory.getLogger(this.getClass)
 
 	val thatModelPath = "gdat/glp_dat_01_owl.ttl"
@@ -53,7 +55,7 @@ trait TdatChunker {
 	protected lazy val myS4JLog : Logger = LoggerFactory.getLogger(this.getClass)
 
 	def getSomeJsonLD(useBui : Boolean) : String = {
-		val sds = new SomeDataStuff()
+		val sds = new RdfJsonLdAdapter()
 		val mdl = sds.loadThatModel(useBui)
 		val mdmp = mdl.toString
 		myS4JLog.debug("Loaded: {}", mdmp)

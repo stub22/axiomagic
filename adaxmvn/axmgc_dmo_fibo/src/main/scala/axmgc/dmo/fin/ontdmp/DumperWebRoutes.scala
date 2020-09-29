@@ -4,7 +4,9 @@ import akka.http.scaladsl.{Http, server => dslServer}
 import dslServer.Directives.{complete, entity, get, path, _}
 import dslServer.Directive0
 import akka.http.scaladsl.model.HttpEntity.{Strict => HEStrict}
+import axmgc.web.ent.{HtEntMkr, WebXml}
 import axmgc.web.pond._
+import axmgc.web.tuple.{IntrnlPonderRslt, WebRqPrms, WebTupleMaker}
 import org.slf4j.{Logger, LoggerFactory}
 
 trait DumperWebRoutes // Marker for file - only

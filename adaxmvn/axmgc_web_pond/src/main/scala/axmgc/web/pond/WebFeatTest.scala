@@ -9,6 +9,8 @@ import akka.http.scaladsl.model.{HttpEntity, HttpResponse, StatusCodes}
 import akka.http.scaladsl.model.HttpEntity.{Strict => HEStrict}
 import akka.stream.scaladsl.Source
 import akka.util.ByteString
+import axmgc.web.cors.CORSHandler
+import axmgc.web.ent.HtEntMkr
 import org.slf4j.{Logger, LoggerFactory}
 
 /*

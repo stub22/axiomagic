@@ -35,7 +35,7 @@ import PersonJsonSupport._
   */
 
 
-trait WebRoute
+trait WebRouteStuff
 
 trait OurUrlPaths extends WebResBind {
 	val pathA = "patha"

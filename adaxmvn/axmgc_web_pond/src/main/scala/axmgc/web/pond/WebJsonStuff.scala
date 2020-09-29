@@ -3,24 +3,18 @@ package axmgc.web.pond
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
 import spray.json.{DefaultJsonProtocol, DeserializationException, JsString, JsValue, JsonFormat}
 
-private trait WebJson
+private trait WebJsonStuff
 
-trait JsonEntMkr extends SprayJsonSupport {
+private trait JsonEntMkr extends SprayJsonSupport
 
-}
+private trait JsonRtMkr
 
-trait JsonRtMkr {
-
-}
-
-
-case class Color(name: String, red: Int, green: Int, blue: Int)
-case class Money(currency: String, amount: BigDecimal)
+private case class Color(name: String, red: Int, green: Int, blue: Int)
+private case class Money(currency: String, amount: BigDecimal)
 
 // val bal = Money("USD", 100)
 
-
-object MyJsonProtocol extends DefaultJsonProtocol {
+private object MyJsonProtocol extends DefaultJsonProtocol {
 	implicit val colorFormat = jsonFormat4(Color)
 
 	implicit object MoneyFormat extends JsonFormat[Money] {
@@ -40,9 +34,9 @@ object MyJsonProtocol extends DefaultJsonProtocol {
 // It utilizes SprayJsonSupport via the PersonJsonSupport object as the in-scope unmarshaller.
 
 
-case class Person(name: String, favoriteNumber: Int)
-object PersonJsonSupport extends DefaultJsonProtocol with SprayJsonSupport {
-	implicit val myJF_Person : JsonFormat[Person] = jsonFormat2(Person)
+private case class Person(name: String, favoriteNumber: Int)
+private object PersonJsonSupport extends DefaultJsonProtocol with SprayJsonSupport {
+	implicit private val myJF_Person : JsonFormat[Person] = jsonFormat2(Person)
 }
 /*
 The SprayJsonSupport trait provides a FromEntityUnmarshaller[T] and ToEntityMarshaller[T]
