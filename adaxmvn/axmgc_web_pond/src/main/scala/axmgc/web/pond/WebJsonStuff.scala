@@ -3,6 +3,8 @@ package axmgc.web.pond
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
 import spray.json.{DefaultJsonProtocol, DeserializationException, JsString, JsValue, JsonFormat}
 
+private trait WebJson
+
 trait JsonEntMkr extends SprayJsonSupport {
 
 }
