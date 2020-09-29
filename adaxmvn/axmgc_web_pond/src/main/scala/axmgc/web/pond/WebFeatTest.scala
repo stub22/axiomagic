@@ -11,6 +11,7 @@ import akka.stream.scaladsl.Source
 import akka.util.ByteString
 import axmgc.web.cors.CORSHandler
 import axmgc.web.ent.HtEntMkr
+import axmgc.web.lnkdt.LDChunkerTest
 import org.slf4j.{Logger, LoggerFactory}
 
 /*
@@ -25,11 +26,12 @@ trait WebFeatTest
 
 trait FeatTstRtMkr extends CORSHandler  with OurUrlPaths {
 	protected def getHtEntMkr : HtEntMkr
-	protected def getTdatChnkr: TdatChunker
+	protected def getTdatChnkr: LDChunkerTest
 	// Remember, the "whens" of route exec are cmplx!
 	def makeFeatTstRoute: dslServer.Route = {
 		val htEntMkr = getHtEntMkr
 		val tdatChnkr = getTdatChnkr
+		val pGrldr = new PondGriddler {}
 		val mainRt = parameterMap { paramMap: Map[String, String] =>
 			path(pathA) {
 				get {
@@ -40,7 +42,7 @@ trait FeatTstRtMkr extends CORSHandler  with OurUrlPaths {
 			} ~ path(pathB) { // note tilde connects to next alternate route
 				get {
 					val dummyOld = "<h1>Say goooooodbye to akka-http</h1>"
-					val muchBesterTxt = tdatChnkr.getSomeXhtml5()
+					val muchBesterTxt = pGrldr.getSomeXhtml5()
 					val muchBesterEnt = htEntMkr.makeHtmlEntity(muchBesterTxt)
 					complete(muchBesterEnt) // HttpEntity(ContentTypes.`text/html(UTF-8)`, muchBesterTxt ))
 				}

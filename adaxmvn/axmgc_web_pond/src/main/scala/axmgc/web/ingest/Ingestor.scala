@@ -5,7 +5,6 @@ import akka.http.scaladsl.server.Directives.{complete, path, _}
 import akka.http.scaladsl.{server => dslServer}
 import akka.util.Timeout
 import axmgc.web.ent.HtEntMkr
-import axmgc.web.pond.OurUrlPaths
 import axmgc.web.sssn.{WE_DomClick, WE_Empty, WebEvent}
 import org.slf4j.{Logger, LoggerFactory}
 
@@ -38,13 +37,15 @@ import akka.pattern.ask
 import scala.concurrent.duration._
 
 
-trait IngestRtMkr extends OurUrlPaths  {
+trait IngestRtMkr {
+	protected def getPathTxt : String
 	protected def getIngestor : WbEvtIngestor
 	def makeIngstRt (lgr : Logger) : dslServer.Route = {
 		val ingstr = getIngestor
 		val htEntMkr = ingstr.getHtEntMkr
+		val pathTxt = getPathTxt
 		val wevIngRt =
-			path(pathIngstTst) {
+			path(pathTxt) {
 				// val lgr = getLogger
 				val pretendSessID = -99L
 				val actRef = ingstr.weiFindHlpActRef(pretendSessID)

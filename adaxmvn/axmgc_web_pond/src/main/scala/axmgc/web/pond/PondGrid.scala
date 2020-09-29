@@ -1,5 +1,6 @@
 package axmgc.web.pond
 
+import axmgc.web.lnkdt.RdfJsonLdAdapter
 import org.apache.jena.rdf.model.{Model => JenaModel}
 
 import scala.xml.Elem
@@ -46,5 +47,20 @@ trait RectUiFuncs {
 		val elems = makePondDataDump(pShowers)
 		val result = "big ol XML dump : [" + elems.toString + "]"
 		result
+	}
+}
+
+trait PondGriddler {
+
+	def getSomeXhtml5() : String = {
+		val banner : String = "<h3>Much Bester Down Here</h3>"
+		// val gridMkr = new PondGrid {}
+		// val pshwrs = gridMkr.
+		val rui = new RectUiFuncs {}
+		val (pshwrA, pshwrB) = (new PondShower {},new PondShower {})
+		val pList : List[PondShower] = List(pshwrA, pshwrB)
+		val pondShowerDump = rui.makePondDataDump(rui.OF_JSON, pList)
+
+		pondShowerDump
 	}
 }

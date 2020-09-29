@@ -4,9 +4,9 @@ import akka.actor.ActorRef
 import akka.http.scaladsl.{Http, server => dslServer}
 import dslServer.Directives.{complete, entity, get, path, _}
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
-
 import axmgc.web.ent.{HtEntMkr, WebXml}
 import axmgc.web.ingest.{IngestRtMkr, WbEvtIngestor}
+import axmgc.web.lnkdt.LDChunkerTest
 import axmgc.web.rsrc.{WebResBind, WebRsrcRouteMkr}
 import axmgc.web.srvevt.HttpEventSrcRtMkr
 import axmgc.web.tuple.{IntrnlPonderRslt, WTRouteMaker, WebRqPrms, WebTupleMaker}
@@ -62,7 +62,7 @@ trait OurUrlPaths extends WebResBind {
 
 trait RouteWeaver extends  SprayJsonSupport with OurUrlPaths {
 
-	protected lazy val myTdatChnkr = new TdatChunker {}
+	protected lazy val myTdatChnkr = new LDChunkerTest {}
 	protected lazy val myHtEntMkr = new HtEntMkr {}
 	protected lazy val myXEntMkr = new WebXml {}
 	protected val mySlf4JLog = LoggerFactory.getLogger(this.getClass)
@@ -70,7 +70,7 @@ trait RouteWeaver extends  SprayJsonSupport with OurUrlPaths {
 	protected def rmFindHlpActRef(sessID: Long): ActorRef
 
 	protected lazy val myWtplMkr = new WebTupleMaker {
-		override protected def getTdatChnkr: TdatChunker = myTdatChnkr
+		override protected def getTdatChnkr: LDChunkerTest = myTdatChnkr
 		override protected def getHtEntMkr: HtEntMkr = myHtEntMkr
 		override protected def getWebXml: WebXml = myXEntMkr
 
@@ -78,6 +78,8 @@ trait RouteWeaver extends  SprayJsonSupport with OurUrlPaths {
 	}
 	protected lazy val myWtRtMkr = new WTRouteMaker {
 		override protected def getWbTplMkr: WebTupleMaker = myWtplMkr
+
+		override protected def getPathTxt: String = pgTplTst
 	}
 	lazy val myWbActrXltr = new WbEvtIngestor {
 		override def weiFindHlpActRef(sessID: Long): ActorRef = rmFindHlpActRef(sessID)
@@ -85,14 +87,18 @@ trait RouteWeaver extends  SprayJsonSupport with OurUrlPaths {
 	}
 	lazy val myIngstRtMkr = new IngestRtMkr {
 		override protected def getIngestor: WbEvtIngestor = myWbActrXltr
+
+		override protected def getPathTxt: String = pathIngstTst
 	}
 	lazy val myWbRsrcRtMkr = new WebRsrcRouteMkr {}
-	lazy val htEvtSrcRtMkr = new HttpEventSrcRtMkr {}
+	lazy val htEvtSrcRtMkr = new HttpEventSrcRtMkr {
+		override protected def getPathTxt: String = pathHttpEvtSrc
+	}
 
 	lazy val myFTRtMkr = new FeatTstRtMkr {
 		override protected def getHtEntMkr: HtEntMkr = myHtEntMkr
 
-		override protected def getTdatChnkr: TdatChunker = myTdatChnkr
+		override protected def getTdatChnkr: LDChunkerTest = myTdatChnkr
 	}
 
 	private def makeHttpEvtSrcRt : dslServer.Route = {

@@ -1,4 +1,4 @@
-package axmgc.web.pond
+package axmgc.web.lnkdt
 
 import java.io.ByteArrayOutputStream
 
@@ -51,29 +51,3 @@ class RdfJsonLdAdapter {
 
 }
 
-trait TdatChunker {
-	protected lazy val myS4JLog : Logger = LoggerFactory.getLogger(this.getClass)
-
-	def getSomeJsonLD(useBui : Boolean) : String = {
-		val sds = new RdfJsonLdAdapter()
-		val mdl = sds.loadThatModel(useBui)
-		val mdmp = mdl.toString
-		myS4JLog.debug("Loaded: {}", mdmp)
-		val jldTxt = sds.writeModelToJsonLDString_Pretty(mdl)
-		myS4JLog.debug("Formatted: {}", jldTxt)
-		jldTxt
-	}
-
-	def getSomeXhtml5() : String = {
-		val banner : String = "<h3>Much Bester Down Here</h3>"
-		val gridMkr = new PondGrid {}
-		// val pshwrs = gridMkr.
-		val rui = new RectUiFuncs {}
-		val (pshwrA, pshwrB) = (new PondShower {},new PondShower {})
-		val pList : List[PondShower] = List(pshwrA, pshwrB)
-		val pondShowerDump = rui.makePondDataDump(rui.OF_JSON, pList)
-
-		pondShowerDump
-	}
-
-}

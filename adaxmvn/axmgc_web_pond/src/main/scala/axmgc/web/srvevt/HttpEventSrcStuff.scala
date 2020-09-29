@@ -8,7 +8,6 @@ import akka.http.scaladsl.model.sse.ServerSentEvent
 import akka.http.scaladsl.server.Directives.{complete, get, path}
 import akka.http.scaladsl.{server => dslServer}
 import akka.stream.scaladsl.Source
-import axmgc.web.pond.OurUrlPaths
 
 import scala.concurrent.duration._
 
@@ -18,18 +17,20 @@ Started from example code in Akka-Http docs:
 https://doc.akka.io/docs/akka-http/current/sse-support.html
  */
 
-trait HttpEventSrc
+private trait HttpEventSrcStuff
 
-trait HttpEventSrcRtMkr extends OurUrlPaths  {
+trait HttpEventSrcRtMkr {
+	protected def getPathTxt : String
 
 // Warning:  As of 2018, EventSource is not supported by Microsoft browsers.
 // https://stackoverflow.com/questions/24498141/is-there-a-microsoft-equivalent-for-html5-server-sent-events/
 // https://stackoverflow.com/questions/29648747/does-the-edge-browser-support-html5-server-side-events
 
 	def mkEvtSrcRt: dslServer.Route = {
+		val pathTxt = getPathTxt
 import akka.http.scaladsl.marshalling.sse.EventStreamMarshalling._
 
-		path(pathHttpEvtSrc) {
+		path(pathTxt) {
 			get {
 				complete {
 					Source

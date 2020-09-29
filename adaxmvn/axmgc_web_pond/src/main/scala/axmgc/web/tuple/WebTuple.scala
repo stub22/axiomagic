@@ -3,7 +3,7 @@ package axmgc.web.tuple
 import akka.http.scaladsl.server.Directives.{complete, parameterMap, path}
 import akka.http.scaladsl.{server => dslServer}
 import axmgc.web.ent.{HtEntMkr, WebXml}
-import axmgc.web.pond.{OurUrlPaths, TdatChunker} // , _}
+import axmgc.web.lnkdt.LDChunkerTest
 // import dslServer.Directive0  // == Directive[Unit] used when Future returns Unit
 import akka.http.scaladsl.model.HttpEntity.{Strict => HEStrict}
 import org.slf4j.Logger
@@ -44,7 +44,7 @@ trait IntrnlPonderRslt {
 }
 trait WebTupleMaker extends HtEntMkr {
 
-	protected def getTdatChnkr : TdatChunker
+	protected def getTdatChnkr : LDChunkerTest
 	protected def getHtEntMkr : HtEntMkr
 	protected def getWebXml : WebXml
 
@@ -100,12 +100,14 @@ trait WebTupleMaker extends HtEntMkr {
 	}
 
 }
-trait WTRouteMaker extends OurUrlPaths {
+trait WTRouteMaker { // extends OurUrlPaths {
+	protected def getPathTxt : String
 	protected def getWbTplMkr : WebTupleMaker
 	def makeWbTplRt (lgr : Logger) : dslServer.Route = {
+		val pathTxt = getPathTxt
 		val wbTplMkr = getWbTplMkr
 
-		val tplRt = parameterMap { rqParams : Map[String, String] => path(pgTplTst) {
+		val tplRt = parameterMap { rqParams : Map[String, String] => path(pathTxt) {
 			val pttXml = wbTplMkr.pgTplXml("pg_tpl_tst_id", rqParams)
 			complete(pttXml)
 		}} // ~

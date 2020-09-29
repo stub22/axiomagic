@@ -5,6 +5,7 @@ import dslServer.Directives.{complete, entity, get, path, _}
 import dslServer.Directive0
 import akka.http.scaladsl.model.HttpEntity.{Strict => HEStrict}
 import axmgc.web.ent.{HtEntMkr, WebXml}
+import axmgc.web.lnkdt.LDChunkerTest
 import axmgc.web.pond._
 import axmgc.web.tuple.{IntrnlPonderRslt, WebRqPrms, WebTupleMaker}
 import org.slf4j.{Logger, LoggerFactory}
@@ -41,12 +42,12 @@ trait DmpWbRtMkr {
 
 trait DumperTupleBridge extends DumperWebFeat {
 	protected lazy val myS4JLog = LoggerFactory.getLogger(this.getClass)
-	protected lazy val myTdatChnkr = new TdatChunker {}
+	protected lazy val myTdatChnkr = new LDChunkerTest {}
 	protected lazy val myHtEntMkr = new HtEntMkr {}
 	protected lazy val myXEntMkr = new WebXml {}
 
 	protected lazy val myWtplMkr = new WebTupleMaker {
-		override protected def getTdatChnkr: TdatChunker = myTdatChnkr
+		override protected def getTdatChnkr: LDChunkerTest = myTdatChnkr
 		override protected def getHtEntMkr: HtEntMkr = myHtEntMkr
 		override protected def getWebXml: WebXml = myXEntMkr
 
