@@ -98,7 +98,7 @@ trait RouteWeaver extends  SprayJsonSupport with OurUrlPaths {
 	lazy val myFTRtMkr = new FeatTstRtMkr {
 		override protected def getHtEntMkr: HtEntMkr = myHtEntMkr
 
-		override protected def getTdatChnkr: LDChunkerTest = myLDChnkr
+		override protected def getLDChunker: LDChunkerTest = myLDChnkr
 	}
 
 	private def makeHttpEvtSrcRt : dslServer.Route = {

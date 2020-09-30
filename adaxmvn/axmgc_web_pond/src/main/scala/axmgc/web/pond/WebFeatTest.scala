@@ -1,5 +1,6 @@
 package axmgc.web.pond
 
+import akka.NotUsed
 import akka.actor.ActorRef
 import akka.http.scaladsl.{Http, server => dslServer}
 import dslServer.Directives.{complete, entity, get, path, _}
@@ -26,11 +27,11 @@ trait WebFeatTest
 
 trait FeatTstRtMkr extends CORSHandler  with OurUrlPaths {
 	protected def getHtEntMkr : HtEntMkr
-	protected def getTdatChnkr: LDChunkerTest
+	protected def getLDChunker: LDChunkerTest
 	// Remember, the "whens" of route exec are cmplx!
 	def makeFeatTstRoute: dslServer.Route = {
 		val htEntMkr = getHtEntMkr
-		val tdatChnkr = getTdatChnkr
+		val ldChnkr = getLDChunker
 		val pGrldr = new PondGriddler {}
 		val mainRt = parameterMap { paramMap: Map[String, String] =>
 			path(pathEW) {
@@ -43,19 +44,21 @@ trait FeatTstRtMkr extends CORSHandler  with OurUrlPaths {
 			} ~ path(pathPG) { // note tilde connects to next alternate route
 				get {
 					// val dummyOld = "<h1>Say goooooodbye to akka-http</h1>"
-					val muchBesterTxt = pGrldr.getSomeXhtml5()
+					val pgMsg = pGrldr.toString
+					val bonusMsg = "FeatTstRtMkr.makeFeatTstRoute calling: " + pgMsg
+					val muchBesterTxt = pGrldr.getSomeXhtml5(bonusMsg)
 					val muchBesterEnt = htEntMkr.makeHtmlEntity(muchBesterTxt)
 					complete(muchBesterEnt) // HttpEntity(ContentTypes.`text/html(UTF-8)`, muchBesterTxt ))
 				}
 			} ~ path(pathJsonPreDump) {
-				val jsLdTxt = tdatChnkr.getSomeJsonLD(true)
-				val htTxt = "<pre>" + jsLdTxt + "</pre>"
-				val htEnt = htEntMkr.makeHtmlEntity(htTxt)
+				val hdrTxt = s"<h2>${ldChnkr.toString}.getSomeJsonLD yields:</h2><br/>"
+				val jsLdTxt = ldChnkr.getSomeJsonLD(true)
+				val ldDumpTxt = "<pre>" + jsLdTxt + "</pre>"
+				val htEnt = htEntMkr.makeHtmlEntity(hdrTxt + ldDumpTxt)
 				complete(htEnt)
 
-
 			} ~ path(pathJsonLdMime) {
-				val jsonDat = tdatChnkr.getSomeJsonLD(true)
+				val jsonDat = ldChnkr.getSomeJsonLD(true)
 				val jsonEnt = htEntMkr.makeJsonEntity(jsonDat)
 				corsHandler(complete(jsonEnt))
 			} ~ path(pathJsonPerson) {
@@ -68,7 +71,7 @@ trait FeatTstRtMkr extends CORSHandler  with OurUrlPaths {
 							}}
 				*/
 			} ~ path(pathUseSource) {
-				val streamingData = Source.repeat("hello \n").take(10).map(ByteString(_))
+				val streamingData: Source[ByteString, NotUsed] = Source.repeat("hello \n").take(10).map(ByteString(_))
 				// render the response in streaming fashion:
 				val chnkdEnt = htEntMkr.makeChunked(streamingData)
 				val resp = HttpResponse(entity = chnkdEnt)

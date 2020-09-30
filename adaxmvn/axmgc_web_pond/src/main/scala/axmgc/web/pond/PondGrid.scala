@@ -53,17 +53,19 @@ trait RectUiFuncs {
 
 trait PondGriddler {
 
-	def getSomeXhtml5() : String = {
+	def getSomeXhtml5(bonusMsg : String) : String = {
 		val banner : String = "<h3>Much Bester Down Here</h3>"
 		// val gridMkr = new PondGrid {}
 		// val pshwrs = gridMkr.
 		val rui = new RectUiFuncs {}
-		val (pshwrA, pshwrB) = (new PondShower {
+		val (pshwrA, pshwrB, pshwrC) = (new PondShower {
 			override def getPondNick: String = "showerA"
 		}, new PondShower {
 			override def getPondNick: String = "showerB"
+		}, new PondShower {
+			override def getPondNick: String = bonusMsg
 		})
-		val pList : List[PondShower] = List(pshwrA, pshwrB)
+		val pList : List[PondShower] = List(pshwrA, pshwrB, pshwrC)
 		val pondShowerDump = rui.makePondDataDump(rui.OF_JSON, pList)
 
 		pondShowerDump
