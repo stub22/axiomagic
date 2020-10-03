@@ -1,4 +1,4 @@
-package axmgc.web.pond
+package axmgc.web.json
 
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
 import spray.json.{DefaultJsonProtocol, DeserializationException, JsString, JsValue, JsonFormat}

@@ -66,7 +66,7 @@ trait WebTupleMaker extends HtEntMkr {
 	case class PgEvalCtx(ptxt_id : String, strtLocMsec : Long, wrqPrms :WebRqPrms, opt_prvSssnTpl : Option[PgEntTpl])
 
 	// ptxt_id  contains    client sender block's Html-Dom ID, e.g. div@id.onclick
-	def makeEntsForPgAcc(ptxt_id : String, wrqPrms : WebRqPrms) : PgEntTpl = {
+	private def makeEntsForPgAcc(ptxt_id : String, wrqPrms : WebRqPrms) : PgEntTpl = {
 		val localMsec: Long = System.currentTimeMillis()
 		val pgEvalCtx = PgEvalCtx(ptxt_id, localMsec, wrqPrms, None)
 		evalFullPageNow(pgEvalCtx, false)
@@ -93,9 +93,9 @@ trait WebTupleMaker extends HtEntMkr {
 	}
 	def mkJsonTstEnt: HEStrict = {
 		val tdatChnkr = getLDChnkr
-		val jsonDat = tdatChnkr.getSomeJsonLD(true)
+		val jsonDat: String = tdatChnkr.getSomeJsonLD(true)
 		val htEntMkr = getHtEntMkr
-		val jsonEnt = htEntMkr.makeJsonEntity(jsonDat)
+		val jsonEnt: HEStrict = htEntMkr.makeJsonEntity(jsonDat)
 		jsonEnt
 	}
 

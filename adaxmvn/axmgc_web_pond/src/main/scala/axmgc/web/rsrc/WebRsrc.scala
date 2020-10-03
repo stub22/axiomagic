@@ -112,7 +112,7 @@ marginChar from the line.  WHERE marginChar defaults to `|`
 		val nmLines : Seq[String] = myRsrcNms.readIcnNms
 		nmLines
 	}
-	lazy val myIconNms_sorted : Seq[String] = loadIconNms()
+	private lazy val myIconNms_sorted : Seq[String] = loadIconNms()
 	def getShuffledIcoNms : Seq[String] = scala.util.Random.shuffle(myIconNms_sorted)
 
 }

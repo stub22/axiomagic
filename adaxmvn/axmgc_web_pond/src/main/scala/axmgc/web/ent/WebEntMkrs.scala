@@ -20,9 +20,9 @@ trait HtEntMkr {
 	val xmlCntType = ContentTypes.`text/xml(UTF-8)`
 	// val cssCntType = ContentTypes.`te
 // https://stackoverflow.com/questions/38061599/how-to-serve-a-text-css-file-from-akka-backend
-	val cssMType = MediaTypes.`text/css`
-	val u8Chrset = HttpCharsets.`UTF-8`
-	val cssU8CType = ContentType(cssMType, u8Chrset)
+	private val cssMType = MediaTypes.`text/css`
+	private val u8Chrset = HttpCharsets.`UTF-8`
+	private val cssU8CType = ContentType(cssMType, u8Chrset)
 	// text/css
 
 	def makeHtmlEntity(htmlTxt: String): HttpEntity.Strict = {
@@ -38,7 +38,7 @@ trait HtEntMkr {
 		chnkStrmEnt
 	}
 
-	val dummyCssTxt =
+	private val dummyCssTxt =
 		"""
 	body {
 		background-color: green;
