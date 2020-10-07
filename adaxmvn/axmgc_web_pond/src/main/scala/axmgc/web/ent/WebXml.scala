@@ -54,12 +54,16 @@ class WebXml extends XmlEntMkr with WebResBind  {
 			<div>
 				{svgHlpr.mkDDSTstBlk}
 			</div>
-			<script>
-			// comment hiding begin-cdat {tmpJS.myEvntTstScr_cdata}
-			</script>
+			<script src="/wdat/axmgc_js/wrp_datgui/tplIcoEvtHndlr.js"></script>
 		</body>
 		bdyElem
 	}
+
+	/*		This works for embedding a script as text within a CData
+			<script>
+			// comment hiding begin-cdat {tmpJS.myEvntTstScr_cdata}
+			</script>
+	  */
 	def mkRealBdy(ipr : IntrnlPonderRslt) : XElem = {
 		val iprPairs = ipr.getOrderedRsltPairs
 		val iprEls = iprPairs.map(mkPairElem(_))
@@ -75,6 +79,10 @@ class WebXml extends XmlEntMkr with WebResBind  {
 			<span>key='{pair._1}'</span><span> , </span><span>val='{pair._2}'</span>
 		</div>
 	}
+	def mkScriptElem(scriptPath : String) : XElem = {
+		<script src={scriptPath}></script>
+	}
+	def mkScriptSeq(scrPths : Seq[String]) :
 
 	private def maybeAppendAttr(elem : XElem, attrName : String, attrVal_opt : Option[String]) : XElem = {
 		// Can we use "MetaData" .next stuff to control attribute ordering?
@@ -109,7 +117,7 @@ class WebXml extends XmlEntMkr with WebResBind  {
 
 trait TmpJscrptHolder {
 	lazy val myEvntTstScr_cdata = new scala.xml.PCData(myEvntTstScr_raw)
-	val myEvntTstScr_raw =
+	private val myEvntTstScr_raw =
 		"""//another comment after bgn-cdat then LINE-BREAK:
 		  |function routeEvt(evt) {
 		  |    // alert('Ancestor got click, evtTgt=' + event.target)

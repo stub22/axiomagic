@@ -1,8 +1,8 @@
 package axmgc.web.rsrc
 
 import akka.http.scaladsl.server.Directives.{complete, get, path, _}
+import akka.http.scaladsl.server.PathMatchers
 import akka.http.scaladsl.{server => dslServer}
-
 import org.slf4j.Logger  // Que hace?
 
 trait WebRsrc // file-marker trait matching filename
@@ -12,9 +12,11 @@ trait WebResBind {
 	val ptok_wdat = "wdat"
 	val ptok_styl = "stylz"
 	val ptok_ivct = "img_vctr"
+	val ptok_scrjs = "axmgc_js"
 	val fldrPth_wdat = ptok_wdat
 	val fldrPth_styl = fldrPth_wdat + FLD_SEP + ptok_styl
 	val fldrPth_ivct = fldrPth_wdat + FLD_SEP + ptok_ivct
+	val fldrPth_scrjs = fldrPth_wdat + FLD_SEP + ptok_scrjs
 
 	val urlPth_styIcn = FLD_SEP + fldrPth_styl +  FLD_SEP + "icmbg_sty.css"
 	val urlPth_styDem = FLD_SEP + fldrPth_styl +  FLD_SEP + "icmbg_dem.css"
@@ -24,8 +26,9 @@ trait WebResBind {
 
 trait WebRsrcRouteMkr extends WebResBind {
 	def makeWbRscRt (lgr : Logger) : dslServer.Route = {
-		lgr.info("fldrPath_styl = " + fldrPth_styl)
-		lgr.info(s"fpi = $fldrPth_ivct ")
+		lgr.info(s"fldrPth_styl = $fldrPth_styl")
+		lgr.info(s"fldrPth_ivct = $fldrPth_ivct")
+		lgr.info(s"fldrPth_scrjs = $fldrPth_scrjs")
 		/*
 		The path matching DSL describes what paths to accept after URL decoding.
 		This is why the path-separating slashes have special status and cannot
@@ -49,20 +52,30 @@ pathEndOrSingleSlash: is equivalent to rawPathPrefix(PathEnd) or rawPathPrefix(S
 					path (ptok_styl / Segment) { fnm =>
 						lgr.info("matched GET style-file: {}", fnm)
 						val resNm = fldrPth_styl + FLD_SEP + fnm
-						lgr.info("returning resource at: {}", resNm)
+						lgr.info("returning style resource at: {}", resNm)
 						// What about mime-type header?
 						getFromResource(resNm)
 					} ~ path (ptok_ivct / Segment) { fnm =>
 						lgr.info("matched GET img_vctr-file: {}", fnm)
 						val resNm = fldrPth_ivct + FLD_SEP + fnm
-						lgr.info("returning resource at: {}", resNm)
+						lgr.info("returning vct-image resource at: {}", resNm)
 						// What about mime-type header?
 						getFromResource(resNm)
+					} ~ pathPrefix (ptok_scrjs / ) {
+						lgr.info ("Found GET js-script prefix: {}", ptok_scrjs)
+						extractUnmatchedPath { jsPth =>
+							lgr.info("Extract js-script path: {}", jsPth)
+							val resNm = fldrPth_scrjs + FLD_SEP + jsPth
+							lgr.info("returning javascript resource at: {}", resNm)
+							// What about mime-type header?
+							getFromResource(resNm)
+						}
 					} ~	pass {
 						lgr.info("Extracting unexpected path following wdat")
 						extractUnmatchedPath { remPath =>
-							lgr.info("remaining path: {}", remPath)
-							complete(s"Did not understand request for webdata at: $remPath with params: $paramMap")
+
+						lgr.info("remaining path: {}", remPath)
+						complete(s"Did not understand request for webdata at: $remPath with params: $paramMap")
 
 						}
 					}
