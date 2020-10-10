@@ -1,0 +1,85 @@
+/* ==========================================
+copied from sbox/suppDmd_v0e.html
+========================================== */
+
+table caption {   font-size: 1.5em;  }
+
+body {
+	background-color: lightgray;
+}
+.flx-horiz {
+	display: flex;
+	flex-direction: row;
+}
+#vvd3 {
+	background-color: #D0E0D0;
+}
+#prpr {
+	background-color: #D0E0D0;
+
+}
+#param_scrn {
+/*            transform: scale(1.25); */
+	background-color: palevioletred;
+	border: "solid 3px black";
+	/* width: 300; */
+}
+#pl3dx3 {
+	background-color: bisque;
+	/* height 40%; */
+	/* Seems to want pre-allocated height, or else we get:
+axdp_v02E.js:207769 Uncaught Error: Something went wrong with axis scaling
+at Object.ax.setScale (axdp_v02E.js:207769)
+at component (axdp_v02E.js:166667)
+at connectColorbar (axdp_v02E.js:166313)
+at marginPushers (axdp_v02E.js:191581)
+at Object.lib.syncOrAsync (axdp_v02E.js:186283)
+at Object.exports.plot (axdp_v02E.js:191663)
+at Object.exports.newPlot (axdp_v02E.js:191933)
+at pltl3x3 (pzDatSurf_C.js:42)
+at suppDmd_v0E.html:203
+	*/
+
+	width: 30vw;  height: 24vh;
+	border: "solid 3px black";
+}
+#div_tues_flow {
+/*        width: 30vw;  height: 24vh; */
+	background-color: purple;
+}
+#div_peep_nlg {
+	background-color: purple;
+}
+#suppDmd_mdl_desc {
+	background-color: #D0E0D0;
+	display: flex;
+	flex-direction: column;
+}
+.inset_div {
+	/*  width: 80%; */
+	 /* height: 80%; */
+}
+.inset_img {
+	/* max-width: 80%; */
+
+}
+.dg {
+	background-color: orange;
+}
+.dg.main {
+	background-color: green;
+}
+table, th, td {
+	border: 1px solid black;
+}
+
+#mp_tab {
+	margin-right: 40;
+}
+/*        width: 800px;
+                    height: 600px;
+
+        .js-plotly-plot, .plot-container {
+            height: 44vh
+        }
+*/
