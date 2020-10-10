@@ -2,7 +2,7 @@ package axmgc.web.tuple
 
 import akka.http.scaladsl.server.Directives.{complete, parameterMap, path}
 import akka.http.scaladsl.{server => dslServer}
-import axmgc.web.ent.{HtEntMkr, WebXml}
+import axmgc.web.ent.{HtEntMkr, WebXmlGen}
 import axmgc.web.lnkdt.LDChunkerTest
 // import dslServer.Directive0  // == Directive[Unit] used when Future returns Unit
 import akka.http.scaladsl.model.HttpEntity.{Strict => HEStrict}
@@ -46,7 +46,7 @@ trait WebTupleMaker extends HtEntMkr {
 
 	protected def getLDChnkr : LDChunkerTest
 	protected def getHtEntMkr : HtEntMkr
-	protected def getWebXml : WebXml
+	protected def getWebXml : WebXmlGen
 
 	protected def doPageWork(rqPrms : WebRqPrms) : Option[IntrnlPonderRslt]
 
@@ -54,7 +54,7 @@ trait WebTupleMaker extends HtEntMkr {
 
 	// Output from page-tuple calc.
 	// These 3 optional ents each represent a separate, nestable, client-fetchable key-value map.
-	// (XML, CSS, JSON) each match that conceptual description.
+	// (XML, CSS, JSON) are specific categories of ent.
 	// The multiformat aggregation into this tuple indicates the parts are meant to be consistent
 	// for a client that fetches them in either unified or separate HTTP request operations.
 	// The opt_inCtx allows us to memoize the prior-state and input-req history, if desired.
@@ -88,7 +88,7 @@ trait WebTupleMaker extends HtEntMkr {
 		val wrqParams = new WebRqPrms {
 			override protected def fetchParamMap: Map[String, String] = rqParamMap
 		}
-		val pet = makeEntsForPgAcc(ptxt_id, wrqParams)
+		val pet: PgEntTpl = makeEntsForPgAcc(ptxt_id, wrqParams)
 		pet.xhEnt_opt.get
 	}
 	def mkJsonTstEnt: HEStrict = {

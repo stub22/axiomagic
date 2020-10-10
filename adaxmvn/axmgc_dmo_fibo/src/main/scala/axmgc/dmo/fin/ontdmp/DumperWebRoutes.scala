@@ -4,7 +4,7 @@ import akka.http.scaladsl.{Http, server => dslServer}
 import dslServer.Directives.{complete, entity, get, path, _}
 import dslServer.Directive0
 import akka.http.scaladsl.model.HttpEntity.{Strict => HEStrict}
-import axmgc.web.ent.{HtEntMkr, WebXml}
+import axmgc.web.ent.{HtEntMkr, WebXmlGen}
 import axmgc.web.lnkdt.LDChunkerTest
 import axmgc.web.pond._
 import axmgc.web.tuple.{IntrnlPonderRslt, WebRqPrms, WebTupleMaker}
@@ -44,12 +44,12 @@ trait DumperTupleBridge extends DumperWebFeat {
 	protected lazy val myS4JLog = LoggerFactory.getLogger(this.getClass)
 	protected lazy val myTdatChnkr = new LDChunkerTest {}
 	protected lazy val myHtEntMkr = new HtEntMkr {}
-	protected lazy val myXEntMkr = new WebXml {}
+	protected lazy val myXEntMkr = new WebXmlGen {}
 
 	protected lazy val myWtplMkr = new WebTupleMaker {
 		override protected def getLDChnkr: LDChunkerTest = myTdatChnkr
 		override protected def getHtEntMkr: HtEntMkr = myHtEntMkr
-		override protected def getWebXml: WebXml = myXEntMkr
+		override protected def getWebXml: WebXmlGen = myXEntMkr
 
 		override protected def doPageWork(rqPrms: WebRqPrms): Option[IntrnlPonderRslt] = doRealPageWork(rqPrms)
 	}

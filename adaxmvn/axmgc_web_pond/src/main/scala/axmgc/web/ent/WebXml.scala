@@ -4,17 +4,78 @@ import akka.http.scaladsl.model.HttpEntity
 import axmgc.web.rsrc.{WebResBind, WebSvg}
 import axmgc.web.tuple.IntrnlPonderRslt
 
-import scala.xml.{Elem => XElem, Null => XNull, UnprefixedAttribute => XUAttr}
+import scala.xml.{Elem => XElem, Null => XNull, UnprefixedAttribute => XUAttr, Node => XNode, Text => XText, NodeSeq => XNodeSeq}
 
-class WebXml extends XmlEntMkr with WebResBind  {
+private trait WebXml
+
+trait XmlAttribFuncs {
+
+}
+trait WebLinkXmlFuncs {
+	private def maybeAppendAttr(elem : XElem, attrName : String, attrVal_opt : Option[String]) : XElem = {
+		// Can we use "MetaData" .next stuff to control attribute ordering?
+		// https://www.scala-lang.org/api/2.12.4/scala-xml/scala/xml/MetaData.html
+		if (attrVal_opt.isDefined) {
+			// Watch out for scala.xml.Null
+			val attr = new XUAttr(attrName, attrVal_opt.get, XNull)
+			elem % attr
+		} else elem
+	}
+	// Attributes seem to come out in opposite order from how they are added here.
+	// Remember css-class values are separated by spaces
+	def mkLnkA(hrefURL : String, labelTxt : String, id_opt : Option[String],
+			   clz_opt : Option[String]) : XElem = {
+		val baseEl = <a href={hrefURL}>{labelTxt}</a>
+		val elWthId = maybeAppendAttr(baseEl, "id", id_opt)
+		val elWthClz = maybeAppendAttr(elWthId, "class", clz_opt)
+		elWthClz
+	}
+}
+trait WebStringFuncs {
+	def nTabs(n : Int) : String = {
+		"\t" * n
+	}
+}
+trait WebHeadFuncs {
+	val webStringHlpr = new WebStringFuncs {}
+	def mkScriptElem(scriptPath : String) : XElem = {
+		<script src={scriptPath}></script>
+	}
+	def mkScriptXNS(scrPths : Seq[String]) : XNodeSeq = {
+		val includeFormatNodes = true
+		val includeTabs = true
+		val numTabs = 3
+		val crNode = if (includeTabs) new XText("\n" + webStringHlpr.nTabs(numTabs)) else new XText("\n")
+		val scrNodes: Seq[XNode] = scrPths.flatMap(sp => {
+			val scr = <script src={sp}></script>
+			if (includeFormatNodes) List(scr,crNode) else List(scr)
+		})
+		val ndsq = XNodeSeq.fromSeq(scrNodes)
+		ndsq
+	}
+
+}
+
+class WebXmlGen extends XmlEntMkr with WebResBind  {
 	val svgHlpr = new WebSvg {}
+	val lnkHlpr = new WebLinkXmlFuncs {}
+	val headHlpr = new WebHeadFuncs {}
 	def mergeXhtml (xeHead : XElem, xeBody : XElem) : XElem = {
 		<html>
 			{xeHead}
 			{xeBody}
 		</html>
 	}
+
+	def mkTstScrXNS : XNodeSeq = {
+		val scrPaths = new WebScriptPaths {}
+		val pathSeq = scrPaths.getManyScrPaths
+		val scrXNS = headHlpr.mkScriptXNS(pathSeq)
+		scrXNS
+	}
+
 	def mkTstHd : XElem = {
+		val scrXNS = mkTstScrXNS
 		<head>
 			<title>WebXml Generated header contains this title</title>
 
@@ -24,6 +85,8 @@ class WebXml extends XmlEntMkr with WebResBind  {
 			<link rel="stylesheet" href={urlPth_styIcn}></link>
 			<link rel="stylesheet" href={urlPth_styDem}></link>
 			<link rel="stylesheet" href={urlPth_styGrd}></link>
+
+			{scrXNS}
 		</head>
 	}
 	def mkDmmyBdy : XElem = {
@@ -33,9 +96,9 @@ class WebXml extends XmlEntMkr with WebResBind  {
 				<span>WebXml made this here body, and made it real good.</span>
 			</div>
 			<div>
-				{mkLnkA ("/patha", "link to /patha", None, Some("aaclz othr"))}
+				{lnkHlpr.mkLnkA ("/patha", "link to /patha", None, Some("aaclz othr"))}
 				<span>SPC</span>
-				{mkLnkA ("/pathb", "link to /pathb", Some("lpb_idv"), Some("bbclz"))}
+				{lnkHlpr.mkLnkA ("/pathb", "link to /pathb", Some("lpb_idv"), Some("bbclz"))}
 			</div>
 			<div>
 				{svgHlpr.mkDblDivWithSvgIcon("access_alarms")}
@@ -79,29 +142,7 @@ class WebXml extends XmlEntMkr with WebResBind  {
 			<span>key='{pair._1}'</span><span> , </span><span>val='{pair._2}'</span>
 		</div>
 	}
-	def mkScriptElem(scriptPath : String) : XElem = {
-		<script src={scriptPath}></script>
-	}
-	def mkScriptSeq(scrPths : Seq[String]) :
 
-	private def maybeAppendAttr(elem : XElem, attrName : String, attrVal_opt : Option[String]) : XElem = {
-		// Can we use "MetaData" .next stuff to control attribute ordering?
-		// https://www.scala-lang.org/api/2.12.4/scala-xml/scala/xml/MetaData.html
-		if (attrVal_opt.isDefined) {
-			// Watch out for scala.xml.Null
-			val attr = new XUAttr(attrName, attrVal_opt.get, XNull)
-			elem % attr
-		} else elem
-	}
-	// Attributes seem to come out in opposite order from how they are added here.
-	// Remember css-class values are separated by spaces
-	def mkLnkA(hrefURL : String, labelTxt : String, id_opt : Option[String],
-			   clz_opt : Option[String]) : XElem = {
-		val baseEl = <a href={hrefURL}>{labelTxt}</a>
-		val elWthId = maybeAppendAttr(baseEl, "id", id_opt)
-		val elWthClz = maybeAppendAttr(elWthId, "class", clz_opt)
-		elWthClz
-	}
 
 	def getXHPageEnt(opt_Rslt : Option[IntrnlPonderRslt]) : HttpEntity.Strict = {
 		val headXE = mkTstHd

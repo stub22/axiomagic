@@ -10,9 +10,12 @@ trait WebEntMkrs {}
 import akka.http.scaladsl.model._
 import akka.stream.scaladsl.Source
 import akka.util.ByteString
+import org.slf4j.LoggerFactory
 
 // constructive, not prescriptive
 trait HtEntMkr {
+	protected val mySlf4JLog = LoggerFactory.getLogger(this.getClass)
+
 	// Note scala backticks, used to identify variables containing special chars
 	val htmlCntType = ContentTypes.`text/html(UTF-8)`
 	val jsonCntType = ContentTypes.`application/json`
@@ -57,8 +60,25 @@ trait XmlEntMkr extends HtEntMkr with ScalaXmlSupport {
 	type AlNodeSeq = NodeSeq
 
 	def makeXmlEntity(nodeSeq: NodeSeq, ctyp: ContentType.WithCharset = xmlCntType): HttpEntity.Strict = {
-		HttpEntity(ctyp, nodeSeq.toString()) // the "toString" is not what we want!
+
+		// This ".toString" is easy, BUT...
+		// TODO:  Look at  XHtml.toHtml  and XML.write
+		val naiveXmlStrng = nodeSeq.toString()
+		mySlf4JLog.info(s"naiveXmlStrng length = ${naiveXmlStrng.length}, begins with ${naiveXmlStrng.take(100)}")
+
+		// TODO:  Explore scala.xml.XML.write
+
+		val xhtmlStrng = scala.xml.Xhtml.toXhtml(nodeSeq)
+
+		mySlf4JLog.info(s"xhtmlStrng length = ${xhtmlStrng.length}, begins with ${naiveXmlStrng.take(100)}")
+
+		mySlf4JLog.info(s"Naive.equals(xhtml)?  ${naiveXmlStrng.equals(xhtmlStrng)}")
+
+		val txtForEnt = xhtmlStrng
+
+		HttpEntity(ctyp, txtForEnt)
 	}
+
 
 }
 /*

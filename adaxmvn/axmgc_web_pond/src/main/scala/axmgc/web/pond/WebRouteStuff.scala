@@ -4,7 +4,7 @@ import akka.actor.ActorRef
 import akka.http.scaladsl.{Http, server => dslServer}
 import dslServer.Directives.{complete, entity, get, path, _}
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
-import axmgc.web.ent.{HtEntMkr, WebXml}
+import axmgc.web.ent.{HtEntMkr, WebXmlGen}
 import axmgc.web.ingest.{IngestRtMkr, WbEvtIngestor}
 import axmgc.web.lnkdt.LDChunkerTest
 import axmgc.web.rsrc.{WebResBind, WebRsrcRouteMkr}
@@ -64,7 +64,7 @@ trait RouteWeaver extends  SprayJsonSupport with OurUrlPaths {
 
 	protected lazy val myLDChnkr = new LDChunkerTest {}
 	protected lazy val myHtEntMkr = new HtEntMkr {}
-	protected lazy val myXEntMkr = new WebXml {}
+	protected lazy val myXEntMkr = new WebXmlGen {}
 	protected val mySlf4JLog = LoggerFactory.getLogger(this.getClass)
 
 	protected def rmFindHlpActRef(sessID: Long): ActorRef
@@ -72,7 +72,7 @@ trait RouteWeaver extends  SprayJsonSupport with OurUrlPaths {
 	protected lazy val myWtplMkr = new WebTupleMaker {
 		override protected def getLDChnkr: LDChunkerTest = myLDChnkr
 		override protected def getHtEntMkr: HtEntMkr = myHtEntMkr
-		override protected def getWebXml: WebXml = myXEntMkr
+		override protected def getWebXml: WebXmlGen = myXEntMkr
 
 		override protected def doPageWork(rqPrms: WebRqPrms): Option[IntrnlPonderRslt] = None
 	}
