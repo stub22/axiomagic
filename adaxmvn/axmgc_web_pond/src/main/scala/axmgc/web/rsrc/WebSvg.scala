@@ -2,7 +2,7 @@ package axmgc.web.rsrc
 
 import scala.xml.{Elem => XElem}
 
-trait WebSvg extends WebResBind {
+trait WebSvg extends WebRsrcFolders {
 	val pthStylIco = fldrPth_styl + FLD_SEP + "icmbg_sty.css"
 	val pthStylIcoDem = fldrPth_styl + FLD_SEP + "icmbg_dem.css"
 	def getCssResPths : List[String] = List(pthStylIco, pthStylIcoDem)

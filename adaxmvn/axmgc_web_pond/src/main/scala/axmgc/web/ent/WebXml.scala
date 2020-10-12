@@ -1,7 +1,7 @@
 package axmgc.web.ent
 
 import akka.http.scaladsl.model.HttpEntity
-import axmgc.web.rsrc.{WebResBind, WebSvg}
+import axmgc.web.rsrc.{WebRsrcFolders, WebSvg}
 import axmgc.web.tuple.IntrnlPonderRslt
 
 import scala.xml.{Elem => XElem, Null => XNull, UnprefixedAttribute => XUAttr, Node => XNode, Text => XText, NodeSeq => XNodeSeq}
@@ -56,15 +56,19 @@ trait WebHeadFuncs {
 
 }
 
-class WebXmlGen extends XmlEntMkr with WebResBind  {
-	val svgHlpr = new WebSvg {}
-	val lnkHlpr = new WebLinkXmlFuncs {}
+trait XmlPageHelp extends XmlEntMkr {
 	val headHlpr = new WebHeadFuncs {}
+
 	def mergeXhtml (xeHead : XElem, xeBody : XElem) : XElem = {
 		<html>
 			{xeHead}
 			{xeBody}
 		</html>
+	}
+	def makePageEnt(pageXE : XElem) : HttpEntity.Strict = {
+		val ctyp = htmlCntType
+		val xhEnt = makeXmlEntity (pageXE, ctyp)
+		xhEnt
 	}
 
 	def mkTstScrXNS : XNodeSeq = {
@@ -74,17 +78,29 @@ class WebXmlGen extends XmlEntMkr with WebResBind  {
 		scrXNS
 	}
 
+}
+
+class WebXmlGen extends XmlEntMkr with WebRsrcFolders  {
+	val svgHlpr = new WebSvg {}
+	val lnkHlpr = new WebLinkXmlFuncs {}
+	val xPageHlp = new XmlPageHelp {}
+
+	def mkIconStylXNS : XNodeSeq = {
+		???
+	}
+
 	def mkTstHd : XElem = {
-		val scrXNS = mkTstScrXNS
+		val scrXNS = xPageHlp.mkTstScrXNS
+		val stylPths = new WebStylePaths {}
 		<head>
 			<title>WebXml Generated header contains this title</title>
 
 			<meta name="viewport" content="width=device-width, initial-scale=1"></meta>
 			<meta charset="utf-8"></meta>
 
-			<link rel="stylesheet" href={urlPth_styIcn}></link>
-			<link rel="stylesheet" href={urlPth_styDem}></link>
-			<link rel="stylesheet" href={urlPth_styGrd}></link>
+			<link rel="stylesheet" href={stylPths.urlPth_styIcn}></link>
+			<link rel="stylesheet" href={stylPths.urlPth_styDem}></link>
+			<link rel="stylesheet" href={stylPths.urlPth_styGrd}></link>
 
 			{scrXNS}
 		</head>
@@ -117,7 +133,6 @@ class WebXmlGen extends XmlEntMkr with WebResBind  {
 			<div>
 				{svgHlpr.mkDDSTstBlk}
 			</div>
-			<script src="/wdat/axmgc_js/wrp_datgui/tplIcoEvtHndlr.js"></script>
 		</body>
 		bdyElem
 	}
@@ -126,6 +141,10 @@ class WebXmlGen extends XmlEntMkr with WebResBind  {
 			<script>
 			// comment hiding begin-cdat {tmpJS.myEvntTstScr_cdata}
 			</script>
+
+			This works within <body>
+
+			<script src="/wdat/axmgc_js/wrp_datgui/tplIcoEvtHndlr.js"></script>
 	  */
 	def mkRealBdy(ipr : IntrnlPonderRslt) : XElem = {
 		val iprPairs = ipr.getOrderedRsltPairs
@@ -147,11 +166,11 @@ class WebXmlGen extends XmlEntMkr with WebResBind  {
 	def getXHPageEnt(opt_Rslt : Option[IntrnlPonderRslt]) : HttpEntity.Strict = {
 		val headXE = mkTstHd
 		val bodyXE : XElem = opt_Rslt.map(mkRealBdy).getOrElse(mkDmmyBdy)
-		val rootXE = mergeXhtml(headXE, bodyXE)
+		val pageXE = xPageHlp.mergeXhtml(headXE, bodyXE)
 		// Default output entity mime-type is xml, which browser don't wanna render.
 		// So we set mime-type to html, which seems OK so far.
-		val ctyp = htmlCntType
-		val xhEnt = makeXmlEntity (rootXE, ctyp)
+
+		val xhEnt = xPageHlp.makePageEnt(pageXE) //  makeXmlEntity (rootXE, ctyp)
 		xhEnt
 	}
 }
@@ -159,30 +178,7 @@ class WebXmlGen extends XmlEntMkr with WebResBind  {
 trait TmpJscrptHolder {
 	lazy val myEvntTstScr_cdata = new scala.xml.PCData(myEvntTstScr_raw)
 	private val myEvntTstScr_raw =
-		"""//another comment after bgn-cdat then LINE-BREAK:
-		  |function routeEvt(evt) {
-		  |    // alert('Ancestor got click, evtTgt=' + event.target)
-		  |    // Seems that target for keypress is always the body...
-		  |    var evtTyp = evt.type
-		  |    var evtTgt = evt.target
-		  |    var etID = evtTgt.id
-		  |    var currTgt = evt.currentTarget
-		  |    var ctID = currTgt.id
-		  |    var dbgYes = (! evtTyp.includes("mouse"))
-		  |    if (dbgYes) {
-		  |    		var dbgTxt = "routeEvt{type=" + evtTyp + ", target=" + evtTgt + ", etID=" + etID + ", currTgt=" + currTgt + ", ctID=" + ctID + "}"
-		  |    		console.log(dbgTxt)
-		  |    }
-		  |    var prevC = evtTgt.style.color
-		  |    var nextC =  makeRandomColor()
-		  |    if (dbgYes) {
-		  |    		var clrDbg = "changing color from " + prevC + " to " + nextC
-		  |    		console.log(clrDbg)
-		  |    }
-		  |    evtTgt.style.color = nextC
-		  |	   evtTgt.style.fill = nextC
-		  |}
-		  |
+		"""//another comment after bgn-cdat then LINE-BREAK:|
 		  |function makeRandomColor(){
 		  |// https://stackoverflow.com/questions/1484506/random-color-generator
 		  |    var c = '';
@@ -190,46 +186,6 @@ trait TmpJscrptHolder {
 		  |        c += (Math.random()).toString(16).substr(-6).substr(-1)
 		  |    }
 		  |    return '#'+c;
-		  |}
-		  |
-		  |
-		  |function attchHndlrs(domElmt) {
-		  |    var ourEvtNms = ['click', 'mouseover', 'mouseout', 'mousemove', 'keypress']
-		  |    // https://javascript.info/bubbling-and-capturing
-		  |    // Optional 3rd arg is boolean, where true => capture-handler, but dflt=false => bubble handler
-		  |    // is preferred.
-		  |    console.log("handler names are: ", ourEvtNms)
-		  |    console.log("attaching handlers to element: ", domElmt)
-		  |    ourEvtNms.forEach(function(nm) {
-		  |        domElmt.addEventListener(nm, routeEvt)
-		  |    })
-		  |}
-		  |function attchHndlrsAtId(domID) {
-		  |		console.log("looking up dom el for event handlers at: ", domID)
-		  |    var domEl = document.getElementById(domID)
-		  |    attchHndlrs(domEl)
-		  |}
-		  |
-		  |var myTicker = null
-		  |var myIntervalMsec = 1000
-		  |function startTicker () {
-		  |    if (myTicker == null) {
-		  |        myTicker = window.setInterval(myTickFunc, myIntervalMsec);
-		  |    } else {
-		  |        console.log("Ticker already running, ignoring START rq")
-		  |    }
-		  |}
-		  |function stopTicker () {
-		  |    if (myTicker != null) {
-		  |        window.clearInterval(myTicker)
-		  |        myTicker = null;
-		  |    } else {
-		  |        console.log("Ticker isn't running, ignoring STOP rq")
-		  |    }
-		  |}
-		  |function myTickFunc() {
-		  |  var d = new Date();
-		  |  document.getElementById("tt_out").innerHTML = d.toLocaleTimeString();
 		  |}
 		  |//comment hiding end-cdat""".stripMargin
 

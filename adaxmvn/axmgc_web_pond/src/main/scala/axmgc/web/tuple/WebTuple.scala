@@ -63,14 +63,9 @@ trait WebTupleMaker extends HtEntMkr {
 						jsonEnt_opt : Option[HEStrict], opt_inCtx : Option[PgEvalCtx])
 
 	// Inputs to the page-tuple calculation.
-	case class PgEvalCtx(ptxt_id : String, strtLocMsec : Long, wrqPrms :WebRqPrms, opt_prvSssnTpl : Option[PgEntTpl])
+	case class PgEvalCtx(ptxt_id : String, strtLocMsec : Long, wrqPrms :WebRqPrms,
+						 opt_prvSssnTpl : Option[PgEntTpl])
 
-	// ptxt_id  contains    client sender block's Html-Dom ID, e.g. div@id.onclick
-	private def makeEntsForPgAcc(ptxt_id : String, wrqPrms : WebRqPrms) : PgEntTpl = {
-		val localMsec: Long = System.currentTimeMillis()
-		val pgEvalCtx = PgEvalCtx(ptxt_id, localMsec, wrqPrms, None)
-		evalFullPageNow(pgEvalCtx, false)
-	}
 	def evalFullPageNow(pgEvalCtx : PgEvalCtx, chainBk : Boolean = false) : PgEntTpl = {
 		// So far this merely a simulation of making all required page elements in one swoop.
 		val wrqPrms = pgEvalCtx.wrqPrms
@@ -84,6 +79,14 @@ trait WebTupleMaker extends HtEntMkr {
 		val chnBkCtx_opt = if (chainBk) Some (pgEvalCtx) else None
 		PgEntTpl(xhPgEnt_opt, cssPgEnt_opt, jsnPgEnt_opt, chnBkCtx_opt)
 	}
+
+	// ptxt_id  contains    client sender block's Html-Dom ID, e.g. div@id.onclick
+	private def makeEntsForPgAcc(ptxt_id : String, wrqPrms : WebRqPrms) : PgEntTpl = {
+		val localMsec: Long = System.currentTimeMillis()
+		val pgEvalCtx = PgEvalCtx(ptxt_id, localMsec, wrqPrms, None)
+		evalFullPageNow(pgEvalCtx, false)
+	}
+
 	def pgTplXml(ptxt_id : String, rqParamMap: Map[String, String]): HEStrict = {
 		val wrqParams = new WebRqPrms {
 			override protected def fetchParamMap: Map[String, String] = rqParamMap
@@ -91,6 +94,7 @@ trait WebTupleMaker extends HtEntMkr {
 		val pet: PgEntTpl = makeEntsForPgAcc(ptxt_id, wrqParams)
 		pet.xhEnt_opt.get
 	}
+
 	def mkJsonTstEnt: HEStrict = {
 		val tdatChnkr = getLDChnkr
 		val jsonDat: String = tdatChnkr.getSomeJsonLD(true)
@@ -100,7 +104,8 @@ trait WebTupleMaker extends HtEntMkr {
 	}
 
 }
-trait WTRouteMaker { // extends OurUrlPaths {
+
+trait WTRouteMaker {
 	protected def getPathTxt : String
 	protected def getWbTplMkr : WebTupleMaker
 	def makeWbTplRt (lgr : Logger) : dslServer.Route = {

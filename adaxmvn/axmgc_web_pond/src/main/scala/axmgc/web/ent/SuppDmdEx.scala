@@ -1,10 +1,58 @@
 package axmgc.web.ent
 
+import akka.http.scaladsl.server.Directives.{complete, parameterMap, path}
+import akka.http.scaladsl.{server => dslServer}
+import akka.http.scaladsl.model.HttpEntity.{Strict => HEStrict}
+import axmgc.web.tuple.WebRqPrms
+import org.slf4j.Logger
+
+import scala.xml.{Elem => XElem, Node => XNode, NodeSeq => XNodeSeq, Null => XNull, Text => XText, UnprefixedAttribute => XUAttr}
+
 private trait SuppDmdEx
+
 
 trait SupplyAndDemand {
 
-	private val xmlBody = <body>
+	val stylePaths = "suppDmd_sty.css"
+	val scriptPaths = "sdPlotGui.js"
+
+	private val stylPths = new WebStylePaths {}
+	val xph = new XmlPageHelp{}
+
+	private val mjScriptTxt =
+		""" //another comment after bgn-cdat then LINE-BREAK:
+			MathJax.Hub.Config({
+				jax: ["input/TeX","output/HTML-CSS"],
+				displayAlign: "left"
+			});
+	    //comment hiding end-cdat  """.stripMargin
+
+	lazy val mjScript_cdata = new scala.xml.PCData(mjScriptTxt)
+
+	private val scrXNS = xph.mkTstScrXNS
+
+	val xmlHead = <head>
+		<title>AxMgc generated HTML : SuppDmd Example</title>
+
+		<meta name="viewport" content="width=device-width, initial-scale=1"></meta>
+		<meta charset="utf-8"></meta>
+
+		<link rel="stylesheet" href={stylPths.urlPth_stySuppDmd}></link>
+
+		{scrXNS}
+
+		<script type="text/x-mathjax-config">// comment hiding begin-cdat {mjScript_cdata}</script>
+
+		<!-- Dat-GUI from CDN (not from NPM) -->
+		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/dat-gui/0.7.6/dat.gui.js"></script>
+		<!-- MathJax from CDN (not from NPM):  note the async attribute  -->
+		<script type="text/javascript" async="async"
+				src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+		<script type="text/javascript" defer="defer" src="wdat/axmgc_js/wrp_datgui/sdPlotGui.js"></script>
+	</head>
+
+	val xmlBody = <body>
 		<h3>m: Supply, Demand, Price, Cost, Profit, Income Tax, Carbon Fee</h3>
 		<div class="flx-horiz">
 			<div id="suppDmd_mdl_desc">
@@ -67,4 +115,45 @@ trait SupplyAndDemand {
 			</div>
 		</div>
 	</body>
+
+	def mkResponse(rqParams : Map[String, String]) : HEStrict = {
+		val headXE = xmlHead
+		val bodyXE = xmlBody
+		val pageXE = xph.mergeXhtml(headXE, bodyXE)
+		val pageEnt = xph.makePageEnt(pageXE)
+		pageEnt
+	}
+	def makeSuppDmdRt (lgr : Logger) : dslServer.Route = {
+		val pathTxt = "suppdmd"
+
+		val sdRoute = parameterMap { rqParams : Map[String, String] => path(pathTxt) {
+			val rspEnt = mkResponse(rqParams)
+			complete(rspEnt)
+		}}
+		sdRoute
+	}
 }
+
+/*
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <title>Calculate: Supply, Demand, Price</title>
+    <script type="text/javascript"  src="../_lib/_axdp/axdp_v02E.js"></script>
+    <script type="text/javascript" src="../_lib/ax_js_2E/wrp_mjs/supdmd_E.js"></script>
+    <script type="text/javascript" src="../_lib/ax_js_2E/wrp_mjs/exprKinds_C.js"></script>
+    <script type="text/javascript" src="../_lib/ax_js_2E/wrp_mjs/exprWrap_C.js"></script>
+    <script type="text/javascript" src="../_lib/ax_js_2E/wrp_veg/vtDatFncs_C.js"></script>
+    <script type="text/javascript" src="../_lib/ax_js_2E/wrp_pltl/pzDatSurf_C.js"></script>
+    <script type="text/javascript" src="../_lib/ax_js_2E/wrp_datgui/suppDmdPrmGui_E.js"></script>
+    <script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    jax: ["input/TeX","output/HTML-CSS"],
+    displayAlign: "left"
+});
+    </script>
+    <!-- Dat-GUI from CDN (not from NPM) -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/dat-gui/0.7.6/dat.gui.js"></script>
+    <!-- MathJax from CDN (not from NPM):  note the async attribute  -->
+    <script type="text/javascript" async
+            src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+ */

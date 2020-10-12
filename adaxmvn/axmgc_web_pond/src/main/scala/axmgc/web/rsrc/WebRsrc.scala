@@ -7,7 +7,7 @@ import org.slf4j.Logger  // Que hace?
 
 trait WebRsrc // file-marker trait matching filename
 
-trait WebResBind {
+trait WebRsrcFolders {
 	val FLD_SEP = '/'
 	val ptok_wdat = "wdat"
 	val ptok_styl = "stylz"
@@ -18,13 +18,9 @@ trait WebResBind {
 	val fldrPth_ivct = fldrPth_wdat + FLD_SEP + ptok_ivct
 	val fldrPth_scrjs = fldrPth_wdat + FLD_SEP + ptok_scrjs
 
-	val urlPth_styIcn = FLD_SEP + fldrPth_styl +  FLD_SEP + "icmbg_sty.css"
-	val urlPth_styDem = FLD_SEP + fldrPth_styl +  FLD_SEP + "icmbg_dem.css"
-	val urlPth_styGrd = FLD_SEP + fldrPth_styl +  FLD_SEP + "ictst_grid.css"
-
 }
 
-trait WebRsrcRouteMkr extends WebResBind {
+trait WebRsrcRouteMkr extends WebRsrcFolders {
 	def makeWbRscRt (lgr : Logger) : dslServer.Route = {
 		lgr.info(s"fldrPth_styl = $fldrPth_styl")
 		lgr.info(s"fldrPth_ivct = $fldrPth_ivct")
@@ -74,8 +70,8 @@ pathEndOrSingleSlash: is equivalent to rawPathPrefix(PathEnd) or rawPathPrefix(S
 						lgr.info("Extracting unexpected path following wdat")
 						extractUnmatchedPath { remPath =>
 
-						lgr.info("remaining path: {}", remPath)
-						complete(s"Did not understand request for webdata at: $remPath with params: $paramMap")
+							lgr.info("remaining path: {}", remPath)
+							complete(s"Did not understand request for webdata at: $remPath with params: $paramMap")
 
 						}
 					}

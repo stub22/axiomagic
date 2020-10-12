@@ -4,10 +4,10 @@ import akka.actor.ActorRef
 import akka.http.scaladsl.{Http, server => dslServer}
 import dslServer.Directives.{complete, entity, get, path, _}
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
-import axmgc.web.ent.{HtEntMkr, WebXmlGen}
+import axmgc.web.ent.{HtEntMkr, SupplyAndDemand, WebXmlGen}
 import axmgc.web.ingest.{IngestRtMkr, WbEvtIngestor}
 import axmgc.web.lnkdt.LDChunkerTest
-import axmgc.web.rsrc.{WebResBind, WebRsrcRouteMkr}
+import axmgc.web.rsrc.{WebRsrcFolders, WebRsrcRouteMkr}
 import axmgc.web.srvevt.HttpEventSrcRtMkr
 import axmgc.web.tuple.{IntrnlPonderRslt, WTRouteMaker, WebRqPrms, WebTupleMaker}
 import org.slf4j.{Logger, LoggerFactory}
@@ -37,7 +37,7 @@ import PersonJsonSupport._
 
 trait WebRouteStuff
 
-trait OurUrlPaths extends WebResBind {
+trait OurUrlPaths extends WebRsrcFolders {
 	val pathEW = "ent-wrap"
 	val pathPG = "pond-grid"
 	val pathJsonPreDump = "json-pre-dump"
@@ -132,6 +132,7 @@ trait RouteWeaver extends  SprayJsonSupport with OurUrlPaths {
 			<li>${mkLinkTxt(pathIngstTst, pathIngstTst)}</li>
 			<li>${mkLinkTxt(pgTplTst, pgTplTst)}</li>
 			<li>${mkLinkTxt(pathHttpEvtSrc, pathHttpEvtSrc)}</li>
+			<li>${mkLinkTxt("suppdmd", "suppdmd")}</li>
 									</ol>
 								</div>
 							"""
@@ -142,15 +143,22 @@ trait RouteWeaver extends  SprayJsonSupport with OurUrlPaths {
 		}
 	}
 
+	def mkSuppDmdRt(lgr : Logger) : dslServer.Route = {
+		val suppDmdEx = new SupplyAndDemand {}
+		val rt = suppDmdEx.makeSuppDmdRt(lgr)
+		rt
+	}
+
 	def makeComboRoute : dslServer.Route = {
 		val featTstRt = myFTRtMkr.makeFeatTstRoute
 		val wbRscRt = makeWbRscRt
 		val wtplRt = makeWTplRt
 		val ingstRt = myIngstRtMkr.makeIngstRt(mySlf4JLog)
 		val httpEvtSrcRt = makeHttpEvtSrcRt
+		val suppDmdRt = mkSuppDmdRt(mySlf4JLog)
 		val menuRt = makeMenuRt
 
-		val comboRt = wbRscRt ~ wtplRt ~ featTstRt ~ ingstRt ~ httpEvtSrcRt ~ menuRt
+		val comboRt = wbRscRt ~ wtplRt ~ featTstRt ~ ingstRt ~ httpEvtSrcRt ~ suppDmdRt ~ menuRt
 		comboRt
 	}
 
