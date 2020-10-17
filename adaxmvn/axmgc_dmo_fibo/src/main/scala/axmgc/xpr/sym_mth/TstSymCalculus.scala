@@ -42,12 +42,16 @@ object TstSymCalculus {
 		println("println: .main() says goodbye") // , but actors are possibly still running
 
 	}
+	/*
+	Console classes moved to .io project on 2020-10-10
+	https://bitbucket.org/axelclk/symja_android_library/commits/ca0fb399ba923c1fd049fc588f6e0c23c18c6536
+	 */
 	def runRelaxedConsole(args: Array[String]) : Unit = {
-		myS4JLogger.warn("Invoking org.matheclipse.core.eval.Console")
-		org.matheclipse.core.eval.Console.main(args)
+		myS4JLogger.warn("Invoking org.matheclipse.io.eval.Console")
+		org.matheclipse.io.eval.Console.main(args)
 	}
 	def runMmaConsole(args: Array[String]) : Unit = {
-		myS4JLogger.warn("Invoking org.matheclipse.core.eval.MMAConsole")
-		org.matheclipse.core.eval.MMAConsole.main(args)
+		myS4JLogger.warn("Invoking org.matheclipse.io.eval.MMAConsole")
+		org.matheclipse.io.eval.MMAConsole.main(args)
 	}
 }
