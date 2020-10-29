@@ -67,7 +67,7 @@ trait WebTupleMaker extends HtEntMkr {
 						 opt_prvSssnTpl : Option[PgEntTpl])
 
 	def evalFullPageNow(pgEvalCtx : PgEvalCtx, chainBk : Boolean = false) : PgEntTpl = {
-		// So far this merely a simulation of making all required page elements in one swoop.
+		// So far this merely a skeletal dry-run of making all required page elements in one swoop.
 		val wrqPrms = pgEvalCtx.wrqPrms
 		val intrnlRslt_opt : Option[IntrnlPonderRslt] = doPageWork(wrqPrms)
 		val xentMkr = getWebXml

@@ -9,16 +9,19 @@ trait KBPediaOntoWrap extends MdlDmpFncs {
 	protected lazy val myS4JLog : Logger = LoggerFactory.getLogger(this.getClass)
 	override protected def getS4JLog: Logger = myS4JLog
 
-	private val pth_kbpRefCnc = "gdat/kbpedia/kbpedia_ref_cncpts_v20_36MB.n3"
+	private val pth_kbp_v20 = "gdat/kbpedia/kbpedia_ref_cncpts_v20_36MB.n3"
+	private val pth_kbp_v25 = "gdat/kbpedia/kbp_ref_concepts_v250_sz39MB.n3"
 
-	lazy val myMdl_KBPRC = loadKBRefCnc
+	private lazy val myMdl_KBPRC = loadKBRefCnc
 	private def loadKBRefCnc : JenaMdl = {
-		val pth = pth_kbpRefCnc
+		val pth = pth_kbp_v25
 		myS4JLog.info("Starting load of ref concepts from rsrc: {}", pth)
 		val mdl = RDFDataMgr.loadModel(pth)
 		myS4JLog.info("Finished load, model size: {}", mdl.size())
 		mdl
 	}
+
+	def getKBP_model = myMdl_KBPRC
 
 	def dumpStatsToLog(): Unit = {
 		dumpSomeModelStatsToLog(myMdl_KBPRC)

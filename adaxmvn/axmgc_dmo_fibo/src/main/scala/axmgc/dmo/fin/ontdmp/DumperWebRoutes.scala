@@ -22,6 +22,8 @@ trait DumperWebFeat {
 
 trait DmpWbRtMkr {
 
+	protected lazy val myS4JLog = LoggerFactory.getLogger(this.getClass)
+
 	protected def getDumperWebFeat : DumperWebFeat
 
 	def makeDmprTstRt  : dslServer.Route = {
@@ -36,6 +38,8 @@ trait DmpWbRtMkr {
 				complete(rspEnt) // "dgo went and responded...")
 			} // ~
 		}
+
+		myS4JLog.info(s"Made routes at ${webFeat.pthTok_dhlo} and ${webFeat.pthTok_dgo}")
 		dmprMainRt
 	}
 }
@@ -81,7 +85,7 @@ trait DumperTupleBridge extends DumperWebFeat {
 
 	private def goNuts(np : String) = {
 		myS4JLog.info("goNuts got np: {}", np)
-		val kbpMdl = myKbpediaOnt.myMdl_KBPRC
+		val kbpMdl = myKbpediaOnt.getKBP_model
 		myKbpediaOnt.dumpStatsToLog()
 	}
 }
