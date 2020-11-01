@@ -44,6 +44,8 @@ trait OurUrlPaths extends WebRsrcFolders {
 	val pathJsonLdMime = "json-ld-mime"
 	val pathMore = "moreHere"
 	val pathJsonPerson = "jpers"
+	val pathJsonMoney = "jmoney"
+	val pathJsonPortfolio = "jportf"
 	val pathUseSource = "usrc"
 	val pathCssT01 = "t01.css"
 	val pathIngstTst = "ingst"
@@ -127,6 +129,8 @@ trait RouteWeaver extends  SprayJsonSupport with OurUrlPaths {
 			<li>${mkLinkTxt(pathJsonLdMime, pathJsonLdMime)}</li>
 			<li>${mkLinkTxt(pathMore, pathMore)}</li>
 			<li>${mkLinkTxt(pathJsonPerson, pathJsonPerson)}</li>
+			<li>${mkLinkTxt(pathJsonMoney, pathJsonMoney)}</li>
+			<li>${mkLinkTxt(pathJsonPortfolio, pathJsonPortfolio)}</li>
 			<li>${mkLinkTxt(pathUseSource, pathUseSource)}</li>
 			<li>${mkLinkTxt(pathCssT01, pathCssT01)}</li>
 			<li>${mkLinkTxt(pathIngstTst, pathIngstTst)}</li>
@@ -145,8 +149,9 @@ trait RouteWeaver extends  SprayJsonSupport with OurUrlPaths {
 
 	def mkSuppDmdRt(lgr : Logger) : dslServer.Route = {
 		val suppDmdEx = new SupplyAndDemand {}
-		val rt = suppDmdEx.makeSuppDmdRt(lgr)
-		rt
+		val wrt = suppDmdEx.makeSuppDmdRt(lgr)
+		lgr.info(s"Made suppDmdRt: ${wrt}")
+		wrt.getRoute
 	}
 
 	def makeComboRoute : dslServer.Route = {
@@ -161,6 +166,8 @@ trait RouteWeaver extends  SprayJsonSupport with OurUrlPaths {
 		val comboRt = wbRscRt ~ wtplRt ~ featTstRt ~ ingstRt ~ httpEvtSrcRt ~ suppDmdRt ~ menuRt
 		comboRt
 	}
+
+
 
 
 }

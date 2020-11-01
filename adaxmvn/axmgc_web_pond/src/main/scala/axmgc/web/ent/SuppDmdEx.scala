@@ -3,6 +3,7 @@ package axmgc.web.ent
 import akka.http.scaladsl.server.Directives.{complete, parameterMap, path}
 import akka.http.scaladsl.{server => dslServer}
 import akka.http.scaladsl.model.HttpEntity.{Strict => HEStrict}
+import akka.http.scaladsl.server.Route
 import axmgc.web.tuple.WebRqPrms
 import org.slf4j.Logger
 
@@ -10,6 +11,16 @@ import scala.xml.{Elem => XElem, Node => XNode, NodeSeq => XNodeSeq, Null => XNu
 
 private trait SuppDmdEx
 
+trait WrappedRoute {
+	def getRoute : dslServer.Route
+	def getPathTxt : Option[String]
+	def getDescription : String = getPathTxt.map(ptxt => s"pathTxt='${ptxt}'").getOrElse("No description for route-class " + getRoute.getClass)
+}
+class WrappedPathRoute(rt : dslServer.Route, pathTxt : String) extends WrappedRoute {
+	override def getRoute: Route = rt
+	override def getPathTxt: Option[String] = Some(pathTxt)
+	override def toString: String = getDescription
+}
 
 trait SupplyAndDemand {
 
@@ -123,15 +134,20 @@ trait SupplyAndDemand {
 		val pageEnt = xph.makePageEnt(pageXE)
 		pageEnt
 	}
-	def makeSuppDmdRt (lgr : Logger) : dslServer.Route = {
+	def makeSuppDmdRt (lgr : Logger) : WrappedRoute = {
 		val pathTxt = "suppdmd"
 
 		val sdRoute = parameterMap { rqParams : Map[String, String] => path(pathTxt) {
 			val rspEnt = mkResponse(rqParams)
 			complete(rspEnt)
 		}}
-		sdRoute
+		val wrt = new WrappedPathRoute(sdRoute, pathTxt)
+		wrt
 	}
+}
+
+trait WhatIsTypPlz {
+	// def f[T](v: T) = T
 }
 
 /*

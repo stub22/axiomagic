@@ -11,7 +11,8 @@ import akka.http.scaladsl.model.HttpEntity.{Strict => HEStrict}
 import akka.stream.scaladsl.Source
 import akka.util.ByteString
 import axmgc.web.cors.CORSHandler
-import axmgc.web.ent.HtEntMkr
+import axmgc.web.ent.{HtEntMkr, PorfolioRtMkr}
+import axmgc.web.json.{MoneyRtMkr, Person, PersonRouteMkr}
 import axmgc.web.lnkdt.LDChunkerTest
 import org.slf4j.{Logger, LoggerFactory}
 
@@ -33,6 +34,10 @@ trait FeatTstRtMkr extends CORSHandler  with OurUrlPaths {
 		val htEntMkr = getHtEntMkr
 		val ldChnkr = getLDChunker
 		val pGrldr = new PondGriddler {}
+		val personRtMkr = new PersonRouteMkr {}
+		val moneyRtMkr = new MoneyRtMkr {}
+		val portfRtMkr = new PorfolioRtMkr{}
+
 		val mainRt = parameterMap { paramMap: Map[String, String] =>
 			path(pathEW) {
 				get {
@@ -62,14 +67,11 @@ trait FeatTstRtMkr extends CORSHandler  with OurUrlPaths {
 				val jsonEnt = htEntMkr.makeJsonEntity(jsonDat)
 				corsHandler(complete(jsonEnt))
 			} ~ path(pathJsonPerson) {
-				complete("nope")
-				/*
-							entity(as[Person]) { prsn => {
-								val msg = s"Person: ${prsn.name} - favorite number: ${prsn.favoriteNumber}"
-								println("person = " + prsn)
-								complete(msg)
-							}}
-				*/
+				personRtMkr.mkPersonReceiverRt
+			} ~ path(pathJsonMoney) {
+				moneyRtMkr.mkMoneySenderRt(htEntMkr)
+			} ~ path(pathJsonPortfolio) {
+				portfRtMkr.mkPortfolioSenderRt(htEntMkr)
 			} ~ path(pathUseSource) {
 				val streamingData: Source[ByteString, NotUsed] = Source.repeat("hello \n").take(10).map(ByteString(_))
 				// render the response in streaming fashion:

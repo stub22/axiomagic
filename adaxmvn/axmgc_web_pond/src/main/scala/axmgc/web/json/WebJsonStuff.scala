@@ -1,7 +1,10 @@
 package axmgc.web.json
 
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
-import spray.json.{DefaultJsonProtocol, DeserializationException, JsString, JsValue, JsonFormat}
+import akka.http.scaladsl.server.Directives.{as, complete, entity}
+import akka.http.scaladsl.server.Route
+import axmgc.web.ent.HtEntMkr
+import spray.json.{DefaultJsonProtocol, DeserializationException, JsString, JsValue, JsonFormat, enrichAny}
 
 private trait WebJsonStuff
 
@@ -11,7 +14,7 @@ private trait JsonRtMkr
 
 private case class Color(name: String, red: Int, green: Int, blue: Int)
 private case class Money(currency: String, amount: BigDecimal)
-
+private case class ManyMoney(flvr : String, lst : List[Money])
 // val bal = Money("USD", 100)
 
 private object MyJsonProtocol extends DefaultJsonProtocol {
@@ -31,12 +34,64 @@ private object MyJsonProtocol extends DefaultJsonProtocol {
 
 }
 
-// It utilizes SprayJsonSupport via the PersonJsonSupport object as the in-scope unmarshaller.
+trait MoneyRtMkr {
 
+	def moneyFormatBad(mv : Money) = {
+		import MyJsonProtocol._
+		val mjs: JsString = MoneyFormat.write(mv)
+		mjs
+	}
+	private val gmf = new DefaultJsonProtocol {
+		implicit val mfi = jsonFormat2(Money)
+		implicit val mmf = jsonFormat2(ManyMoney)
+	}
+	def moneyFormatGood(mv : Money): JsValue = {
+		import gmf._
+		val gmjsv : JsValue = mv.toJson
+		gmjsv
+	}
+	def manyMoney : JsValue = {
+		val m1 = new Money("Euros", 99.1)
+		val m2 = new Money("Yen", amount = 127.4)
+		val mm = new ManyMoney("heyNow", List(m1, m2))
+		import gmf._
+		val mmjsv = mm.toJson
+		mmjsv
+	}
+	def mkMoneySenderRt(htEntMkr: HtEntMkr) : Route = {
+		val mv = new Money("Pounds", 12.2)
+		val bad = moneyFormatBad(mv)
+		val good = moneyFormatGood(mv)
+		val many = manyMoney
+		val chosen = many
+		val gje = htEntMkr.makeJsonEntity(chosen.toString())
+		complete {
+			gje
+		}
+	}
+}
 
-private case class Person(name: String, favoriteNumber: Int)
-private object PersonJsonSupport extends DefaultJsonProtocol with SprayJsonSupport {
-	implicit private val myJF_Person : JsonFormat[Person] = jsonFormat2(Person)
+// https://doc.akka.io/docs/akka-http/current/routing-dsl/directives/marshalling-directives/completeWith.html
+// "It utilizes SprayJsonSupport via the PersonJsonSupport object as the in-scope unmarshaller."
+
+case class Person(name: String, favoriteNumber: Int)
+object PersonJsonSupport extends DefaultJsonProtocol with SprayJsonSupport {
+	implicit val myJF_Person = jsonFormat2(Person)
+
+}
+
+trait PersonRouteMkr {
+	def mkPersonReceiverRt: Route = {
+		// Need this implicit stuff to do fancy json unmarshalling
+		import PersonJsonSupport._
+		// complete("nope")
+		// https://doc.akka.io/docs/akka-http/current/routing-dsl/directives/marshalling-directives/entity.html
+		entity(as[Person]) { prsn => {
+			val msg = s"Person: ${prsn.name} - favorite number: ${prsn.favoriteNumber}"
+			println("person = " + prsn)
+			complete(msg)
+		}}
+	}
 }
 /*
 The SprayJsonSupport trait provides a FromEntityUnmarshaller[T] and ToEntityMarshaller[T]
