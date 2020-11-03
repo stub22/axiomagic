@@ -69,9 +69,9 @@ trait FeatTstRtMkr extends CORSHandler  with OurUrlPaths {
 			} ~ path(pathJsonPerson) {
 				personRtMkr.mkPersonReceiverRt
 			} ~ path(pathJsonMoney) {
-				moneyRtMkr.mkMoneySenderRt(htEntMkr)
+				corsHandler(moneyRtMkr.mkMoneySenderRt(htEntMkr))
 			} ~ path(pathJsonPortfolio) {
-				portfRtMkr.mkPortfolioSenderRt(htEntMkr)
+				corsHandler(portfRtMkr.mkPortfolioSenderRt(htEntMkr))
 			} ~ path(pathUseSource) {
 				val streamingData: Source[ByteString, NotUsed] = Source.repeat("hello \n").take(10).map(ByteString(_))
 				// render the response in streaming fashion:

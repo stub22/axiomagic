@@ -17,11 +17,12 @@ private case class Money(currency: String, amount: BigDecimal)
 private case class ManyMoney(flvr : String, lst : List[Money])
 // val bal = Money("USD", 100)
 
-private object MyJsonProtocol extends DefaultJsonProtocol {
+private object UselessCustomProtocolExample extends DefaultJsonProtocol {
 	implicit val colorFormat = jsonFormat4(Color)
 
 	implicit object MoneyFormat extends JsonFormat[Money] {
 		val fmt = """([A-Z]{3}) ([0-9.]+)""".r
+		// What is the point of custom serialization string that is not JSON?
 		def write(m: Money) = JsString(s"${m.currency} ${m.amount}")
 		def read(json: JsValue) = json match {
 			case JsString(fmt(c, a)) => Money(c, BigDecimal(a))
@@ -36,17 +37,18 @@ private object MyJsonProtocol extends DefaultJsonProtocol {
 
 trait MoneyRtMkr {
 
-	def moneyFormatBad(mv : Money) = {
-		import MyJsonProtocol._
-		val mjs: JsString = MoneyFormat.write(mv)
+	def moneyFormatCustomTextNotJSON(mv : Money) = {
+		import UselessCustomProtocolExample._
+		val mjs: JsString = MoneyFormat.write(mv) // Produces a String which is not JSON
 		mjs
 	}
-	private val gmf = new DefaultJsonProtocol {
-		implicit val mfi = jsonFormat2(Money)
-		implicit val mmf = jsonFormat2(ManyMoney)
+	private val jsonProtocol_money = new DefaultJsonProtocol {
+		// Importing this set of implicits into a scope allows for conversion to/from JSON
+		implicit val jpfmt_Money = jsonFormat2(Money)
+		implicit val jpfmt_ManyMoney = jsonFormat2(ManyMoney)
 	}
 	def moneyFormatGood(mv : Money): JsValue = {
-		import gmf._
+		import jsonProtocol_money._
 		val gmjsv : JsValue = mv.toJson
 		gmjsv
 	}
@@ -54,13 +56,13 @@ trait MoneyRtMkr {
 		val m1 = new Money("Euros", 99.1)
 		val m2 = new Money("Yen", amount = 127.4)
 		val mm = new ManyMoney("heyNow", List(m1, m2))
-		import gmf._
+		import jsonProtocol_money._
 		val mmjsv = mm.toJson
 		mmjsv
 	}
 	def mkMoneySenderRt(htEntMkr: HtEntMkr) : Route = {
 		val mv = new Money("Pounds", 12.2)
-		val bad = moneyFormatBad(mv)
+		val bad = moneyFormatCustomTextNotJSON(mv)
 		val good = moneyFormatGood(mv)
 		val many = manyMoney
 		val chosen = many
@@ -70,6 +72,7 @@ trait MoneyRtMkr {
 		}
 	}
 }
+
 
 // https://doc.akka.io/docs/akka-http/current/routing-dsl/directives/marshalling-directives/completeWith.html
 // "It utilizes SprayJsonSupport via the PersonJsonSupport object as the in-scope unmarshaller."
