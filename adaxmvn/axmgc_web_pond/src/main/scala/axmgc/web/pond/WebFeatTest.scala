@@ -76,7 +76,8 @@ trait FeatTstRtMkr extends CORSHandler  with OurUrlPaths {
 				val streamingData: Source[ByteString, NotUsed] = Source.repeat("hello \n").take(10).map(ByteString(_))
 				// render the response in streaming fashion:
 				val chnkdEnt = htEntMkr.makeChunked(streamingData)
-				val resp = HttpResponse(entity = chnkdEnt)
+				val resp = HttpResponse(entity
+						= chnkdEnt)
 				println("This usrc response gets constructed NOW!", resp)
 				complete(resp)
 			} ~ path(pathCssT01) {

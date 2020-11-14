@@ -1,6 +1,9 @@
 package axmgc.xpr.pdm
 
 object LnchMndTst {
+	def main(args: Array[String]): Unit = {
+
+	}
 }
 trait MndStf {
 	/*
