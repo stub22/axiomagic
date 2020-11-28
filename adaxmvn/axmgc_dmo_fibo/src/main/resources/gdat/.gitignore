@@ -1,3 +1,4 @@
 # Exclude big ol' kbpedia test files
 kbpedia/
+findat_md/
 # Done
