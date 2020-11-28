@@ -71,14 +71,14 @@ trait NumSource {
 }
 
 // Finite measure value - a real number >= 0
-trait FiniteMeasNum extends PosRealNum {
+trait FiniteMeasNum extends NonnegRealNum {
 
 	// In some cases we might not know if a number is rational.
-	def isKnownNNRational : Boolean
-	def getKnownNNRational : Option[NonnegRatNum[_]]
+	def isKnownNNRational : Boolean = false
+	def getKnownNNRational : Option[NonnegRatNum[_]] = None
 
 	def hasKnownFiniteDigits : Boolean
-	def hasKnownInfiniteDigits : Boolean
+	def hasKnownInfiniteDigits : Boolean = false
 	def getKnownDecimalDigitCount : Option[Int]
 }
 

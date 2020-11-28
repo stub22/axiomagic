@@ -36,8 +36,6 @@ trait Box extends ConvexEuclideanRegion {
 
 trait UnitBox extends Box
 
-
-
 // Measure space over some measurable space, where measure-values are finite
 trait FinvalMeasSpc[-MC <: MeasComp, +FMN <: FiniteMeasNum] extends MeasComp {
 	// mcomp is usually a point, a euclidean region, or a sum of such.
@@ -46,6 +44,8 @@ trait FinvalMeasSpc[-MC <: MeasComp, +FMN <: FiniteMeasNum] extends MeasComp {
 	def emptyMeasure : FMN
 
 }
+// Defines the likelihood of a set of possible events, where the events are usually subsets of R^n.
+// May be viewed as function from R^n to [0,1] s.t. prob(wholeSpace) = fullMeasure = 1.
 trait ProbSpc[-MC <: MeasComp, +PMN <: ProbMeasNum] extends FinvalMeasSpc[MC, PMN] {
 
 }
@@ -68,4 +68,10 @@ Rn vectors of dimension N.  This set defines the measurable space.
 The dist is a real valued function over the space, visualizable as an N-dimensional histogram.
 A distribution may be described by equations and finite approximations, which may be determined from data and/or edited by users.
 We use a distribution as an interactive vehicle for plotting and editing.
+
+Distribution may be defined exactly, or may be approximated.
+
+Successive approximation may use covariance matrix.
+If we know the marginal distribution on each axis of the space
+AND we know covariance matrix, then we know a lot.
  */

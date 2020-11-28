@@ -2,7 +2,21 @@ package axmgc.xpr.pdm
 
 object LnchMndTst {
 	def main(args: Array[String]): Unit = {
+		println("OK then!")
+		firstBigDecStuff
+	}
+	def firstBigDecStuff : Unit = {
+		val bd_1 = BigDecimal.apply(1)
+		val bd_4 = BigDecimal.apply(4)
+		val bd_6 = BigDecimal.apply(6)
 
+		val bd_oneSixth = bd_1 / bd_6
+
+		val bd_oneFourth = bd_1 / bd_4
+
+		println(s"1/4 = ${bd_oneFourth}")
+
+		println(s"1/6 = ${bd_oneSixth}")
 	}
 }
 trait MndStf {
