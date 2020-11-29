@@ -1,6 +1,6 @@
 package axmgc.dmo.fin.ontdmp.borkl
 
-import oracle.kv.{KVStoreConfig, KVStoreFactory, Version}
+import oracle.kv.{KVStoreConfig, KVStoreFactory}
 
 private trait BorklGo
 
@@ -12,6 +12,7 @@ trait ServONJ {
 
 trait CliONJ {
 	def testCliConn() : Unit = {
+		// Adapted from Oracle-SDK hello-world example :   HelloBigDataWorld.java
 		val dfltStoreName = "kvstore"
 		val otherStoreName = "kvs_borkl_29"
 		val storeName = dfltStoreName
@@ -23,9 +24,7 @@ trait CliONJ {
 		val kvsCli =  KVStoreFactory.getStore(kvsConf);
 		println ("Got kvsCli:" + kvsCli)
 
-		import oracle.kv.Key
-		import oracle.kv.Value
-		import oracle.kv.ValueVersion
+		import oracle.kv.{Key, Value, Version, ValueVersion}
 		val keyString = "Hello"
 		val valueString = "Big Data World!"
 
