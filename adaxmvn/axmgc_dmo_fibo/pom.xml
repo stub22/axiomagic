@@ -75,14 +75,13 @@ java.lang.NoClassDefFoundError: org/apache/logging/log4j/LogManager
             <version>18.3.10</version>
         </dependency>
 <!--
-The oracle-server deps above automatically pull in berkeley DB v18.3.12
+The oracle-server deps above automatically pull in berkeley DB - java edition - v18.3.12
  https://mvnrepository.com/artifact/com.sleepycat/je
         <dependency>
             <groupId>com.sleepycat</groupId>
             <artifactId>je</artifactId>
             <version>18.3.12</version>
         </dependency>
-
 -->
 
     </dependencies>
