@@ -82,9 +82,20 @@ trait FindatScanner {
 	}
 	def readStuff : Unit = {
 
-		val fldz1 = Map[Int,String](0 -> "fld_00", 1 -> "fld_01", 2 -> "fld_02", 3 -> "fld_03")
-		val fldz2 = Map[Int,String](0 -> "fld_00", 1 -> "fld_01", 2 -> "fld_02")
-		val fldz3 = Map[Int,String](0 -> "fld_00", 1 -> "fld_01", 2 -> "fld_02")
+		val fldz1 = List[(Int,String)](0 -> "fld_00", 1 -> "fld_01", 2 -> "fld_02", 3 -> "fld_03")
+		val fldz2 = List[(Int,String)](0 -> "fld_00", 1 -> "fld_01", 2 -> "fld_02")
+/*
+CoolProc at line 0 got txt:
+0-6    Sponsor,Composite Ticker,Composite Name,Constituent Ticker,Constituent Name,Weighting,Identifier,
+7-14   Date,Location,Exchange,Total Shares Held,Notional Value,Market Value,Sponsor Sector,Last Trade,
+15-22   Currency,BloombergSymbol,BloombergExchange,NAICSSector,NAICSSubIndustry,Coupon,Maturity,Rating,
+23-32    Type,SharesOutstanding,MarketCap,Earnings,PE Ratio,Face,eSignalTicker,TimeZone,DividendAmt,XDate,
+DividendYield,RIC,IssueType,NAICSSector,NAICSIndustry,NAICSSubIndustry,CUSIP,ISIN,BBGID
+ */
+		val fldz3 = List[(Int,String)](0 -> "sponsor", 1 -> "agg_sym", 2 -> "agg_name", 3 -> "mbr_sym",
+				4 -> "mbr_name", 5 -> "weight", 6-> "some_id", 7 -> "dt_rcvd", 8 -> "mbr_xloc", 9 -> "mbr_xchg", 10 -> "shares",
+				11 -> "not_val", 12-> "mkt_val", 13-> "mbr_sect", 14-> "mbr_last", 15-> "mbr_last_curr",
+				20 -> "mbr_coup", 21-> "mbr_maturity", 22-> "mbr_rating", 23->"mbr_type", 24->"mbr_shares", 25-> "mbr_mktCap")
 		val fp1 = new FldXProc(fldz1.toList) {
 			val symDir = new SMHashMap[String, (String, String)]
 			override def saveRow(rowKey: String, fseq: Seq[(Int, String, String)]): Unit = {
