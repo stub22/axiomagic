@@ -1,25 +1,25 @@
 # axiomagic tuning kit 
 Axiomagic is an open source meta-system for interactive exploration.
 <br/>Core components use Scala, Akka Http, RDF, and HTML/CSS/Javascript.
-<br/>Upstream functional generators (Idris, MMT) emit bounded, tunable, explainable smarts for runtime.
+<br/>Upstream functional generators (Idris, MMT) emit bounded, tunable, explainable smarts for use in downstream web runtime.
 <br/>Here is a screenshot of an experimental live-generated interactive Javascript+CSS page.
 <br/>TODO:  Replace with real content and milder color contrast.
 <br/><img src="docs/_screen_img/web_icon_demo_AA.png" alt="axiomagic screen shot"	title="demo screen shot" width="380" height="300" />
 <br/> <i> (This experiment uses icons downloaded from icomoon.io) </i>
 ## Uses 
 Axiomagic is intended for use in domain-specific browsers, calculators, simulators, and games.
-<br/>Axmgc code applies well to science, finance, and entertainment.
+<br/>Axmgc features apply naturally in science, finance, and edutainment.
 
 ## Lineage
 
 This work builds on models and designs from previous projects, including the [Glue-AI 1.x](http://glue.ai) constellation 
 from Stu B22 and pals.
 
-Axiomagic is intended to be a thin layer of functions and tools, relying on the amazing capacity of today's open source components for server, cloud, browser, and edge devices.  However the applications built around Axmgc could be rich and sophsiticated, or simple tiny inquiries.
+Axiomagic is intended to be a thin layer of functions and tools, relying on the burgeoning capacity of today's open source components for server, cloud, browser, and edge devices.  Use it to build rich, sophsiticated applications, or quick, narrow investigations.
 
-Implementation Technology:  Scala, RDF, Akka, Idris, and many web components.
+Implementation Technology:  Scala, RDF, Akka, Idris, and HTML/JS. 
 ## Example Applications
-Some current open science experiments helping drive our requirements for Axiomagic:
+Some open science experiments helping drive our requirements for Axiomagic:
 #### Practical Motives
  * https://gitlab.com/stub22/open-fin-onto - Open financial computing, grounded in FIBO and related ontologies
  * https://gitlab.com/stub22/defogo - Wildfire analysis leveraging IoT and cloud
