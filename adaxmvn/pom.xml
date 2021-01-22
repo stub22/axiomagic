@@ -31,4 +31,27 @@
         <module>axmgc_web_ontui</module>
     </modules>
 
+    <build>
+        <pluginManagement>
+            <plugins>
+                <!-- Need this scala plugin config to ensure scala-classes are captured in the output jars.
+                 -->
+                <plugin>
+                    <groupId>net.alchim31.maven</groupId>
+                    <artifactId>scala-maven-plugin</artifactId>
+                    <version>${scala.plugin.version}</version>
+                    <configuration>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>compile</goal>
+                                <goal>testCompile</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
 </project>

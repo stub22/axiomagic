@@ -45,7 +45,8 @@ trait ChkFormulas extends MdlDmpFncs {
 		// ExprEvaluator does these two steps
 		val eeng = getEvalEngine()
 		EvalEngine.set(eeng)
-		eeng.reset()
+		// TODO:  FIXME - this "reset" method is missing as of 2021-01-14
+//		eeng.reset()
 	}
 	def parseExpr(inputExpression: String): Option[IExpr] = {
 		if (inputExpression != null) {
