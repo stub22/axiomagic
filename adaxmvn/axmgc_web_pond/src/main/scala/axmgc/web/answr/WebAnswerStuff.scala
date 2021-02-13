@@ -1,5 +1,8 @@
 package axmgc.web.answr
 
+/*
+High level rep of answers.
+ */
 // An answer can be empty, or a part can be missing, but a part (or part-key)
 // cannot be empty.
 
@@ -8,6 +11,11 @@ private trait WebAnswerStuff
 protected trait TWAPartKey
 
 protected sealed abstract class WAPartKey extends TWAPartKey {}
+/*
+  These answer parts represent structured data forms.
+  Note that Javascript code is NOT treated as a WAPart - it is in another layer.
+  However of course a WAP_Xhtml block MAY contain small amounts of triggering Javascript.
+ */
 case class WAP_Xhtml(domId_opt : Option[String]) extends WAPartKey
 case class WAP_Css(cssFileNm_opt : Option[String]) extends WAPartKey
 case class WAP_Trtl(graphUriTxt : String) extends WAPartKey

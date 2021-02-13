@@ -118,7 +118,7 @@ trait RouteWeaver extends  SprayJsonSupport with OurUrlPaths {
 	}
 	private def mkLinkTxt(url: String, label: String) = s"""<a href="${url}">${label}</a>"""
 	private def makeMenuRt : dslServer.Route = {
-		val menuXhtmlBlock = s"""<div>
+		val menuXhtmlBlock: String = s"""<div>
 									<h2>Axiomagic Test Menu</h2>
 									<ol>
 			<li>Hey</li>
@@ -128,7 +128,7 @@ trait RouteWeaver extends  SprayJsonSupport with OurUrlPaths {
 			<li>${mkLinkTxt(pathJsonPreDump, pathJsonPreDump)}</li>
 			<li>${mkLinkTxt(pathJsonLdMime, pathJsonLdMime)}</li>
 			<li>${mkLinkTxt(pathMore, pathMore)}</li>
-			<li>${mkLinkTxt(pathJsonPerson, pathJsonPerson)}</li>
+			<li>${mkLinkTxt(pathJsonPerson, pathJsonPerson)} - FAILS - our PersonJsonSupport is broken</li>
 			<li>${mkLinkTxt(pathJsonMoney, pathJsonMoney)}</li>
 			<li>${mkLinkTxt(pathJsonPortfolio, pathJsonPortfolio)}</li>
 			<li>${mkLinkTxt(pathUseSource, pathUseSource)}</li>

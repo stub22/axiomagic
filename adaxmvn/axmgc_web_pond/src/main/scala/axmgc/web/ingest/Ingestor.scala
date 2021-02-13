@@ -2,6 +2,7 @@ package axmgc.web.ingest
 
 import akka.actor.ActorRef
 import akka.http.scaladsl.server.Directives.{complete, path, _}
+import akka.http.scaladsl.server.Route
 import akka.http.scaladsl.{server => dslServer}
 import akka.util.Timeout
 import axmgc.web.ent.HtEntMkr
@@ -58,7 +59,7 @@ trait IngestRtMkr {
 				// Here "onComplete" is an akka-http directive (not the same-named method of the future),
 				// which creates a route.
 				// https://doc.akka.io/docs/akka-http/current/routing-dsl/directives/future-directives/onComplete.html
-				onComplete(askFut) {
+				val ingestorRoute: Route = onComplete(askFut) {
 					case Success(r) => {
 						val rsltTxt = "<h2>ans=[" + r.toString + "]</h2>"
 						val rsltEnt = htEntMkr.makeHtmlEntity(rsltTxt)
@@ -70,6 +71,7 @@ trait IngestRtMkr {
 						complete(failEnt)
 					}
 				}
+				ingestorRoute
 			} // ~
 		wevIngRt
 	}

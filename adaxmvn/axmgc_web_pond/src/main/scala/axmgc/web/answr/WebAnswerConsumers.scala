@@ -9,7 +9,7 @@ private case class RPV_StringPart(myTxt : String) extends RegularPV
 private case class RPV_XmlElemPart(myElem : XElem) extends RegularPV
 private case class RPV_XmlSeqPart(myElem : XNodeSeq) extends RegularPV
 
-// 2020-09-25 Note: This trait has not been implemented yet.
+// 2020-09-25 Note: none of these traits are fully implemented yet.
 // Temporarily marking these traits as private scope, to keep track of what is unfinished.
 private trait TRegConsumer {
 	// xhel should already contain dom-id attr, if any.

@@ -4,7 +4,7 @@ import java.io.ByteArrayOutputStream
 
 import org.apache.jena.graph.{Graph => JenaGraph}
 import org.apache.jena.rdf.model.{Model => JenaModel}
-import org.apache.jena.riot.system.RiotLib
+import org.apache.jena.riot.system.{PrefixMap, RiotLib}
 import org.apache.jena.riot.{JsonLDWriteContext, RDFDataMgr, RDFFormat, WriterGraphRIOT}
 import org.slf4j.{Logger, LoggerFactory}
 
@@ -35,7 +35,7 @@ class RdfJsonLdAdapter {
 		val outBAOS = new ByteArrayOutputStream
 		try {
 			val wrtr : WriterGraphRIOT = RDFDataMgr.createGraphWriter(fmt)
-			val pm = RiotLib.prefixMap(jgrph)
+			val pm: PrefixMap = RiotLib.prefixMap(jgrph)
 			val baseURI : String = null
 			wrtr.write(outBAOS, jgrph, pm, baseURI, jldWCtx)
 			val outTxt = outBAOS.toString()

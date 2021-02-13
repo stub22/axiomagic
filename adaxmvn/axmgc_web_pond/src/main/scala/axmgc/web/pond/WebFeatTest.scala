@@ -63,7 +63,7 @@ trait FeatTstRtMkr extends CORSHandler  with OurUrlPaths {
 				complete(htEnt)
 
 			} ~ path(pathJsonLdMime) {
-				val jsonDat = ldChnkr.getSomeJsonLD(true)
+				val jsonDat: String = ldChnkr.getSomeJsonLD(true)
 				val jsonEnt = htEntMkr.makeJsonEntity(jsonDat)
 				corsHandler(complete(jsonEnt))
 			} ~ path(pathJsonPerson) {

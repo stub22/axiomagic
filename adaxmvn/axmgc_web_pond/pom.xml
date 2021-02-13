@@ -10,7 +10,6 @@
     <modelVersion>4.0.0</modelVersion>
     <artifactId>axiomagic.web.pond</artifactId>
 
-
     <dependencies>
         <dependency>
             <groupId>org.scala-lang</groupId>
@@ -37,12 +36,6 @@
         </dependency>
 
         <dependency>
-            <groupId>io.spray</groupId>
-            <artifactId>spray-json_2.12</artifactId>
-            <version>${spray.json.version}</version>
-        </dependency>
-
-        <dependency>
             <groupId>org.apache.jena</groupId>
             <artifactId>apache-jena-libs</artifactId>
             <type>pom</type>
@@ -56,12 +49,21 @@
         </dependency>
 
         <!-- JSON bindings:
-            This dep transitively brings in spray-json -->
+            This dep transitively brings in spray-json, but visual IDEs might sometimes not see it. -->
         <dependency>
             <groupId>com.typesafe.akka</groupId>
             <artifactId>akka-http-spray-json_2.12</artifactId>
             <version>10.1.7</version>
         </dependency>
+        <!-- Explicit, approximately same version of json lib is brought in transitively above
+				Does this extra explicit dep help latest IDEA? (stub22 is using 2020.2)
+		-->
+				<dependency>
+					<groupId>io.spray</groupId>
+					<artifactId>spray-json_2.12</artifactId>
+					<version>${spray.json.version}</version>
+				</dependency>
+
 
         <!-- XML bindings:
             OK  -->
