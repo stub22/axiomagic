@@ -39,9 +39,7 @@ object TstOntDmps  {
 class TstOntApp(myActSysNm : String) extends WebServerLauncher {
 	protected lazy val myS4JLog : Logger = LoggerFactory.getLogger(this.getClass)
 	protected lazy val myActorSys = makeActorSys(myActSysNm)
-	private lazy val myOntChkr  = new ChkFibo {
-		override protected def getS4JLog: Logger = myS4JLog
-	}
+	private lazy val myOntChkr  = new ChkFibo {}
 	def chkOntStatsAndPrintToLog : Unit = {
 		myOntChkr.dumpFiboMdlStatsToLog()
 	}

@@ -153,6 +153,7 @@ class WebXmlGen extends XmlEntMkr with WebRsrcFolders  {
 			<div>Did somebody ask for a REAL body?</div>
 			<div>IntrnlPonderRslt Dump:<br/>{ipr.dumpAsTxt}</div>
 			<div>{iprEls}</div>
+			<div>special: <pre>{ipr.specialJsonTxt}</pre></div>
 		</body>
 		bdyElem
 	}

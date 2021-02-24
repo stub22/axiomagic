@@ -68,24 +68,28 @@ trait DumperTupleBridge extends DumperWebFeat {
 	private def doRealPageWork (rqPrms: WebRqPrms): Option[IntrnlPonderRslt] = {
 		myS4JLog.info("doRealPageWork got paramMap: {}", rqPrms)
 		val opt_nuts = rqPrms.getTextParam("nuts")
-		if (opt_nuts.isDefined) {
-			goNuts(opt_nuts.get)
-		}
+		val njtxt = if (opt_nuts.isDefined) {
+			val nuttyJsonTxt = goNuts(opt_nuts.get)
+			nuttyJsonTxt
+		} else "no 'nuts' param found"
 		// if (rqPrms.)
 		val myRslt = new IntrnlPonderRslt {
 			override def getRqPrms: WebRqPrms = rqPrms
 			override def getOrderedRsltPairs: Seq[(String, String)] = {
 				getRqPrms.getParamPairs
 			}
+
+			override def specialJsonTxt: String = njtxt
 		}
 		Some(myRslt)
 	}
 
 	lazy val myKbpediaOnt = new KBPediaOntoWrap {}
 
-	private def goNuts(np : String) = {
+	private def goNuts(np : String) : String = {
 		myS4JLog.info("goNuts got np: {}", np)
 		val kbpMdl = myKbpediaOnt.getKBP_model
-		myKbpediaOnt.dumpStatsToLog()
+		val statJsonTxt: String = myKbpediaOnt.dumpStatsToLogAndJsonTxt()
+		statJsonTxt
 	}
 }

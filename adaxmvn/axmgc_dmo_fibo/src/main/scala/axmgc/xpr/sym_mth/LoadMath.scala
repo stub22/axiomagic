@@ -1,6 +1,6 @@
 package axmgc.xpr.sym_mth
 
-import axmgc.dmo.fin.ontdmp.MdlDmpFncs
+import axmgc.dmo.fin.ontdmp.{MdlDmpFncs, OntQryMgr}
 import org.apache.jena.riot.RDFDataMgr
 import org.apache.jena.rdf.model.{Model => JenaMdl}
 import org.matheclipse.core.eval.{EvalEngine, MathMLUtilities, TeXUtilities}
@@ -27,9 +27,9 @@ trait ChkFormulas extends MdlDmpFncs {
 		myS4JLog.info("Finished math formula load, model size: {}", mdl.size())
 		mdl
 	}
-
+	private val ontQryMgr = new OntQryMgr
 	def dumpStatsToLog(): Unit = {
-		dumpSomeModelStatsToLog(myMdl_MathFrmlas)
+		val qryOutJsnTxt =  ontQryMgr.dumpMdlStatsToJsnArrTxt( myMdl_MathFrmlas)
 	}
 	// TODO:  MathML as XML
 	def makeLgrngMathML : String = {

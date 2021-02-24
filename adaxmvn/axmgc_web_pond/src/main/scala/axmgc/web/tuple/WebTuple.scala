@@ -41,6 +41,7 @@ trait IntrnlPonderRslt {
 		s"IntrnlPonderRslt[\n${rqParamsDump}\n]"
 	}
 	def getOrderedRsltPairs : Seq[(String, String)]
+	def specialJsonTxt : String
 }
 trait WebTupleMaker extends HtEntMkr {
 
@@ -69,7 +70,9 @@ trait WebTupleMaker extends HtEntMkr {
 	def evalFullPageNow(pgEvalCtx : PgEvalCtx, chainBk : Boolean = false) : PgEntTpl = {
 		// So far this merely a skeletal dry-run of making all required page elements in one swoop.
 		val wrqPrms = pgEvalCtx.wrqPrms
+
 		val intrnlRslt_opt : Option[IntrnlPonderRslt] = doPageWork(wrqPrms)
+		// val sjt = intrnlRslt_opt.get.specialJsonTxt
 		val xentMkr = getWebXml
 		val outEnt = xentMkr.getXHPageEnt(intrnlRslt_opt)
 		val xhPgEnt_opt = Some(outEnt)
