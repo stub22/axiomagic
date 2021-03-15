@@ -28,6 +28,7 @@
 	<repositories>
 		<repository>
 			<id>jitpack.io</id>
+			<name>jitpack_repo_name</name>
 			<url>https://jitpack.io</url>
 		</repository>
 	</repositories>
