@@ -31,6 +31,12 @@ https://stackoverflow.com/questions/53315677/spark-java-saveastable-failes-with-
             <version>2.4.0</version>
         </dependency>
         <!-- Uses bintray repo linked below in "repositories" section -->
+
+        <!--    Netlogo is distributed under GPL license.
+                We use it only experimentally, in the file axmgc/xpr/nlg/TestNlg.scala.
+
+                Disabling that file and this dependency removes all connection from axiomagic to NetLogo.
+         -->
         <dependency>
             <groupId>org.nlogo</groupId>
             <artifactId>netlogo</artifactId>

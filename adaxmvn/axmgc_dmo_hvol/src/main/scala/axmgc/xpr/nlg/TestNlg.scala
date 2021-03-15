@@ -5,6 +5,10 @@ import org.nlogo.lite.{AppletPanel, InterfaceComponent => NlgIntfc}
 import org.nlogo.headless.{HeadlessWorkspace => NlgHdlsWrk}
 import org.nlogo.workspace.{Controllable => NlgCntrlbl}
 
+/*
+ *  FIXME: NetLogo is distributed under GPL license, so this experiment should be treated as an optional
+ *  demo-plugin for axiomagic.
+ */
 object TestNlg {
 	def main(args: Array[String]) {
 		val workingDir = System.getProperty("user.dir");
