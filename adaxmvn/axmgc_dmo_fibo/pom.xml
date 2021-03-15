@@ -89,6 +89,7 @@ The oracle-server deps above automatically pull in berkeley DB - java edition - 
     <repositories>
         <repository>
             <id>snapshots-repo</id>
+            <name>snap_repo_name</name>
             <url>https://oss.sonatype.org/content/repositories/snapshots</url>
             <releases>
                 <enabled>false</enabled>

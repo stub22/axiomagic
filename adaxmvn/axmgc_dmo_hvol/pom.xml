@@ -60,7 +60,7 @@ https://stackoverflow.com/questions/53315677/spark-java-saveastable-failes-with-
                 <enabled>false</enabled>
             </snapshots>
             <id>bintray-netlogo-NetLogo-JVM</id>
-            <name>bintray</name>
+            <name>bintray_repo_name</name>
             <url>http://dl.bintray.com/netlogo/NetLogo-JVM</url>
         </repository>
     </repositories>
