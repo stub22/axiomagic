@@ -1,10 +1,10 @@
-Axiomagic credits, updated 2018-Sep-02
+Axiomagic credits, updated 2021-Mar-15
 --------------------------------------
 Axiomagic is licensed under terms of the Apache 2.0 license.
 See the file AXIOMAGIC_LICENSE_APACHE2.txt.
 Axiomagic also makes use of the following software:
 
-Apache 2.0 Licensed:
+Apache License 2.0:
 Maven   				https://maven.apache.org
 Jena RDF suite    		https://jena.apache.org
 Log4J    				https://logging.apache.org/log4j
@@ -13,23 +13,41 @@ Apache Commons			https://commons.apache.org
 Akka					https://doc.akka.io/docs/akka/2.5/project/licenses.html
 Spray					http://spray.io/project-info/license/
 FasterXML Jackson 2.x	https://github.com/FasterXML/jackson/wiki/FAQ
+Spark					https://spark.apache.org/
+TopQuadrant SHACL 		https://github.com/TopQuadrant/shacl
+Oracle NoSQL DB - Community Edition
+						https://www.oracle.com/database/technologies/nosql-database-server-downloads.html
+						https://search.maven.org/artifact/com.oracle.kv/oracle-nosql-client
+						https://search.maven.org/artifact/com.oracle.kv/oracle-nosql-server
 
-BSD 3-Clause Licensed:
-Scala				https://www.scala-lang.org/license/
-JSON-LD Java 		https://github.com/jsonld-java/jsonld-java/blob/master/LICENCE
+BSD 3-Clause License:
+Scala					https://www.scala-lang.org/license/
+JSON-LD Java 			https://github.com/jsonld-java/jsonld-java/blob/master/LICENCE
 
 MIT-style Licensed:
-SLF4J				https://www.slf4j.org/license.html
+SLF4J					https://www.slf4j.org/license.html
 
 Public Domain:
 Scala-Maven-Plugin in artifact group net.alchim31.maven
 	(was previously Apache License 2.0, is now Public Domain)
 	https://github.com/davidB/scala-maven-plugin
 
+GNU General Public License 2.0
+Netlogo					https://ccl.northwestern.edu/netlogo/docs/copyright.html
+
+GNU General Public License 3.0
+Symja					https://github.com/axkr/symja_android_library
+						Parts of symja are available under less restrictive licenses.  See the README.
+
+FIXME: License Compound, Complex or Uncertain:
+	resources: 	embedded javascript deps
+				FIBO ontology
+				KBPedia ontology
+
+
 Other components may be included indirectly, via pom.xml dependencies,
 classpaths, web services, and other mechanisms.  If you notice a 
 substantial omission from the above list of credits, please let us know!
 
 Other licenses:
-Java - not included with Axiomagic, see your java vendor
-for license terms.
+Java JDK is required but not included with Axiomagic; see your JDK vendor for license terms.
