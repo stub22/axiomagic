@@ -1,17 +1,13 @@
 # axiomagic tuning kit 
 Axiomagic is an open source meta-system for interactive exploration.
 <br/>Core components use Scala, Akka Http, RDF, and HTML/CSS/Javascript.
-<br/>Upstream functional generators (Idris, MMT) emit bounded, tunable, explainable smarts for use in downstream web runtime.
-<br/>Here is a screenshot of an experimental live-generated interactive Javascript+CSS page.
-<br/>TODO:  Replace with real content and milder color contrast.
-<br/><img src="docs/_screen_img/web_icon_demo_AA.png" alt="axiomagic screen shot"	title="demo screen shot" width="380" height="300" />
-<br/> <i> (This experiment uses icons downloaded from icomoon.io) </i>
+<br/>Upstream functional generators (Scala, Idris, ...) emit bounded, tunable, explainable smarts (model kernels) for use in downstream interactive web runtime.
+
 ## Uses 
-Axiomagic is intended for use in domain-specific browsers, calculators, simulators, and games.
+Axiomagic is a toolkit for interactions with domain-specific data, deployed in browsers, calculators, simulators, and games.
 <br/>Axmgc features apply naturally in science, finance, and edutainment.
 
 ## Lineage
-
 This work builds on models and designs from previous projects, including the [Glue-AI 1.x](http://glue.ai) constellation 
 from Stu B22 and pals.
 
@@ -20,13 +16,16 @@ Axiomagic is intended to be a thin layer of functions and tools, relying on the 
 Implementation Technology:  Scala, RDF, Akka, Idris, and HTML/JS. 
 ## Example Applications
 Some open science experiments helping drive our requirements for Axiomagic:
-#### Practical Motives
+
+#### Scientific Study Examples  
+ * http://gravax.fun - Interactive model analysis tool tackling e.g. 
+   * https://gitlab.com/stub22/open-sci-cosmo - Gravitation at galactic scale
+   * https://gitlab.com/stub22/open-sci-proof - Models of variable axioms (= the ultimate version of what we call "tuning")
+
+#### Practical Engineering Examples
  * https://gitlab.com/stub22/open-fin-onto - Open financial computing, grounded in FIBO and related ontologies
  * https://gitlab.com/stub22/defogo - Wildfire analysis leveraging IoT and cloud
-#### Academic Studies  
- * https://gitlab.com/stub22/open-sci-cosmo - Gravitation at galactic scale
- * https://gitlab.com/stub22/open-sci-proof - Models of variable axioms (= the ultimate version of what we call "tuning")
- 
+  
 ## Runtime Pacakaging
  Axiomagic provides both Client (AxCli) and Server (AxSrv) components, which may be selectively combined into an embedded (AxEmb) setup.
  * AxCli
