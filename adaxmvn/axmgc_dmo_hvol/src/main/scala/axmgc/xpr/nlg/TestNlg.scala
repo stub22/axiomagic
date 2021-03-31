@@ -7,7 +7,8 @@ import org.nlogo.workspace.{Controllable => NlgCntrlbl}
 
 /*
  *  FIXME: NetLogo is distributed under GPL license, so this experiment should be treated as an optional
- *  demo-plugin for axiomagic.
+ *  demo-plugin for the axiomagic.dmo.hvol module.
+ *  https://ccl.northwestern.edu/netlogo/docs/copyright.html
  */
 object TestNlg {
 	def main(args: Array[String]) {
