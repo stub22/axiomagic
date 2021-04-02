@@ -4,6 +4,7 @@ import axmgc.web.lnch.FallbackLog4J
 import axmgc.web.pond.WebServerLauncher
 import org.apache.jena.riot.RDFDataMgr
 import org.slf4j.{Logger, LoggerFactory}
+import akka.http.scaladsl.{server => dslServer}
 
 object TstOntDmps  {
 	val flg_consoleTest = true
@@ -13,7 +14,7 @@ object TstOntDmps  {
 
 	val myActSysNm = "axmgc_dmo_fin_19"
 	val myWbSvcHostName = "localhost"
-	val myWbSvcPort = 8119
+	val myWbSvcPort = 8973
 
 	lazy val myFLog4J = new FallbackLog4J {}
 	lazy val myTontApp = new TstOntApp(myActSysNm)
@@ -39,9 +40,9 @@ object TstOntDmps  {
 class TstOntApp(myActSysNm : String) extends WebServerLauncher {
 	protected lazy val myS4JLog : Logger = LoggerFactory.getLogger(this.getClass)
 	protected lazy val myActorSys = makeActorSys(myActSysNm)
-	private lazy val myOntChkr  = new ChkFibo {}
+	private lazy val myFiboChkr  = new ChkFibo {}
 	def chkOntStatsAndPrintToLog : Unit = {
-		myOntChkr.dumpFiboMdlStatsToLog()
+		myFiboChkr.dumpFiboMdlStatsToLog()
 	}
 	def launchWebSvc(svcHostName : String, svcPort : Int, flg_blockUntilEnterKey: Boolean = true) : Unit = {
 
@@ -49,12 +50,29 @@ class TstOntApp(myActSysNm : String) extends WebServerLauncher {
 		myS4JLog.info("Launching app with actrSysNm={}", myActSysNm)
 		val actSys = myActorSys
 		myS4JLog.debug("Found actorSys handle: {}", actSys)
-
-		val dmprTpblBrdg: DumperWebFeat = new DumperTupleBridge {}
+		val testRt = makeOurTestComboRoute()
+		launchWebServer(testRt, actSys, svcHostName, svcPort, flg_blockUntilEnterKey)
+	}
+	private def makeOurTestComboRoute (): dslServer.Route = {
+		val dmprRt = mkDumperRoute()
+		val nvRt = mkNavTreeRoute("onav")
+		import dslServer.Directives.{_}
+		val testComboRt = dmprRt ~ nvRt
+		testComboRt
+	}
+	private def mkDumperRoute(): dslServer.Route = {
+		val dmprTpblBrdg: DumperWebFeat = new DumperTupleBridge {
+			override protected def getFiboOntChkr: ChkFibo = myFiboChkr
+		}
 		val dmprRtMkr = new DmpWbRtMkr {
 			override protected def getDumperWebFeat: DumperWebFeat = dmprTpblBrdg
 		}
 		val dmprRt = dmprRtMkr.makeDmprTstRt
-		launchWebServer(dmprRt, actSys, svcHostName, svcPort, flg_blockUntilEnterKey)
+		dmprRt
+	}
+	private def mkNavTreeRoute(routePathTxt : String) : dslServer.Route = {
+		val wnrb = new WebNavRouteBldr{}
+		val wnrt = wnrb.mkNavJsonRt(routePathTxt)
+		wnrt
 	}
 }

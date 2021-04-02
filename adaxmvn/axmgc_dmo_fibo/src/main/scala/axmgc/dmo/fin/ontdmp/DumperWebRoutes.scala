@@ -68,11 +68,18 @@ trait DumperTupleBridge extends DumperWebFeat {
 	private def doRealPageWork (rqPrms: WebRqPrms): Option[IntrnlPonderRslt] = {
 		myS4JLog.info("doRealPageWork got paramMap: {}", rqPrms)
 		val opt_nuts = rqPrms.getTextParam("nuts")
+		val opt_fibo = rqPrms.getTextParam("fibo")
+		val opt_tree = rqPrms.getTextParam("tree")
 		val njtxt = if (opt_nuts.isDefined) {
 			val nuttyJsonTxt = goNuts(opt_nuts.get)
 			nuttyJsonTxt
-		} else "no 'nuts' param found"
-		// if (rqPrms.)
+		} else if (opt_fibo.isDefined) {
+			val fiboJsonTxt = dumpSomeFiboStats(opt_fibo.get)
+			fiboJsonTxt
+		} else if (opt_tree.isDefined) {
+			"hmm, tree data fetch does not fit the IntrnlPonderRslt concept if it implies 'full-page' context"
+		} else "no 'nuts' or 'fibo' or 'tree' params found"
+
 		val myRslt = new IntrnlPonderRslt {
 			override def getRqPrms: WebRqPrms = rqPrms
 			override def getOrderedRsltPairs: Seq[(String, String)] = {
@@ -84,7 +91,7 @@ trait DumperTupleBridge extends DumperWebFeat {
 		Some(myRslt)
 	}
 
-	lazy val myKbpediaOnt = new KBPediaOntoWrap {}
+	private lazy val myKbpediaOnt = new KBPediaOntoWrap {}
 
 	private def goNuts(np : String) : String = {
 		myS4JLog.info("goNuts got np: {}", np)
@@ -92,4 +99,15 @@ trait DumperTupleBridge extends DumperWebFeat {
 		val statJsonTxt: String = myKbpediaOnt.dumpStatsToLogAndJsonTxt()
 		statJsonTxt
 	}
+
+	protected def getFiboOntChkr : ChkFibo
+
+	private lazy val myFiboOntChkr = getFiboOntChkr
+
+	private def dumpSomeFiboStats(fsp : String) : String = {
+		myS4JLog.info("dumpSomeFiboStats got fsp: {}", fsp)
+		"[fibo answer goes here]"
+	}
+
+
 }
