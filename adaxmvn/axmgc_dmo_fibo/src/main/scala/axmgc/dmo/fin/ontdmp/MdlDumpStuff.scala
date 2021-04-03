@@ -129,12 +129,13 @@ trait MdlDmpFncs extends  StmtXtractFuncs  with StdGenVocab {
 		myLog.info("Uniq local names: {}", uniqLocNams)
 	}
 
-	def dumpPropsTallyByName(mdl: JenaMdl): Unit = {
+	def dumpPropsTallyByName(mdl: JenaMdl): Unit  = {
 		val sckr = new MdlPrpSucker {}
 		val tallyMap: Map[JenaProp, Int] = sckr.tallyProps(mdl)
-		val propsByURI = tallyMap.keys.toSeq.sortBy(_.getURI)
+		val propsByURI: Seq[JenaProp] = tallyMap.keys.toSeq.sortBy(_.getURI)
 		myLog.info("Uniq prop count: {}", propsByURI.size)
 		dumpPropsTally(propsByURI, tallyMap)
+
 	}
 
 	def dumpPropsTallyByCount(mdl: JenaMdl): Unit = {
@@ -142,7 +143,7 @@ trait MdlDmpFncs extends  StmtXtractFuncs  with StdGenVocab {
 		val tallyMap: Map[JenaProp, Int] = sckr.tallyProps(mdl)
 		val pairsByCount: Seq[(JenaProp, Int)] = tallyMap.toSeq.sortBy(_._2)
 		myLog.info("Pairs count: {}", pairsByCount.size)
-		val propsByCount = pairsByCount.map(_._1)
+		val propsByCount: Seq[JenaProp] = pairsByCount.map(_._1)
 		dumpPropsTally(propsByCount, tallyMap)
 	}
 

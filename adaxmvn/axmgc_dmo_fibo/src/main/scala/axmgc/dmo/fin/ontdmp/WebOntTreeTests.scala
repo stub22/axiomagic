@@ -3,6 +3,7 @@ package axmgc.dmo.fin.ontdmp
 import axmgc.web.cors.CORSHandler
 import akka.http.scaladsl.{server => dslServer}
 import akka.http.scaladsl.model.HttpEntity.{Strict => HEStrict}
+import axmgc.web.ent.HtEntMkr
 
 private trait WebOntTreeTests
 
@@ -28,8 +29,15 @@ trait DemoOntNavTreeResponder {
 			case _ => throw new Exception("Unknown selector: " + selPrm)
 		}
 	}
+	// FIXME:  This HTEM should probably go into a narrower responder ctx
+	private val myHTEM = new HtEntMkr {}
 	private def mkFiboResponse(paramMap : Map[String, String]) : HEStrict = ???
-	private def mkKbpediaResponse(paramMap : Map[String, String]) : HEStrict = ???
+	private def mkKbpediaResponse(paramMap : Map[String, String]) : HEStrict = {
+		// FIXME:  This stat txt is not actually navdat
+		val statJsonTxt: String = myKbpediaOnt.dumpStatsToLogAndJsonTxt()
+		val navdatEnt = myHTEM.makeJsonEntity(statJsonTxt)
+		navdatEnt
+	}
 }
 
 trait WebNavRouteBldr {

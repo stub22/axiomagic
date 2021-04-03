@@ -1,7 +1,8 @@
 package axmgc.dmo.fin.ontdmp
 
 import org.slf4j.LoggerFactory
-import spray.json.{DefaultJsonProtocol, JsValue, JsonFormat}
+import spray.json.{DefaultJsonProtocol, JsArray, JsBoolean, JsNumber, JsObject, JsString, JsValue, JsonFormat}
+
 import scala.collection.immutable.Seq
 
 private trait WebNavTreeStuff
@@ -15,13 +16,28 @@ private trait WebNavTreeStuff
 
 case class NavItem(title: String, folder : Option[Boolean], expanded : Option[Boolean],
 				   `lazy`: Option[Boolean], `type`: Option[String], tooltip : Option[String],
-				   children : Option[Seq[NavItem]])
+				   children : Option[Seq[NavItem]], xtra : Option[JsValue]) {
+	def addExtra(jsv : JsValue) : NavItem = NavItem(title, folder, expanded, `lazy`, `type`, tooltip, children, Option(jsv))
+}
+
+trait JsValueMakers {
+	// https://github.com/spray/spray-json/blob/release/1.3.x/src/main/scala/spray/json/JsValue.scala
+	// https://www.javadoc.io/doc/io.spray/spray-json_2.12/latest/spray/json/JsObject.html
+	def smapToJsObj(fields: Map[String, JsValue]) : JsObject = new JsObject(fields)
+	// https://www.javadoc.io/doc/io.spray/spray-json_2.12/latest/spray/json/JsArray.html
+	def svectToJsArr(elements: Vector[JsValue]) : JsArray = new JsArray(elements)
+	def seqToJsArr(elements: Seq[JsValue]) : JsArray = svectToJsArr(elements.toVector)
+	def mkJsString(sv : String) : JsString = new JsString(sv)
+	def mkJsNum(bigDec : BigDecimal) = new JsNumber(bigDec)
+	def mkJsNum(lv : Long) = new JsNumber(BigDecimal(lv))
+
+}
 
 trait NavItemMakerFuncs {
 	protected lazy val myS4JLog = LoggerFactory.getLogger(this.getClass)
 	private val navJsonProtoCtx = new DefaultJsonProtocol {
 		// We must use lazyFormat wrapper to handle the recursive type
-		implicit val jf_navItem: JsonFormat[NavItem] = lazyFormat(jsonFormat7(NavItem))
+		implicit val jf_navItem: JsonFormat[NavItem] = lazyFormat(jsonFormat8(NavItem))
 	}
 	def navtreeToJsonValue(rootItems : Seq[NavItem]) : JsValue = {
 		import navJsonProtoCtx._
@@ -30,26 +46,37 @@ trait NavItemMakerFuncs {
 		navJson
 	}
 	def mkLeafItem(title : String, typ_opt : Option[String], ttip_opt : Option[String]) : NavItem = {
-		NavItem(title, Some(false), None, None, typ_opt, ttip_opt, None)
+		NavItem(title, Some(false), None, None, typ_opt, ttip_opt, None, None)
 	}
 	def mkFolderItem(title : String, subItems : Seq[NavItem]) = {
-		NavItem(title, Some(true), Some(false), Some(false), None, None, Some(subItems))
+		NavItem(title, Some(true), Some(false), Some(false), None, None, Some(subItems), None)
 	}
+
+}
+trait MakeSampleNavItems {
+	private val myMakerFuncs = new NavItemMakerFuncs {}
+	private val myJsvMkr = new JsValueMakers{}
+
 	def loadCat(catName : String) : NavItem = {
 		val subItems : Seq[NavItem] = catName match {
 			case "DUM" => loadDummyFolders()
 		}
-		val topItem = mkFolderItem("cat_" + catName, subItems)
+		val topItem = myMakerFuncs.mkFolderItem("cat_" + catName, subItems)
 		topItem
 	}
 	def mkDummyNavTreeRoots(catNames : Seq[String]) : Seq[NavItem] = {
-		val itemA = mkLeafItem(title = "hoowee one item", Some("generic"), None)
-		val itemB = mkLeafItem("leafy green", Some("vegetable"), Some("how about Spinach?"))
-		val listAB = List(itemA, itemB)
-		val fldrC = mkFolderItem("foldy-see", listAB)
-
+		val itemA = myMakerFuncs.mkLeafItem("hoowee one item", Some("generic"), None)
+		val itemB = myMakerFuncs.mkLeafItem("leafy green", Some("vegetable"), Some("how about Spinach?"))
+		val numList = List(JsNumber("2.75"), JsNumber("778.332"))
+		val numJSA = myJsvMkr.seqToJsArr(numList)
+		val itemC = myMakerFuncs.mkLeafItem("should have xtra JSV", Some("HasXtra"), None).addExtra(numJSA)
+		val listAB = List(itemA, itemB, itemC)
+		val fieldMap = Map[String, JsValue]("factName" -> JsString("swiggy"), "numList" -> numJSA, "flag" -> JsBoolean(false))
+		val grtObj: JsObject = myJsvMkr.smapToJsObj(fieldMap)
+		val fldrC = myMakerFuncs.mkFolderItem("foldy-see", listAB).addExtra(grtObj)
+		val anthrObj = myJsvMkr.smapToJsObj(Map("wiggleFactor" -> JsNumber(-17.33), "numbLst" -> numJSA, "bonusObj" -> grtObj))
 		val dummyCtgFldrs = loadDummyFolders()
-		val dumCtsFldr = mkFolderItem("dumcts", dummyCtgFldrs)
+		val dumCtsFldr = myMakerFuncs.mkFolderItem("dumcts", dummyCtgFldrs).addExtra(anthrObj)
 		val dumLst = List(itemB, fldrC, itemA, dumCtsFldr)
 		dumLst
 	}
@@ -58,32 +85,34 @@ trait NavItemMakerFuncs {
 	def loadDummyFolders() : Seq[NavItem] = {
 		val animalFolderItems: Seq[NavItem]  = animalCatNames.map(ctgNm => {
 			val anmGnusItms = loadGenusItems(ctgNm)
-			mkFolderItem("anml_" + ctgNm, anmGnusItms)
+			myMakerFuncs.mkFolderItem("anml_" + ctgNm, anmGnusItms)
 		})
-		val animGrpFldr = mkFolderItem("animals", animalFolderItems)
+		val animGrpFldr = myMakerFuncs.mkFolderItem("animals", animalFolderItems)
 
 		val plantFolders : Seq[NavItem] = plantCatNames.map(ctgNm => {
 			val plntGnusItms = loadGenusItems(ctgNm)
-			mkFolderItem("plnt_" + ctgNm, plntGnusItms)
+			myMakerFuncs.mkFolderItem("plnt_" + ctgNm, plntGnusItms)
 		})
-		val plntGrpFldr = mkFolderItem("plants", plantFolders)
+		val plntGrpFldr = myMakerFuncs.mkFolderItem("plants", plantFolders)
 		val dummyFolderList = List(animGrpFldr, plntGrpFldr)
 		dummyFolderList
 	}
+
 	def loadGenusItems(gnusNm : String) : Seq[NavItem] = {
 		mkDummyLeafItems(10, s"gnus_${gnusNm}_" )
 	}
 
 	def mkDummyLeafItems(cnt : Int, nmPrefix : String) : Seq[NavItem] = {
 		val nms: Seq[String] = (1 to cnt).map(nmPrefix + _)
-		nms.map(nm => mkLeafItem(nm, Some("dummy"), Some("ttip for " + nm)))
+		nms.map(nm => myMakerFuncs.mkLeafItem(nm, Some("dummy"), Some("ttip for " + nm)))
 	}
 }
 
 
 trait NavItemMakerTests {
 	private lazy val myS4JLog = LoggerFactory.getLogger(this.getClass)
-	private lazy val myNvItmMkr = new NavItemMakerFuncs {}
+	private val mySampleItemMkr = new MakeSampleNavItems {}
+	private val myMakerFuncs = new NavItemMakerFuncs {}
 
 	def testNavTreeDataGen(paramMap: Map[String, String]): String = {
 
@@ -94,9 +123,9 @@ trait NavItemMakerTests {
 		val catNameTxt = s"catNames=[${catNames.toString()}]"
 		myS4JLog.info(s"${paramSerText} parsed to ${catNameTxt}")
 		val debugRoot: NavItem = mkDebugItemTree(List(paramSerText, catNameTxt))
-		val itms: Seq[NavItem] = debugRoot +: myNvItmMkr.mkDummyNavTreeRoots(catNames)
+		val itms: Seq[NavItem] = debugRoot +: mySampleItemMkr.mkDummyNavTreeRoots(catNames)
 		myS4JLog.info(s"Made item-tree: ${itms}")
-		val itmJSV = myNvItmMkr.navtreeToJsonValue(itms)
+		val itmJSV = myMakerFuncs.navtreeToJsonValue(itms)
 		myS4JLog.info(s"Made item-JSV: ${itmJSV}")
 		val jsPrtty = itmJSV.prettyPrint
 		myS4JLog.info(s"Pretty JSON len: ${jsPrtty.length}")
@@ -104,8 +133,8 @@ trait NavItemMakerTests {
 	}
 
 	def mkDebugItemTree(dbgMsgs: Seq[String]): NavItem = {
-		val dbgItms = dbgMsgs.map(itmMsg => myNvItmMkr.mkLeafItem(itmMsg, Some("debug"), Some("ttip for " + itmMsg)))
-		val dbgRoot = myNvItmMkr.mkFolderItem("debug-items", dbgItms)
+		val dbgItms = dbgMsgs.map(itmMsg => myMakerFuncs.mkLeafItem(itmMsg, Some("debug"), Some("ttip for " + itmMsg)))
+		val dbgRoot = myMakerFuncs.mkFolderItem("debug-items", dbgItms)
 		dbgRoot
 	}
 }
