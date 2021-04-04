@@ -25,11 +25,9 @@ trait KBPediaOntoWrap extends MdlDmpFncs {
 
 	def getKBP_model = myMdl_KBPRC
 
-
 	def dumpStatsToLogAndJsonTxt(): String = {
 		val resultJsnTxt = ontQryMgr.dumpMdlStatsToJsnArrTxt(myMdl_KBPRC)
 		resultJsnTxt
 	}
-
 
 }

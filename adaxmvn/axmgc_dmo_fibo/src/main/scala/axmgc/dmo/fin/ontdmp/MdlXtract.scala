@@ -1,6 +1,5 @@
 package axmgc.dmo.fin.ontdmp
 
-import org.apache.jena.rdf.model.{RDFNode, StmtIterator}
 import org.apache.jena.rdf.model.{RDFNode, StmtIterator, Statement => JenaStmt, Model => JenaMdl, ModelFactory => JenaMdlFctry, Property => JenaProp, Resource => JenaRsrc}
 import collection.mutable.{ HashMap => MutHashMap,  HashSet => MutHashSet}
 

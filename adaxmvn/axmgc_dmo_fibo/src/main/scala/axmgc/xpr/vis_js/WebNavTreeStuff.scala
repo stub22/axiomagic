@@ -1,4 +1,4 @@
-package axmgc.dmo.fin.ontdmp
+package axmgc.xpr.vis_js
 
 import org.slf4j.LoggerFactory
 import spray.json.{DefaultJsonProtocol, JsArray, JsBoolean, JsNumber, JsObject, JsString, JsValue, JsonFormat}
@@ -14,6 +14,8 @@ private trait WebNavTreeStuff
 // (in the JSON-text form) rather unpleasant.
 // Are circe or other JSON libs more flexible in this regard?
 
+// xtra is application stuff, unrelated to fancytree.  (Will be copied into fancytree node.data)
+// cqid is opaque-ID to be sent by client during a lazy-fetch of this item's children. (Will be copied into fancytree node.data)
 case class NavItem(title: String, folder : Option[Boolean], expanded : Option[Boolean],
 				   `lazy`: Option[Boolean], `type`: Option[String], tooltip : Option[String],
 				   children : Option[Seq[NavItem]], xtra : Option[JsValue]) {
@@ -155,8 +157,8 @@ object RunNavItemMakerTests {
 	}
 }
 
-import axmgc.web.ent.HtEntMkr
 import akka.http.scaladsl.model.HttpEntity.{Strict => HEStrict}
+import axmgc.web.ent.HtEntMkr
 
 trait WebNavItemResponder {
 	private val myNimTsts = new NavItemMakerTests{}

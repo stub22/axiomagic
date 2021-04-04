@@ -4,10 +4,11 @@ import axmgc.web.cors.CORSHandler
 import akka.http.scaladsl.{server => dslServer}
 import akka.http.scaladsl.model.HttpEntity.{Strict => HEStrict}
 import axmgc.web.ent.HtEntMkr
+import axmgc.xpr.vis_js.WebNavItemResponder
 
-private trait WebOntTreeTests
+private trait OntNavWebTests
 
-trait DemoOntNavTreeResponder {
+trait OntNavResponder {
 
 	private lazy val myKbpediaOnt  = new KBPediaOntoWrap {}
 	private lazy val myFiboOntChkr = new ChkFibo {}
@@ -40,10 +41,10 @@ trait DemoOntNavTreeResponder {
 	}
 }
 
-trait WebNavRouteBldr {
+trait OntNavRouteBldr {
 	import dslServer.Directives.{_} // Establishes  ~   and whatnot
 
-	private val myResponder = new DemoOntNavTreeResponder {}
+	private val myResponder = new OntNavResponder {}
 	private val myCH = new CORSHandler {}
 
 	def mkNavJsonRt(rtPthTxt : String) : dslServer.Route = {

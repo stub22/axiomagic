@@ -5,6 +5,7 @@ import axmgc.web.pond.WebServerLauncher
 import org.apache.jena.riot.RDFDataMgr
 import org.slf4j.{Logger, LoggerFactory}
 import akka.http.scaladsl.{server => dslServer}
+import axmgc.xpr.vis_js.{MakeWebTableRoutes, MakeSampleSaveRoutes}
 
 object TstOntDmps  {
 	val flg_consoleTest = true
@@ -38,9 +39,12 @@ object TstOntDmps  {
 	}
 }
 class TstOntApp(myActSysNm : String) extends WebServerLauncher {
+	import dslServer.Directives.{_}
+
 	protected lazy val myS4JLog : Logger = LoggerFactory.getLogger(this.getClass)
 	protected lazy val myActorSys = makeActorSys(myActSysNm)
 	private lazy val myFiboChkr  = new ChkFibo {}
+
 	def chkOntStatsAndPrintToLog : Unit = {
 		myFiboChkr.dumpFiboMdlStatsToLog()
 	}
@@ -56,8 +60,8 @@ class TstOntApp(myActSysNm : String) extends WebServerLauncher {
 	private def makeOurTestComboRoute (): dslServer.Route = {
 		val dmprRt = mkDumperRoute()
 		val nvRt = mkNavTreeRoute("onav")
-		import dslServer.Directives.{_}
-		val testComboRt = dmprRt ~ nvRt
+		val bonusRt = mkBonusRoute()
+		val testComboRt = dmprRt ~ nvRt ~ bonusRt
 		testComboRt
 	}
 	private def mkDumperRoute(): dslServer.Route = {
@@ -71,8 +75,20 @@ class TstOntApp(myActSysNm : String) extends WebServerLauncher {
 		dmprRt
 	}
 	private def mkNavTreeRoute(routePathTxt : String) : dslServer.Route = {
-		val wnrb = new WebNavRouteBldr{}
+		val wnrb = new OntNavRouteBldr{}
 		val wnrt = wnrb.mkNavJsonRt(routePathTxt)
 		wnrt
 	}
+	private def mkBonusRoute() : dslServer.Route = {
+		val mssr = new MakeSampleSaveRoutes{}
+		val svRt = mssr.mkSavingRt
+
+		val mgtr = new MakeWebTableRoutes{}
+		val tbcRt = mgtr.mkSampleColDefsJsonRt("sampcols")
+		val tbrRt = mgtr.mkSampleRowsetJsonRt("samprows")
+
+		val bonusRt = tbcRt ~ tbrRt ~ svRt
+		bonusRt
+	}
 }
+
