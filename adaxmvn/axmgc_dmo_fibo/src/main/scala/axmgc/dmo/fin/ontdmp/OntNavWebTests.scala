@@ -18,9 +18,11 @@ trait OntNavResponder {
 	private val PRMVL_FIBO = "fibo"
 	private val PRMVL_DUM = "dummy"
 
+	private val QIDVL_UNK = "UNKNOWN"
+
 	private val myDummyTreeResponder = new WebNavItemResponder {}
 
-	def mkGoodResponse(paramMap : Map[String, String]) : HEStrict = {
+	def mkBroadResponse(paramMap : Map[String, String]) : HEStrict = {
 		val selPrm_opt = paramMap.get(PRMKY_SEL)
 		val selPrm = selPrm_opt.getOrElse(PRMVL_DUM)
 		selPrm match {
@@ -28,6 +30,13 @@ trait OntNavResponder {
 			case PRMVL_KBPEDIA => mkKbpediaResponse(paramMap)
 			case PRMVL_DUM => myDummyTreeResponder.makeAnswerEntity(paramMap)
 			case _ => throw new Exception("Unknown selector: " + selPrm)
+		}
+	}
+	def mkNarrowResponse(navQID : String, paramMap : Map[String, String]) : HEStrict = {
+		if (!navQID.equals(QIDVL_UNK)) {
+			myDummyTreeResponder.mkNarrowAnswerEntity(navQID, paramMap)
+		} else {
+			mkBroadResponse(paramMap)
 		}
 	}
 	// FIXME:  This HTEM should probably go into a narrower responder ctx
@@ -47,12 +56,18 @@ trait OntNavRouteBldr {
 	private val myResponder = new OntNavResponder {}
 	private val myCH = new CORSHandler {}
 
+	val PN_navQID = "navQID"
+
 	def mkNavJsonRt(rtPthTxt : String) : dslServer.Route = {
 		val njPthRt = path(rtPthTxt) {
 			val pmapRt = parameterMap { paramMap =>
 				// TODO:  Check pm for query prms
 				val pm: Map[String, String] = paramMap
-				val rspEnt = myResponder.mkGoodResponse(pm)
+				val nqidParam_opt = pm.get(PN_navQID)
+				val rspEnt = if(nqidParam_opt.isDefined) {
+					val navQID = nqidParam_opt.get
+					myResponder.mkNarrowResponse(navQID, pm)
+				} else myResponder.mkBroadResponse(pm)
 				complete(rspEnt)
 			}
 			pmapRt

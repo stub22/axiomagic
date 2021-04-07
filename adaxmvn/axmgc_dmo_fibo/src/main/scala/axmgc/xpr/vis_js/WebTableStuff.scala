@@ -65,6 +65,9 @@ trait WebTableDataMaker {
 		jsPrtty
 	}
 }
+trait GridDataSrc {
+	private val myGCDM = new WebTableDataMaker {}
+}
 trait MakeWebTableRoutes {
 
 	import dslServer.Directives._ // Establishes  ~   and whatnot
@@ -74,6 +77,8 @@ trait MakeWebTableRoutes {
 	val rowsetParamName_fake = "fake"
 	val rowsetParamName_gqry = "gqry"
 	val gqryFlav_NONE = "NONE"
+
+	val paramName_gridDataset = "grdst"
 
 	def mkSampleRowsetJsonRt(routePth : String) : dslServer.Route = {
 		val arjPthRt = path(routePth) {

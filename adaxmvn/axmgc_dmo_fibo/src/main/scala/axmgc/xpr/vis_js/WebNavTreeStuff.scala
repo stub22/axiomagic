@@ -15,7 +15,8 @@ private trait WebNavTreeStuff
 // Are circe or other JSON libs more flexible in this regard?
 
 // xtra is application stuff, unrelated to fancytree.  (Will be copied into fancytree node.data)
-// cqid is opaque-ID to be sent by client during a lazy-fetch of this item's children. (Will be copied into fancytree node.data)
+// xtra.subqid is opaque-ID to be sent by client during a lazy-fetch of this nav(tree)-item's children.
+// xtra.grdqid is opaque-ID to be sent by client when requesting table-items that match this navItem.
 case class NavItem(title: String, folder : Option[Boolean], expanded : Option[Boolean],
 				   `lazy`: Option[Boolean], `type`: Option[String], tooltip : Option[String],
 				   children : Option[Seq[NavItem]], xtra : Option[JsValue]) {
@@ -35,6 +36,20 @@ trait JsValueMakers {
 
 }
 
+trait XtraNavPtrFuncs {
+	def NPFN_subNavQID = "subqid"
+	def NPFN_tblRngQID = "tblqid"
+
+	private val myJSVM = new JsValueMakers{}
+
+	def makeXtraNavPtrs(subNavQID : String, tblRngQID : String) : JsObject = {
+		val ptrMap = Map[String, JsValue](
+				NPFN_subNavQID -> myJSVM.mkJsString(subNavQID),
+				NPFN_tblRngQID -> myJSVM.mkJsString(tblRngQID))
+		val ptrObj = myJSVM.smapToJsObj(ptrMap)
+		ptrObj
+	}
+}
 trait NavItemMakerFuncs {
 	protected lazy val myS4JLog = LoggerFactory.getLogger(this.getClass)
 	private val navJsonProtoCtx = new DefaultJsonProtocol {
@@ -53,11 +68,14 @@ trait NavItemMakerFuncs {
 	def mkFolderItem(title : String, subItems : Seq[NavItem]) = {
 		NavItem(title, Some(true), Some(false), Some(false), None, None, Some(subItems), None)
 	}
-
+	def mkLazyFolderItem(title : String, opt_type : Option[String], opt_ttip: Option[String], opt_xtra : Option[JsObject]) = {
+		NavItem(title, Some(true), Some(false), Some(true), opt_type, opt_ttip, None, opt_xtra)
+	}
 }
 trait MakeSampleNavItems {
 	private val myMakerFuncs = new NavItemMakerFuncs {}
 	private val myJsvMkr = new JsValueMakers{}
+	private val myXPM = new XtraNavPtrFuncs {}
 
 	def loadCat(catName : String) : NavItem = {
 		val subItems : Seq[NavItem] = catName match {
@@ -72,6 +90,7 @@ trait MakeSampleNavItems {
 		val numList = List(JsNumber("2.75"), JsNumber("778.332"))
 		val numJSA = myJsvMkr.seqToJsArr(numList)
 		val itemC = myMakerFuncs.mkLeafItem("should have xtra JSV", Some("HasXtra"), None).addExtra(numJSA)
+
 		val listAB = List(itemA, itemB, itemC)
 		val fieldMap = Map[String, JsValue]("factName" -> JsString("swiggy"), "numList" -> numJSA, "flag" -> JsBoolean(false))
 		val grtObj: JsObject = myJsvMkr.smapToJsObj(fieldMap)
@@ -79,7 +98,9 @@ trait MakeSampleNavItems {
 		val anthrObj = myJsvMkr.smapToJsObj(Map("wiggleFactor" -> JsNumber(-17.33), "numbLst" -> numJSA, "bonusObj" -> grtObj))
 		val dummyCtgFldrs = loadDummyFolders()
 		val dumCtsFldr = myMakerFuncs.mkFolderItem("dumcts", dummyCtgFldrs).addExtra(anthrObj)
-		val dumLst = List(itemB, fldrC, itemA, dumCtsFldr)
+		val xpD = myXPM.makeXtraNavPtrs("subsOfLzD", "tblOfLzD")
+		val lzFldrD = myMakerFuncs.mkLazyFolderItem("should have xtra ptrs", Some("HasXtraPtrs"), Some("Try expanding me!"), Some(xpD))
+		val dumLst = List(itemB, fldrC, itemA, dumCtsFldr, lzFldrD)
 		dumLst
 	}
 	val plantCatNames = List("Tree", "Bush", "Grass", "Vine")
@@ -133,6 +154,19 @@ trait NavItemMakerTests {
 		myS4JLog.info(s"Pretty JSON len: ${jsPrtty.length}")
 		jsPrtty
 	}
+	def testFocusedTreeDataGen(navQID : String, paramMap: Map[String, String]): String = {
+		val paramSerText = s"params=[${paramMap.toString()}]"
+		val catNameTxt = s"navQID=[${navQID.toString()}]"
+		myS4JLog.info(s"${paramSerText} parsed to ${catNameTxt}")
+		val debugRoot: NavItem = mkDebugItemTree(List(paramSerText, catNameTxt))
+		val itms: Seq[NavItem] = List(debugRoot)
+		myS4JLog.info(s"Made item-tree: ${itms}")
+		val itmJSV = myMakerFuncs.navtreeToJsonValue(itms)
+		myS4JLog.info(s"Made item-JSV: ${itmJSV}")
+		val jsPrtty = itmJSV.prettyPrint
+		myS4JLog.info(s"Pretty JSON len: ${jsPrtty.length}")
+		jsPrtty
+	}
 
 	def mkDebugItemTree(dbgMsgs: Seq[String]): NavItem = {
 		val dbgItms = dbgMsgs.map(itmMsg => myMakerFuncs.mkLeafItem(itmMsg, Some("debug"), Some("ttip for " + itmMsg)))
@@ -166,6 +200,11 @@ trait WebNavItemResponder {
 
 	def makeAnswerEntity(paramMap : Map[String, String]) : HEStrict = {
 		val jsTxt = myNimTsts.testNavTreeDataGen(paramMap)
+		val navdatEnt = myHTEM.makeJsonEntity(jsTxt)
+		navdatEnt
+	}
+	def mkNarrowAnswerEntity(navQID : String, paramMap : Map[String, String]) : HEStrict = {
+		val jsTxt = myNimTsts.testFocusedTreeDataGen(navQID, paramMap)
 		val navdatEnt = myHTEM.makeJsonEntity(jsTxt)
 		navdatEnt
 	}
