@@ -18,7 +18,7 @@ trait OntNavResponder {
 	private val PRMVL_FIBO = "fibo"
 	private val PRMVL_DUM = "dummy"
 
-	private val QIDVL_UNK = "UNKNOWN"
+	private val QIDVL_UNK = "EMPTY"
 
 	private val myDummyTreeResponder = new WebNavItemResponder {}
 

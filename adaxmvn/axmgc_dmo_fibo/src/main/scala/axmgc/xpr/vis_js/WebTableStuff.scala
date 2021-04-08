@@ -45,18 +45,21 @@ trait WebTableDataMaker {
 		jsTxt
 	}
 
-	def mkExampleRows(cnt : Int, idPrefix : String) : Seq[SampleWebRow] = {
+	def mkExampleRows(cnt : Int, idPrefix : String, titleSuff : String) : Seq[SampleWebRow] = {
 		val rowIdPairs: Seq[(Int, String)] = (1 to cnt).map(num => (num, idPrefix + num))
 		rowIdPairs.map( pair => {
 			val (num, id) = pair
-			SampleWebRow(id, "title of " + id, num, num * 1.7f, (num % 2 > 0) )
+			SampleWebRow(id, "title of " + id + " [" + titleSuff + "]", num, num * 1.7f, (num % 2 > 0) )
 		})
 	}
+
+	val paramName_gridDataset = "tblQID"
+
 	def exampleRowDataGen(paramMap: Map[String, String]): String = {
 		val paramSerText = s"params=[${paramMap.toString()}]"
 		myS4JLog.info(s"paramMap=${paramSerText}")
-
-		val rows = mkExampleRows(9, "DUM")
+		val tblDset = paramMap.get(paramName_gridDataset).getOrElse("NoTblQID")
+		val rows = mkExampleRows(9, "DUM", tblDset)
 		myS4JLog.info(s"Made asset rows: ${rows}")
 		val rsJSV = rowsToJsonValue(rows)
 		myS4JLog.info(s"Made rowset-JSV: ${rsJSV}")
@@ -78,7 +81,6 @@ trait MakeWebTableRoutes {
 	val rowsetParamName_gqry = "gqry"
 	val gqryFlav_NONE = "NONE"
 
-	val paramName_gridDataset = "grdst"
 
 	def mkSampleRowsetJsonRt(routePth : String) : dslServer.Route = {
 		val arjPthRt = path(routePth) {
@@ -86,6 +88,7 @@ trait MakeWebTableRoutes {
 				val pm: Map[String, String] = paramMap
 				val useFakeRwst : Boolean = pm.get(rowsetParamName_fake).isDefined
 				val gqry_flav : String = pm.get(rowsetParamName_gqry).getOrElse(gqryFlav_NONE)
+
 				val jsTxt = if (useFakeRwst)
 					myGCDM.exampleRowDataGen(pm)
 				else "[]" // fetchGqryResultTxt(gqry_flav, pm)
