@@ -52,3 +52,9 @@ body {
     font-style: italic;
     /* width: 100%; */
 }
+
+.dmscrn {
+  width : 45%;
+  height: auto;
+  vertical-align : top;
+}

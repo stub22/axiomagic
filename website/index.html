@@ -1,26 +1,102 @@
 <html>
-<head>
-	<title>Axiomagic - interactive math components</title>
-    <link href="styles.css" rel="stylesheet" type="text/css"/>
-</head>
-<body>
-    <div id="page-heading">Axiomagic - interactive math components</div>
-    <hr/>
-    <div id="navigationBlock">
-        <ul>
-            <li> <a href="index.html">Welcome</a> </li>
-            <!--
-            <li> <a href="demo.html">Demo</a></li>
-            -->
-            <li> <a href="https://github.com/stub22/axiomagic" id="navCurrent">GitHub</a></li>
-            
-        </ul>
-    </div>
-    <hr/>
-    <h3>Resources</h3>
-    <ul>
-        <li><a href="https://github.com/stub22/axiomagic">axiomagic</a> on github</li>
-    </ul>    
-</body>
+  <head>
+	<title>Axiomagic.fun - interactive math components</title>
+	<link href="styles.css" rel="stylesheet" type="text/css"/>
+    <script type="text/javascript" async
+  src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    jax: ["input/TeX","output/HTML-CSS"],
+    displayAlign: "left"
+});    
+    </script>	
+  </head>
+  <body>
+	<div id="page-heading">Axiomagic.fun - interactive math components</div>
+	<hr/>
+	<div id="navigationBlock">
+		<ul>
+			<li> <a href="index.html">Welcome</a> </li>
+			<!--
+			<li> <a href="demo.html">Demo</a></li>
+			-->
+			<li> <a href="https://github.com/stub22/axiomagic" id="navCurrent">GitHub</a></li>
+		</ul>
+	</div>
+	<hr/>
+	<div>
+		<h2>Introduction</h2>
+		<div>
+			Axiomagic.fun generates composed UIs using HTML data-viz components like those shown here.
+			<br/>This example uses Vega-lite, Vue, MathJax, Fancytree and AG Grid.  
+		</div>
+		<div>
+			<img class="dmscrn" src="_scrnimg/axdem_p1_top_A.png"/>img desc p1</img>
+			<img class="dmscrn" src="_scrnimg/axdem_p2_bott_A.png">img desc p2</img>
+		</div> 
+	</div>
+	<div>
+		<div id="explnUiXform">
+			<h3>Barebones Explanation</h3>
+			<div>
+				<span>From input source model and user choices, we derive 1+ of each kind: </span>
+				<ul>
+					<li>explanation (txt)</li>
+					<li>diagram (svg)</li>
+					<li>in-math (expressions, equations, functions) </li>
+					<li>in-code (types, rules, functions)</li>
+					<li>in-param (numbers, choices, flags)</li>
+					<li>in-bulk-data (nominals, numbers, text)</li>
+				</ul>
+				<span>Then we derive outputs below, based on inputs above:</span>
+				<ul>
+					<li>out-math</li>
+					<li>out-bulk-data</li>
+					<li>out-plot (JSON -> Vega, d3, Plot.ly, other)</li>
+					<li>out-log</li>
+				</ul>
+			</div>
+			<h3>Equational Model</h3>
+			<div>
+				<span>Example formatted maths using MathJax</span>
+			</div>
+			<h3>Over That Soc</h3>
+			<div>
+				<span>Todo: improve screenshot PNGs and PDFs motivating stakeholder decisions.</span>
+			</div>
+		</div>         
+		<div id="listDepLinks">
+			<div><span>Axmgc Demo - interactive math GUI with trees, grids, eqns</span>
+				<span>GUI provides interactive playground / lab for investigation, supported in impl by browsable ontos and apis.</span>
+			</div>
+			
+			<span>JS (~ES6) main component list
+				<a target="difrm" href="https://vuejs.org/v2/guide/">Vue</a> UI,
+				<a target="difrm" href="https://vega.github.io/vega-lite/docs/spec.html">Vega-Lite</a> 2D plots,
+				<a target="difrm" href="https://github.com/mar10/fancytree">Fancytree</a> rich tree UI system (uses JQueryUi)
+				
+				<a target="difrm" href="https://github.com/ag-grid/ag-grid">AG Grid (Community ed.)</a>  
+				rich grid UI system (<a target="difrm" href="https://www.npmjs.com/package/ag-grid-community">NPM package info</a>>)
+			</span>
+			<span>Additional UI features</span>	
+				<a target="difrm" href="https://www.mathjax.org/">MathJax</a> math display	
+				<a target="difrm" href="https://svgjs.com/">SVG.js</a> 2D graphics + anim,
+				<a target="difrm" href="https://lurchmath.github.io/openmath-js/site/api-reference/">OpenMath.js</a>
+				standard math grammar.
+				[ REQUIRES SEPARATE DOWNLOAD, GPL licensed: <a target="difrm" href="https://netlogoweb.org/">NetLogo-Web</a> /
+				<a target="difrm" href="http://agentscript.org/">Agentscript</a> agents]
+			</span><br/>
+			<span>Server side (Scala 2.12+, JDK 8+) dep list
+				<a target="difrm" href="https://doc.akka.io/docs/akka-http/current/">Akka Http</a> (previously known as spray.io),
+				<a target="difrm" href="https://jena.apache.org">Jena RDF</a>.
+			</span>			
+		</div>
+	</div>
+	<div>
+		<h3>Resources</h3>
+		<ul>
+		<li><a href="https://github.com/stub22/axiomagic">axiomagic</a> on github</li>
+		</ul>
+	</div>    
+  </body>
 </html>
-
