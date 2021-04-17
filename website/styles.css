@@ -58,3 +58,23 @@ body {
   height: auto;
   vertical-align : top;
 }
+
+.thumbnail:hover {
+  position:relative;
+  top:-25px;
+  left:-35px;
+  width: 90%;
+  height:auto;
+  display:block;
+  z-index:999;
+}
+
+#dmImgLft {
+  display: flex;
+  flex-direction: column;
+}
+
+#dmImgGrp01 {
+  display: flex;
+  flex-direction: row;
+}
