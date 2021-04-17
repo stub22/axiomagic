@@ -2,14 +2,18 @@
   <head>
 	<title>Axiomagic.fun - interactive math components</title>
 	<link href="styles.css" rel="stylesheet" type="text/css"/>
-    <script type="text/javascript" async
+	<script type="text/javascript" async
   src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"></script>
 <script type="text/x-mathjax-config">
 MathJax.Hub.Config({
-    jax: ["input/TeX","output/HTML-CSS"],
-    displayAlign: "left"
+	jax: ["input/TeX","output/HTML-CSS"],
+	displayAlign: "left"
 });    
-    </script>	
+	</script>
+	<!-- Scripts defining the application of this page 
+
+	-->
+	<script src="_dmscrpt/vplot_morecalc_J15.js"></script>        
   </head>
   <body>
 	<div id="page-heading">Axiomagic.fun - interactive math components</div>
@@ -60,6 +64,58 @@ MathJax.Hub.Config({
 			<div>
 				<span>Example formatted maths using MathJax</span>
 			</div>
+  <div>
+	<pre>
+		Below are inline HTML blocks with tex2jax markup.
+		By default, the tex2jax preprocessor defines the LaTeX math delimiters, which are \(...\) 
+		for in-line math, and \[...\] for displayed equations. 
+		It also defines the TeX delimiters $$...$$ for displayed equations, but it does not 
+		define $...$ as in-line math delimiters. 
+		Overall helps if there is newline divding HTML tags from lines with embedded math (which does not nec. mean linebreak in output).
+		Seems that span-wrapped text is more tightly embedded, whereas leaving it at block level in a div means cruder line-break interp.
+		</pre>    
+			
+		<span><code>using \( and $$</code> 
+		  When \(a \ne 0\), there are two solutions to \(ax^2 + bx + c = 0\) and they are
+		  $$x = {-b \pm \sqrt{b^2-4ac} \over 2a}.$$    
+		</span>
+		<p>
+			Big ol integral using <code>iiiint</code>
+			$$\iiiint_V \mu(t,u,v,w) \,dt\,du\,dv\,dw$$
+		</p>
+		<p>
+			Another using <code>oint</code>
+			$$\oint_V f(s,t) \,ds\,dt$$
+		</p>
+		<div>And another oint  which fails if switched to oiint, so: FIXME recheck 'oiint' <br/>
+			$$\oint_V f(s) \,ds$$
+		</div>
+		<div>
+			Sum \(\sum_{n=1}^{\infty} 2^{-n} = 1\) inside text, directly within a div
+		</div>    
+		<div>
+			<a href="http://www.asciimath.org">Asciimath</a> enclosed in back-ticks: `sum_(i=1)^n i^3=((n(n+1))/2)^2`
+		</div>
+		<div>
+			<hr/>START MathML block from poking func <code>doMathDemoStuff(tgtId)</code> 
+		</div>
+		<div id="mexprTgt01">
+		</div>   
+			END MathML from writeStuff
+			<hr/>
+			<h3>Start vega output from PlotDemoStuff</h3>
+			<div>
+				<span id="ex01">ex 01 goes here == first output of doPlotDemoStuff </span>
+				<br/><span id="ex02">ex 02 goes here</span>
+				<br/><span id="ex03">ex 03 goes here</span>
+				<hr/>
+				<div>vvd3 is still here, but vvd1+vvd2 moved above grid.<br/>
+					<span id="vvd3">Inside #vvd3</span>
+				</div>    
+				<div id="pdbl4" style="width:980px; height:800px;">Inside #pdbl4, which is styled, unlike the vvd_.</div>
+			</div>    
+	  
+  </div>          
 			<h3>Over That Soc</h3>
 			<div>
 				<span>Todo: improve screenshot PNGs and PDFs motivating stakeholder decisions.</span>
@@ -97,6 +153,14 @@ MathJax.Hub.Config({
 		<ul>
 		<li><a href="https://github.com/stub22/axiomagic">axiomagic</a> on github</li>
 		</ul>
-	</div>    
+	</div>
+			
+	<script type="text/javascript">
+		console.log("start axiomagic.fun intro page-bottom script");
+		let mathDemoTgtId = 'mexprTgt01';
+		doMathDemoStuff(mathDemoTgtId);
+
+		console.log("END of body-bottom script block.")
+	</script>
   </body>
 </html>
