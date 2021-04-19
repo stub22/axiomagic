@@ -31,8 +31,12 @@ MathJax.Hub.Config({
 	<div>
 		<h2>Introduction</h2>
 		<div>
-			Axiomagic.fun generates composed UIs using HTML data-viz components like those shown here.
-			<br/>This example uses Vega-lite, Vue, MathJax, Fancytree and AG Grid.  
+			<span>Axiomagic.fun generates composed UIs using HTML data-viz components like those shown here.</span>
+			<br/><span>Axmgc GUI provides interactive playground / lab for investigation, supported in impl by browsable ontos and apis.</span>
+			<br/>This example uses Vega-lite, Vue, MathJax, Fancytree and AG Grid to produce
+			<br/><b>AxioMagic Demo</b> = interactive math GUI with trees, grids, eqns</span>
+				
+			</div>
 		</div>
 		<div id="dmImgGrp01" class="flexCntnrRow">
 			<div id="dmScrnsCol">
@@ -99,6 +103,13 @@ tightly embedded, whereas leaving it at block level in a div means cruder line-b
 				$$x = {-b \pm \sqrt{b^2-4ac} \over 2a}.$$    
 				</span>
 			</div>
+			<div class="tily">
+				<div>
+					START MathML block from poking func <code>doMathDemoStuff(tgtId)</code> 
+				</div>
+				<div id="mexprTgt01">mexpr-01</div>   
+				END MathML from writeStuff
+			</div>			
 			<div>
 				<p>
 					Big ol integral using <code>iiiint</code>
@@ -115,7 +126,7 @@ tightly embedded, whereas leaving it at block level in a div means cruder line-b
 					Sum \(\sum_{n=1}^{\infty} 2^{-n} = 1\) inside text, directly within a div
 				</div>    
 				<div>
-					<a href="http://www.asciimath.org">Asciimath</a> enclosed in back-ticks: `sum_(i=1)^n i^3=((n(n+1))/2)^2`
+					<a target="difrm" href="http://www.asciimath.org">Asciimath</a> enclosed in back-ticks: `sum_(i=1)^n i^3=((n(n+1))/2)^2`
 				</div>
 			</div>
   		</div>
@@ -124,13 +135,7 @@ tightly embedded, whereas leaving it at block level in a div means cruder line-b
 	<h3>Over That Soc</h3>
 	<div id="afterSoc" class="flexCntnrRow">
 
-		<div >
-			<div>
-				START MathML block from poking func <code>doMathDemoStuff(tgtId)</code> 
-			</div>
-			<div id="mexprTgt01">mexpr-01</div>   
-			END MathML from writeStuff
-		</div>
+
 		<div id="plotDemoStuffNOT">
 			<h3>Start vega output from PlotDemoStuff</h3>
 			<span id="ex01">ex 01 goes here == first output of doPlotDemoStuff </span>
@@ -144,38 +149,45 @@ tightly embedded, whereas leaving it at block level in a div means cruder line-b
 				<span>Todo: improve screenshot PNGs and PDFs motivating stakeholder decisions.</span>
 			</div>	
 		</div>	
-		<div id="listDepLinks">
-			<div><span>Axmgc Demo - interactive math GUI with trees, grids, eqns</span>
-				<span>GUI provides interactive playground / lab for investigation, supported in impl by browsable ontos and apis.</span>
-			</div>
-			<div>
-				<span>JS (~ES6) main component list
-					<a target="difrm" href="https://vuejs.org/v2/guide/">Vue</a> UI,
-					<a target="difrm" href="https://vega.github.io/vega-lite/docs/spec.html">Vega-Lite</a> 2D plots,
-					<a target="difrm" href="https://github.com/mar10/fancytree">Fancytree</a> rich tree UI system (uses JQueryUi)
+		<div id="listDepLinks" class="flexCntnrRow">
+			<div class="tily">
+				<h4>Primary JS (ES6+) component deps</h4>
+				<ul>
+					<li><a target="difrm" href="https://vega.github.io/vega-lite/docs/spec.html">Vega-Lite</a> = JSON-spec driven 2D data plots</li>
+					<li><a target="difrm" href= "http://wwwendt.de/tech/fancytree/demo/">Fancytree</a> = rich tree UI system (uses JQueryUi)</li>
 					
-					<a target="difrm" href="https://github.com/ag-grid/ag-grid">AG Grid (Community ed.)</a>  
-					rich grid UI system (<a target="difrm" href="https://www.npmjs.com/package/ag-grid-community">NPM package info</a>>)
-				</span>
+					<li><a target="difrm" href="https://www.ag-grid.com/javascript-grid/">AG Grid (Community ed.)</a> = rich data-table UI comp 
+(<a target="npmwin" href="https://www.npmjs.com/package/ag-grid-community">NPM package info</a>, 
+<a target="ghubwin" href="https://github.com/ag-grid/ag-grid">github prj</a>)
+					</li>
+				</ul>	
 			</div>
-			<div>
-				<span>Additional UI features</span>	
-					<a target="difrm" href="https://www.mathjax.org/">MathJax</a> math display	
-					<a target="difrm" href="https://svgjs.com/">SVG.js</a> 2D graphics + anim,
-					<a target="difrm" href="https://lurchmath.github.io/openmath-js/site/api-reference/">OpenMath.js</a>
-					standard math grammar.
-					[ REQUIRES SEPARATE DOWNLOAD, GPL licensed: <a target="difrm" href="https://netlogoweb.org/">NetLogo-Web</a> /
-					<a target="difrm" href="http://agentscript.org/">Agentscript</a> agents]
-				</span>
+			<div class="tily">
+				<h4>Http Web Service deps (middle tier)</h4>
+				<ul>
+					<li>Service Platform = Scala 2.12+ on JDK 8+</li>
+					<li><a target="difrm" href="https://jena.apache.org">Jena RDF</a></li>
+					<li><a target="lbwin" href="https://doc.akka.io/docs/akka-http/current/">Akka Http</a> (previously known as spray.io)</li>
+				</ul>
+			</div>				
+			<div class="tily">
+				<h4>Additional optional UI / modeling features</h4>	
+				<ul class="ignorc">
+					<li><a target="difrm" href="https://vuejs.org/v2/guide/">Vue</a> (2.x) reactive DOM updates</li>
+					<li><a target="difrm" href="https://www.mathjax.org/">MathJax</a> math display	</li>
+					<li><a target="difrm" href="https://svgjs.com/">SVG.js</a> 2D graphics + anim</li>
+					<li><a target="difrm" href="https://lurchmath.github.io/openmath-js/site/api-reference/">OpenMath.js</a> standard math grammar</li>
+					<li>[ REQUIRES SEPARATE DOWNLOAD, GPL licensed: <a target="difrm" href="https://netlogoweb.org/">NetLogo-Web</a> /
+								<a target="difrm" href="http://agentscript.org/">Agentscript</a> agents]
+					</li>			
+				</ul>
 			</div>
-			<div>
-				<span>Server side (Scala 2.12+, JDK 8+) dep list
-					<a target="difrm" href="https://doc.akka.io/docs/akka-http/current/">Akka Http</a> (previously known as spray.io),
-					<a target="difrm" href="https://jena.apache.org">Jena RDF</a>.
-				</span>
-			</div>	
+
 		</div>
-	
+	</div>
+	<hr/>
+	<div>
+		<iframe name="difrm" src="demo_iframe.htm" style="border:2px solid greenyellow; width:100%; height:300px;" title="Iframe Example"></iframe>
 	</div>
 	<hr/>
 	<div id="bttmRsrcLnks">
