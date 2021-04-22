@@ -7,7 +7,7 @@ import scala.collection.mutable.ListBuffer
 
 private trait OntJsonStuff
 
-sealed trait MdlStat // Experimental union type for follwoing json-serial-write cases (cannot read without clznm)
+sealed trait MdlStat // Experimental json-write-enabled union type for following cases (cannot json-read without clznm)
 case class MdlSummaryStat(statName : String, itemCount : Int) extends MdlStat
 case class MdlHistoBinStat(binName : String, binCount : Int, binSamples: List[String])
 case class MdlHistoStat(totalBinCntEst : Int, excludedBinCntEst : Int, binStats : List[MdlHistoBinStat]) extends MdlStat
@@ -21,7 +21,7 @@ trait MdlStatJsonProto extends DefaultJsonProtocol {
 	implicit val jf_mdlHBinStat : JsonFormat[MdlHistoBinStat] = jsonFormat3(MdlHistoBinStat)
 
 	// Manually defined switcher for the various subtypes of MSmmStt
-	implicit val jf_mSmmStt = new RootJsonFormat[MdlStat] {
+	implicit val jf_anyMdlStat = new RootJsonFormat[MdlStat] {
 		override def write(msstt: MdlStat) : JsValue = {
 			msstt match {
 				case ss : MdlSummaryStat => jf_mdlSummStat.write(ss)
@@ -29,6 +29,7 @@ trait MdlStatJsonProto extends DefaultJsonProtocol {
 				case as : AggStat => jf_aggStat.write(as)
 			}
 		}
+		// We don't support reading MdlStats at this time.  We would need a subtype-indicator-field.
 		override def read(json: JsValue): MdlStat = ???
 	}
 
@@ -39,17 +40,29 @@ trait MdlStatJsonProto extends DefaultJsonProtocol {
 trait MdlSttJsonMaker {
 	protected val mySlf4JLog = LoggerFactory.getLogger(this.getClass)
 
-	private val mdlSummStatJsonProtoCtx = new MdlStatJsonProto{}
+	private val mdlStatJsonProtoCtx = new MdlStatJsonProto{}
 
 	private def summStatsToJsArr(summStats : Seq[MdlSummaryStat]) : JsArray = {
-		import mdlSummStatJsonProtoCtx._
+		import mdlStatJsonProtoCtx._
 		import spray.json.enrichAny
 		val summSeqJson: JsValue = summStats.toJson
 		summSeqJson.asInstanceOf[JsArray]
 	}
+	private def mdlStatsToJsArr(stats : Seq[MdlStat]) : JsArray = {
+		import mdlStatJsonProtoCtx._
+		import spray.json.enrichAny
+		val summSeqJson: JsValue = stats.toJson
+		summSeqJson.asInstanceOf[JsArray]
+	}
+
 	// TODO:  Add flag for sorted print
 	def summStatsToJsArrTxt(summStats : Seq[MdlSummaryStat], flag_prettyPrnt : Boolean) : String = {
 		val jsArr: JsArray = summStatsToJsArr(summStats)
+		val jsArrTxt = if (flag_prettyPrnt) jsArr.prettyPrint else jsArr.compactPrint
+		jsArrTxt
+	}
+	def mdlStatsToJsArrTxt(stats : Seq[MdlStat], flag_prettyPrnt : Boolean) : String = {
+		val jsArr: JsArray = mdlStatsToJsArr(stats)
 		val jsArrTxt = if (flag_prettyPrnt) jsArr.prettyPrint else jsArr.compactPrint
 		jsArrTxt
 	}

@@ -1,11 +1,7 @@
 package axmgc.dmo.fin.ontdmp
 
-import org.slf4j.Logger
-import org.apache.jena.graph.{Graph => JenaGraph}
-import org.apache.jena.ontology.OntModelSpec
+
 import org.apache.jena.rdf.model.{RDFNode, StmtIterator, Model => JenaMdl, ModelFactory => JenaMdlFctry, Property => JenaProp, Resource => JenaRsrc, Statement => JenaStmt}
-import org.apache.jena.riot.system.RiotLib
-import org.apache.jena.riot.{JsonLDWriteContext, RDFDataMgr, RDFFormat, WriterGraphRIOT}
 import org.slf4j.{Logger, LoggerFactory}
 
 import scala.collection.JavaConverters._
@@ -179,7 +175,7 @@ class OntQryMgr {
 		myS4JLog.info(s"mkTrivStt nm=${stNm} cnt=${stCnt}")
 		new MdlSummaryStat(stNm, stCnt)
 	}
-	def dumpOntoSummaryStatsToLog(jenaMdl: JenaMdl): Seq[MdlSummaryStat] = {
+	private def hedgeAndMakeBoth (jenaMdl: JenaMdl): (Seq[MdlStat], Seq[MdlSummaryStat]) = {
 		val rstts = new ListBuffer[MdlStat]
 		val rsltStats = new ListBuffer[MdlSummaryStat]
 		val size = jenaMdl.size()
@@ -195,14 +191,29 @@ class OntQryMgr {
 		val subjRprt: MdlSummaryStat = mdlDumpFncs.visitSubjRsrcs(jenaMdl)
 		rsltStats.append(subjRprt)
 		rstts.append(subjRprt)
-		val typHistoRprt = mdlDumpFncs.dumpTypeHistogram(jenaMdl)
-		val prpTyllyByNmRprt = mdlDumpFncs.dumpPropsTallyByName(jenaMdl)
-		val prpTllyByCntRprt = mdlDumpFncs.dumpPropsTallyByCount(jenaMdl)
-		rsltStats.toList
+		val typHistoRprt: MdlStat = mdlDumpFncs.dumpTypeHistogram(jenaMdl)
+		val prpTyllyByNmRprt: Int = mdlDumpFncs.dumpPropsTallyByName(jenaMdl)
+		val prpTllyByCntRprt: Int = mdlDumpFncs.dumpPropsTallyByCount(jenaMdl)
+		rstts.append(typHistoRprt)
+		(rstts.toList, rsltStats.toList)
 	}
+	private def dumpOntoSummaryStatsToLog(jenaMdl: JenaMdl): Seq[MdlSummaryStat] = {
+		val pair = hedgeAndMakeBoth(jenaMdl)
+		pair._2
+	}
+	private def collectGenMdlStats(jenaMdl: JenaMdl): Seq[MdlStat] = {
+		val pair = hedgeAndMakeBoth(jenaMdl)
+		pair._1
+	}
+
 	def dumpMdlStatsToJsnArrTxt(jenaMdl: JenaMdl) : String = {
-		val statSeq: Seq[MdlSummaryStat] = dumpOntoSummaryStatsToLog(jenaMdl)
-		val statJsnArrTxt = statToJson.summStatsToJsArrTxt(statSeq, true)
+		val statJsnArrTxt = if (false) {
+			val statSeq: Seq[MdlSummaryStat] = dumpOntoSummaryStatsToLog(jenaMdl)
+			statToJson.summStatsToJsArrTxt(statSeq, true)
+		} else {
+			val mstts = collectGenMdlStats(jenaMdl)
+			statToJson.mdlStatsToJsArrTxt(mstts, true)
+		}
 		statJsnArrTxt
 	}
 }

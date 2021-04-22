@@ -2,7 +2,7 @@ package axmgc.dmo.fin.ontdmp
 
 import axmgc.web.lnch.FallbackLog4J
 import axmgc.web.pond.WebServerLauncher
-import org.apache.jena.riot.RDFDataMgr
+// import org.apache.jena.riot.RDFDataMgr
 import org.slf4j.{Logger, LoggerFactory}
 import akka.http.scaladsl.{server => dslServer}
 import axmgc.xpr.vis_js.{MakeWebTableRoutes, MakeSampleSaveRoutes}
