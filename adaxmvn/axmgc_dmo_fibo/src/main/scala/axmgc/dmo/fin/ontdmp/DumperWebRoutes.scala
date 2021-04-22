@@ -2,15 +2,13 @@ package axmgc.dmo.fin.ontdmp
 
 import akka.http.scaladsl.{Http, server => dslServer}
 import dslServer.Directives.{complete, entity, get, path, _}
-import dslServer.Directive0
 import akka.http.scaladsl.model.HttpEntity.{Strict => HEStrict}
 import axmgc.web.ent.{HtEntMkr, WebXmlGen}
 import axmgc.web.lnkdt.LDChunkerTest
-import axmgc.web.pond._
 import axmgc.web.tuple.{IntrnlPonderRslt, WebRqPrms, WebTupleMaker}
 import org.slf4j.{Logger, LoggerFactory}
 
-trait DumperWebRoutes // Marker for file - only
+private trait DumperWebRoutes // Marker for file - only
 
 trait DumperWebFeat {
 	val pthTok_dhlo = "dhlo"

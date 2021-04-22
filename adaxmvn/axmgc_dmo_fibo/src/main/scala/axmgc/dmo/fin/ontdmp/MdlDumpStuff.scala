@@ -31,7 +31,7 @@ trait MdlDmpFncs extends  StmtXtractFuncs  with StdGenVocab {
 			}
 			prfxIdx += 1
 		})
-		MdlSummaryStat("prefixes", numPrfxs)
+		MdlSummaryStat("prefixCnt", numPrfxs)
 	}
 
 	def dumpNSs(jenaMdl: JenaMdl): MdlSummaryStat = {
@@ -43,7 +43,7 @@ trait MdlDmpFncs extends  StmtXtractFuncs  with StdGenVocab {
 			nsCnt += 1
 		}
 		myLog.info("Found {} 'namespaces', using the idiosyncratic and disreputable method:  model.listNameSpaces() ", nsCnt)
-		MdlSummaryStat("prefixes", nsCnt)
+		MdlSummaryStat("namespaceCnt", nsCnt)
 	}
 
 	def visitSubjRsrcs(jenaMdl: JenaMdl): MdlSummaryStat = {
@@ -60,21 +60,23 @@ trait MdlDmpFncs extends  StmtXtractFuncs  with StdGenVocab {
 		MdlSummaryStat("subjects", subjCnt)
 	}
 
-	def visitOwlImports(jenaMdl: JenaMdl): Unit = {
+	def visitOwlImports(jenaMdl: JenaMdl): MdlStat = {
 		val prop_owlImport: JenaProp = jenaMdl.getProperty(baseUriTxt_owl, propLN_owlImports)
 		val bindMap: Map[JenaRsrc, Traversable[JenaRsrc]] = pullRsrcArcsAtProp(prop_owlImport, false)
 		dumpGroupSummary(bindMap, "'owl:imports'")
-		dumpUniqTgts(bindMap)
+		val uniqTgtCnt = dumpUniqTgts(bindMap)
+		MdlSummaryStat("owlImportsCount", uniqTgtCnt)
 	}
 
-	def visitRdfTypes(jenaMdl: JenaMdl): Unit = {
+	def visitRdfTypes(jenaMdl: JenaMdl): MdlStat = {
 		val prop_rdfType: JenaProp = jenaMdl.getProperty(baseUriTxt_rdf, propLN_rdfType)
 		val bindMap: Map[JenaRsrc, Traversable[JenaRsrc]] = pullRsrcArcsAtProp(prop_rdfType, false)
 		dumpGroupSummary(bindMap, "'rdf:type'")
-		dumpUniqTgts(bindMap)
+		val uniqTgtCnt = dumpUniqTgts(bindMap)
+		MdlSummaryStat("rdfTypsCount", uniqTgtCnt)
 	}
 
-	def dumpTypeHistogram(jenaMdl: JenaMdl): Unit = {
+	def dumpTypeHistogram(jenaMdl: JenaMdl): MdlStat = {
 		val prop_rdfType: JenaProp = jenaMdl.getProperty(baseUriTxt_rdf, propLN_rdfType)
 		val bindMap: Map[JenaRsrc, Traversable[JenaRsrc]] = pullRsrcArcsAtProp(prop_rdfType, true)
 		// dumpGroupSummary(bindMap, "typeHisto")
@@ -88,10 +90,11 @@ trait MdlDmpFncs extends  StmtXtractFuncs  with StdGenVocab {
 			val dmpd = s"key ${keyCnt} [${kyRsrc}] bound to ${vLst.size} values.  First ${sampleSize} are: ${vLstFront}"
 			myLog.info(dmpd)
 		})
+		MdlSummaryStat("histKeyCnt", keyCnt)
 	}
 
 	// private def doDump(currCnt, initSeg, mod)
-	private def dumpGroupSummary(bindMap: Map[JenaRsrc, Traversable[JenaRsrc]], groupLabel: String): Unit = {
+	private def dumpGroupSummary(bindMap: Map[JenaRsrc, Traversable[JenaRsrc]], groupLabel: String): Int = {
 		val initSegLen = 10
 		val skipWidth = 25
 		val sampleSize = 3
@@ -113,9 +116,10 @@ trait MdlDmpFncs extends  StmtXtractFuncs  with StdGenVocab {
 		})
 		myLog.info("Finished dumping stats for group={}, binding count total: {}", groupLabel, bindCnt)
 		myLog.info("==========================================================================")
+		bindCnt
 	}
 
-	private def dumpUniqTgts(bindMap: Map[JenaRsrc, Traversable[JenaRsrc]]): Unit = {
+	private def dumpUniqTgts(bindMap: Map[JenaRsrc, Traversable[JenaRsrc]]): Int = {
 		val redundTgts: Seq[JenaRsrc] = bindMap.values.flatten.toSeq
 		val redundantTgtUris: Seq[String] = redundTgts.map(_.getURI)
 		myLog.info("Redundant tgt uri count (same as binding count, right?!): {}", redundantTgtUris.size)
@@ -127,24 +131,27 @@ trait MdlDmpFncs extends  StmtXtractFuncs  with StdGenVocab {
 		val uniqLocNams = redundLocalNames.distinct.sorted
 		myLog.info("Uniq local name count: {}", uniqLocNams.size)
 		myLog.info("Uniq local names: {}", uniqLocNams)
+		uniqLocNams.size
 	}
 
-	def dumpPropsTallyByName(mdl: JenaMdl): Unit  = {
+	def dumpPropsTallyByName(mdl: JenaMdl): Int  = {
 		val sckr = new MdlPrpSucker {}
 		val tallyMap: Map[JenaProp, Int] = sckr.tallyProps(mdl)
 		val propsByURI: Seq[JenaProp] = tallyMap.keys.toSeq.sortBy(_.getURI)
-		myLog.info("Uniq prop count: {}", propsByURI.size)
+		val uniqPropCnt = propsByURI.size
+		myLog.info("Uniq prop count: {}", uniqPropCnt)
 		dumpPropsTally(propsByURI, tallyMap)
-
+		uniqPropCnt
 	}
 
-	def dumpPropsTallyByCount(mdl: JenaMdl): Unit = {
+	def dumpPropsTallyByCount(mdl: JenaMdl): Int = {
 		val sckr = new MdlPrpSucker {}
 		val tallyMap: Map[JenaProp, Int] = sckr.tallyProps(mdl)
 		val pairsByCount: Seq[(JenaProp, Int)] = tallyMap.toSeq.sortBy(_._2)
 		myLog.info("Pairs count: {}", pairsByCount.size)
 		val propsByCount: Seq[JenaProp] = pairsByCount.map(_._1)
 		dumpPropsTally(propsByCount, tallyMap)
+		propsByCount.size
 	}
 
 	def dumpPropsTally(propSeq: Seq[JenaProp], tallyMap: Map[JenaProp, Int]): Unit = {
@@ -155,6 +162,7 @@ trait MdlDmpFncs extends  StmtXtractFuncs  with StdGenVocab {
 			val dumped = s"Prop[${propIdx}] uri=${prp.getURI} tally=${tally}"
 			myLog.info(dumped)
 		})
+
 	}
 }
 
@@ -165,23 +173,35 @@ class OntQryMgr {
 		override protected def getS4JLog: Logger = myS4JLog
 	}
 
-	private val statToJson = new MdlJsonProtos {}
-	def dumpSomeModelStatsToLog(jenaMdl: JenaMdl): Seq[MdlSummaryStat] = {
+	private val statToJson = new MdlSttJsonMaker {}
+
+	def mkTrivStt(stNm : String, stCnt : Int) : MdlStat = {
+		myS4JLog.info(s"mkTrivStt nm=${stNm} cnt=${stCnt}")
+		new MdlSummaryStat(stNm, stCnt)
+	}
+	def dumpOntoSummaryStatsToLog(jenaMdl: JenaMdl): Seq[MdlSummaryStat] = {
+		val rstts = new ListBuffer[MdlStat]
 		val rsltStats = new ListBuffer[MdlSummaryStat]
 		val size = jenaMdl.size()
-		myS4JLog.info("jenaMdl size = {}", size)
-		rsltStats.append(mdlDumpFncs.dmpPrfxs(jenaMdl))
-		rsltStats.append(mdlDumpFncs.dumpNSs(jenaMdl))
-		mdlDumpFncs.visitOwlImports(jenaMdl)
-		mdlDumpFncs.visitRdfTypes(jenaMdl)
-		rsltStats.append(mdlDumpFncs.visitSubjRsrcs(jenaMdl))
-		mdlDumpFncs.dumpTypeHistogram(jenaMdl)
-		mdlDumpFncs.dumpPropsTallyByName(jenaMdl)
-		mdlDumpFncs.dumpPropsTallyByCount(jenaMdl)
+		val mdlSzStt = mkTrivStt("jenaMdlSize", size.toInt)
+		val prfxStt = mdlDumpFncs.dmpPrfxs(jenaMdl)
+		val nsStt = mdlDumpFncs.dumpNSs(jenaMdl)
+		rstts.append(mdlSzStt, prfxStt, nsStt)
+		rsltStats.append(prfxStt, nsStt)
+		val owlImpsRprt: MdlStat = mdlDumpFncs.visitOwlImports(jenaMdl)
+		rstts.append(owlImpsRprt)
+		val rdfTypsRprt: MdlStat = mdlDumpFncs.visitRdfTypes(jenaMdl)
+		rstts.append(rdfTypsRprt)
+		val subjRprt: MdlSummaryStat = mdlDumpFncs.visitSubjRsrcs(jenaMdl)
+		rsltStats.append(subjRprt)
+		rstts.append(subjRprt)
+		val typHistoRprt = mdlDumpFncs.dumpTypeHistogram(jenaMdl)
+		val prpTyllyByNmRprt = mdlDumpFncs.dumpPropsTallyByName(jenaMdl)
+		val prpTllyByCntRprt = mdlDumpFncs.dumpPropsTallyByCount(jenaMdl)
 		rsltStats.toList
 	}
 	def dumpMdlStatsToJsnArrTxt(jenaMdl: JenaMdl) : String = {
-		val statSeq: Seq[MdlSummaryStat] = dumpSomeModelStatsToLog(jenaMdl)
+		val statSeq: Seq[MdlSummaryStat] = dumpOntoSummaryStatsToLog(jenaMdl)
 		val statJsnArrTxt = statToJson.summStatsToJsArrTxt(statSeq, true)
 		statJsnArrTxt
 	}
