@@ -9,16 +9,16 @@ private trait OntJsonStuff
 
 sealed trait MdlStat // Experimental json-write-enabled union type for following cases (cannot json-read without clznm)
 case class MdlSummaryStat(statName : String, itemCount : Int) extends MdlStat
-case class MdlHistoBinStat(binName : String, binCount : Int, binSamples: List[String])
-case class MdlHistoStat(totalBinCntEst : Int, excludedBinCntEst : Int, binStats : List[MdlHistoBinStat]) extends MdlStat
+case class HistoBinStat(binName : String, binCount : Int, binSamples: List[String])
+case class MdlHistoStat(histoNm: String, totalBinCntEst : Int, excludedBinCntEst : Int, binStats : List[HistoBinStat]) extends MdlStat
 case class AggStat(aggName : String, subStats : List[MdlStat]) extends MdlStat
 
 trait MdlStatJsonProto extends DefaultJsonProtocol {
 	// jsonFormatN(Type) defines marshalling for a case-class-Type with N fields
 	// When we want recursive types, must add a lazyFormat wrapper
 	implicit val jf_mdlSummStat: JsonFormat[MdlSummaryStat] = jsonFormat2(MdlSummaryStat)
-	implicit val jf_mdlHistoStat: JsonFormat[MdlHistoStat] = jsonFormat3(MdlHistoStat)
-	implicit val jf_mdlHBinStat : JsonFormat[MdlHistoBinStat] = jsonFormat3(MdlHistoBinStat)
+	implicit val jf_mdlHBinStat : JsonFormat[HistoBinStat] = jsonFormat3(HistoBinStat)
+	implicit val jf_mdlHistoStat: JsonFormat[MdlHistoStat] = lazyFormat(jsonFormat4(MdlHistoStat))
 
 	// Manually defined switcher for the various subtypes of MSmmStt
 	implicit val jf_anyMdlStat = new RootJsonFormat[MdlStat] {
@@ -33,8 +33,8 @@ trait MdlStatJsonProto extends DefaultJsonProtocol {
 		override def read(json: JsValue): MdlStat = ???
 	}
 
-	// AggStat may contain any other mdlStats.  Can we avoid the extra lazyFormat() wrapper in this case?
-	implicit val jf_aggStat : JsonFormat[AggStat] = jsonFormat2(AggStat)
+	// AggStat may contain any other mdlStats, which ... [Can we avoid the extra lazyFormat() wrapper in this case?]
+	implicit val jf_aggStat : JsonFormat[AggStat] = lazyFormat(jsonFormat2(AggStat))
 
 }
 trait MdlSttJsonMaker {

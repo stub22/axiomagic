@@ -79,14 +79,25 @@ trait MdlDmpFncs extends  StmtXtractFuncs  with StdGenVocab {
 		val srtdKys = bindMap.keys.toSeq.sortBy(_.getURI)
 		val sampleSize = 3
 		var keyCnt = 0
-		srtdKys.foreach(kyRsrc => {
+		val binStats: Seq[HistoBinStat] = srtdKys.map(kyRsrc => {
 			keyCnt += 1
 			val vLst = bindMap.get(kyRsrc).getOrElse(Nil)
-			val vLstFront = vLst.take(sampleSize)
-			val dmpd = s"key ${keyCnt} [${kyRsrc}] bound to ${vLst.size} values.  First ${sampleSize} are: ${vLstFront}"
+			val vLstFront: Traversable[JenaRsrc] = vLst.take(sampleSize)
+			val binSize = vLst.size
+			val dmpd = s"key ${keyCnt} [${kyRsrc}] bound to ${binSize} values.  First ${sampleSize} are: ${vLstFront}"
 			myLog.info(dmpd)
+			val frontNms = vLstFront.map(chooseNameForStat(_)).toList
+			HistoBinStat(kyRsrc.getURI, binSize, frontNms)
 		})
-		MdlSummaryStat("histKeyCnt", keyCnt)
+		val histStat = MdlHistoStat("types-histo", binStats.size, 0, binStats.toList)
+		val summStt = MdlSummaryStat("histKeyCnt", keyCnt)
+		val aggStt = AggStat("type-stats-agg", List(summStt, histStat))
+		aggStt
+	}
+	private def chooseNameForStat(rsrc : JenaRsrc) : String = {
+		val locNm = rsrc.getLocalName
+		val reg = if (locNm != null) locNm else rsrc.getURI
+		if (reg != null) reg else "NO_URI_FOR_rsrc_" + rsrc.toString
 	}
 
 	// private def doDump(currCnt, initSeg, mod)
@@ -195,7 +206,10 @@ class OntQryMgr {
 		val prpTyllyByNmRprt: Int = mdlDumpFncs.dumpPropsTallyByName(jenaMdl)
 		val prpTllyByCntRprt: Int = mdlDumpFncs.dumpPropsTallyByCount(jenaMdl)
 		rstts.append(typHistoRprt)
-		(rstts.toList, rsltStats.toList)
+		val oldRsltStts = rsltStats.toList
+		val aggy = AggStat("aggOfOld", oldRsltStts)
+		rstts.append(aggy)
+		(rstts.toList, oldRsltStts)
 	}
 	private def dumpOntoSummaryStatsToLog(jenaMdl: JenaMdl): Seq[MdlSummaryStat] = {
 		val pair = hedgeAndMakeBoth(jenaMdl)
@@ -211,7 +225,8 @@ class OntQryMgr {
 			val statSeq: Seq[MdlSummaryStat] = dumpOntoSummaryStatsToLog(jenaMdl)
 			statToJson.summStatsToJsArrTxt(statSeq, true)
 		} else {
-			val mstts = collectGenMdlStats(jenaMdl)
+			val mstts: Seq[MdlStat] = collectGenMdlStats(jenaMdl)
+			myS4JLog.info("new form stats: {}", mstts)
 			statToJson.mdlStatsToJsArrTxt(mstts, true)
 		}
 		statJsnArrTxt
