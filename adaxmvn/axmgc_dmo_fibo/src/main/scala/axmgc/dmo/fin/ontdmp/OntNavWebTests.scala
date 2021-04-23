@@ -42,7 +42,11 @@ trait OntNavResponder {
 	}
 	// FIXME:  This HTEM should probably go into a narrower responder ctx
 	private val myHTEM = new HtEntMkr {}
-	private def mkFiboResponse(paramMap : Map[String, String]) : HEStrict = ???
+	private def mkFiboResponse(paramMap : Map[String, String]) : HEStrict = {
+		val fiboStatJsonTxt: String = myFiboOntChkr.dumpFiboMdlStatsToLog()
+		val fiboNavdatEnt = myHTEM.makeJsonEntity(fiboStatJsonTxt)
+		fiboNavdatEnt
+	}
 	private def mkKbpediaResponse(paramMap : Map[String, String]) : HEStrict = {
 		// FIXME:  This stat txt is not actually navdat
 		val statJsonTxt: String = myKbpediaOnt.dumpStatsToLogAndJsonTxt()

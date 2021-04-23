@@ -151,14 +151,24 @@ trait MdlDmpFncs extends  StmtXtractFuncs  with StdGenVocab {
 		uniqPropCnt
 	}
 
-	def dumpPropsTallyByCount(mdl: JenaMdl): Int = {
+	def dumpPropsTallyByCount(mdl: JenaMdl): MdlStat  = {
 		val sckr = new MdlPrpSucker {}
 		val tallyMap: Map[JenaProp, Int] = sckr.tallyProps(mdl)
 		val pairsByCount: Seq[(JenaProp, Int)] = tallyMap.toSeq.sortBy(_._2)
 		myLog.info("Pairs count: {}", pairsByCount.size)
 		val propsByCount: Seq[JenaProp] = pairsByCount.map(_._1)
 		dumpPropsTally(propsByCount, tallyMap)
-		propsByCount.size
+		val aggPropStat = mkAggPropStat(pairsByCount)
+		aggPropStat
+		// propsByCount.size
+	}
+	private def mkAggPropStat(propCntPairs : Seq[(JenaProp, Int)]) : MdlStat = {
+		val pstts = propCntPairs.map(pair => {
+			val nm = chooseNameForStat(pair._1)
+			MdlSummaryStat(nm, pair._2)
+		})
+		val aggStat = AggStat("propCntStats", pstts.toList)
+		aggStat
 	}
 
 	def dumpPropsTally(propSeq: Seq[JenaProp], tallyMap: Map[JenaProp, Int]): Unit = {
@@ -204,8 +214,8 @@ class OntQryMgr {
 		rstts.append(subjRprt)
 		val typHistoRprt: MdlStat = mdlDumpFncs.dumpTypeHistogram(jenaMdl)
 		val prpTyllyByNmRprt: Int = mdlDumpFncs.dumpPropsTallyByName(jenaMdl)
-		val prpTllyByCntRprt: Int = mdlDumpFncs.dumpPropsTallyByCount(jenaMdl)
-		rstts.append(typHistoRprt)
+		val prpTllyByCntRprt: MdlStat = mdlDumpFncs.dumpPropsTallyByCount(jenaMdl)
+		rstts.append(typHistoRprt, prpTllyByCntRprt)
 		val oldRsltStts = rsltStats.toList
 		val aggy = AggStat("aggOfOld", oldRsltStts)
 		rstts.append(aggy)

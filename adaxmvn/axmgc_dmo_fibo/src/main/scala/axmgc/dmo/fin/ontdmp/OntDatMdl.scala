@@ -21,8 +21,9 @@ trait ChkFibo extends FiboVocab  { // with MdlDmpFncs {
 	}
 	lazy protected val myFiboOntMdl = loadFiboGrphMdl
 	private val ontQryMgr = new OntQryMgr
-	def dumpFiboMdlStatsToLog(): Unit = {
+	def dumpFiboMdlStatsToLog(): String = {
 		val qryOutJsnTxt =  ontQryMgr.dumpMdlStatsToJsnArrTxt(myFiboOntMdl)
+		qryOutJsnTxt
 	}
 
 }
