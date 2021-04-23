@@ -12,10 +12,11 @@ private trait OntNavWebTests
 trait OntNavResponder {
 
 	private lazy val myKbpediaOnt  = new KBPediaOntoWrap {}
-	private lazy val myFiboOntChkr = new ChkFibo {}
+	private lazy val myFiboOntChkr = new FiboOntWrap {}
 
 	private val PRMKY_SEL = "sel"
-	private val PRMVL_KBPEDIA = "kbpedia"
+	private val PRMVL_KBPEDIA_RC = "kbpedia"
+	private val PRMVL_KBPEDIA_KKO = "kko"
 	private val PRMVL_FIBO = "fibo"
 	private val PRMVL_DUM = "dummy"
 
@@ -28,7 +29,8 @@ trait OntNavResponder {
 		val selPrm = selPrm_opt.getOrElse(PRMVL_DUM)
 		selPrm match {
 			case PRMVL_FIBO => mkFiboResponse(paramMap)
-			case PRMVL_KBPEDIA => mkKbpediaResponse(paramMap)
+			case PRMVL_KBPEDIA_RC => mkKbprcResponse(paramMap)
+			case PRMVL_KBPEDIA_KKO => mkKkoResponse(paramMap)
 			case PRMVL_DUM => myDummyTreeResponder.makeAnswerEntity(paramMap)
 			case _ => throw new Exception("Unknown selector: " + selPrm)
 		}
@@ -47,9 +49,15 @@ trait OntNavResponder {
 		val fiboNavdatEnt = myHTEM.makeJsonEntity(fiboStatJsonTxt)
 		fiboNavdatEnt
 	}
-	private def mkKbpediaResponse(paramMap : Map[String, String]) : HEStrict = {
+	private def mkKbprcResponse(paramMap : Map[String, String]) : HEStrict = {
 		// FIXME:  This stat txt is not actually navdat
-		val statJsonTxt: String = myKbpediaOnt.dumpStatsToLogAndJsonTxt()
+		val statJsonTxt: String = myKbpediaOnt.dumpKbprcStatsToLogAndJsonTxt()
+		val navdatEnt = myHTEM.makeJsonEntity(statJsonTxt)
+		navdatEnt
+	}
+	private def mkKkoResponse(paramMap : Map[String, String]) : HEStrict = {
+		// FIXME:  This stat txt is not actually navdat
+		val statJsonTxt: String = myKbpediaOnt.dumpKkoStatsToLogAndJsonTxt()
 		val navdatEnt = myHTEM.makeJsonEntity(statJsonTxt)
 		navdatEnt
 	}

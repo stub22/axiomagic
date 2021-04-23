@@ -89,18 +89,19 @@ trait DumperTupleBridge extends DumperWebFeat {
 		Some(myRslt)
 	}
 
-	private lazy val myKbpediaOnt = new KBPediaOntoWrap {}
+
+	protected def findKbpediaOntWrap : KBPediaOntoWrap
+	private lazy val myKbpOntWrap : KBPediaOntoWrap = findKbpediaOntWrap
 
 	private def goNuts(np : String) : String = {
 		myS4JLog.info("goNuts got np: {}", np)
-		val kbpMdl = myKbpediaOnt.getKBP_model
-		val statJsonTxt: String = myKbpediaOnt.dumpStatsToLogAndJsonTxt()
+		val statJsonTxt: String = myKbpOntWrap.dumpKbprcStatsToLogAndJsonTxt()
 		statJsonTxt
 	}
 
-	protected def getFiboOntChkr : ChkFibo
+	protected def findFiboOntWrap : FiboOntWrap
 
-	private lazy val myFiboOntChkr = getFiboOntChkr
+	private lazy val myFiboOntWrap = findFiboOntWrap
 
 	private def dumpSomeFiboStats(fsp : String) : String = {
 		myS4JLog.info("dumpSomeFiboStats got fsp: {}", fsp)

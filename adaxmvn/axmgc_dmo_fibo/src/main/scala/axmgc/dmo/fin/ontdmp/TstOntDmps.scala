@@ -43,7 +43,8 @@ class TstOntApp(myActSysNm : String) extends WebServerLauncher {
 
 	protected lazy val myS4JLog : Logger = LoggerFactory.getLogger(this.getClass)
 	protected lazy val myActorSys = makeActorSys(myActSysNm)
-	private lazy val myFiboChkr  = new ChkFibo {}
+	private lazy val myFiboChkr  = new FiboOntWrap {}
+	private lazy val myKbpOntWrp = new KBPediaOntoWrap {}
 
 	def chkOntStatsAndPrintToLog : Unit = {
 		myFiboChkr.dumpFiboMdlStatsToLog()
@@ -66,7 +67,9 @@ class TstOntApp(myActSysNm : String) extends WebServerLauncher {
 	}
 	private def mkDumperRoute(): dslServer.Route = {
 		val dmprTpblBrdg: DumperWebFeat = new DumperTupleBridge {
-			override protected def getFiboOntChkr: ChkFibo = myFiboChkr
+			override protected def findFiboOntWrap: FiboOntWrap = myFiboChkr
+
+			override protected def findKbpediaOntWrap: KBPediaOntoWrap = myKbpOntWrp
 		}
 		val dmprRtMkr = new DmpWbRtMkr {
 			override protected def getDumperWebFeat: DumperWebFeat = dmprTpblBrdg
