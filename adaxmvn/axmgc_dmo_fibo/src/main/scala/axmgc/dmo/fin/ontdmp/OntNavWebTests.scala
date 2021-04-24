@@ -64,7 +64,7 @@ trait OntNavResponder {
 		navdatEnt
 	}
 	private def mkKbpTyposResponse(paramMap : Map[String, String]) : HEStrict = {
-		val statJsonTxt: String = myKbpediaOnt.dumpTypoStats
+		val statJsonTxt: String = myKbpediaOnt.dumpTypoStatsAsJsonTxt
 		val navdatEnt = myHTEM.makeJsonEntity(statJsonTxt)
 		navdatEnt
 	}

@@ -9,7 +9,7 @@ import axmgc.xpr.vis_js.{MakeWebTableRoutes, MakeSampleSaveRoutes}
 
 object TstOntDmps  {
 	val flg_consoleTest = true
-	val flg_wbsvcLnch = true
+	val flg_wbsvcLnch =  true
 	val flg_setupFallbackLog4J = false // Set to false if log4j.properties is expected, e.g. from Jena.
 	val myFallbackLog4JLevel = org.apache.log4j.Level.INFO
 
@@ -46,13 +46,15 @@ class TstOntApp(myActSysNm : String) extends WebServerLauncher {
 	private lazy val myFiboChkr  = new FiboOntWrap {}
 	private lazy val myKbpOntWrp = new KBPediaOntoWrap {}
 
-	def chkOntStatsAndPrintToLog : Unit = {
+	def chkOntStatsAndPrintToLog : String = {
 		chkKbpStats()
 	}
-	private def chkKbpStats() : Unit = {
-		myKbpOntWrp.dumpTypoStats
+	private def chkKbpStats() : String = {
+		val typoStatsJsnTxt = myKbpOntWrp.dumpTypoStatsAsJsonTxt
+		myS4JLog.info("typoStats json block: {}", typoStatsJsnTxt)
+		typoStatsJsnTxt
 	}
-	private def chkFiboStats() : Unit = {
+	private def chkFiboStats() : String = {
 		myFiboChkr.dumpFiboMdlStatsToLog()
 	}
 	def launchWebSvc(svcHostName : String, svcPort : Int, flg_blockUntilEnterKey: Boolean = true) : Unit = {

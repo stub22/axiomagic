@@ -225,7 +225,7 @@ class OntQryMgr {
 		val pair = hedgeAndMakeBoth(jenaMdl)
 		pair._2
 	}
-	private def collectGenMdlStats(jenaMdl: JenaMdl): Seq[MdlStat] = {
+	def collectGenMdlStats(jenaMdl: JenaMdl): Seq[MdlStat] = {
 		val pair = hedgeAndMakeBoth(jenaMdl)
 		pair._1
 	}

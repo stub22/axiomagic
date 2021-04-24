@@ -54,6 +54,11 @@ trait MdlSttJsonMaker {
 		val summSeqJson: JsValue = stats.toJson
 		summSeqJson.asInstanceOf[JsArray]
 	}
+	def mdlStatToJsObj(stat: MdlStat) : JsObject = {
+		import mdlStatJsonProtoCtx._
+		import spray.json.enrichAny
+		stat.toJson.asInstanceOf[JsObject]
+	}
 
 	// TODO:  Add flag for sorted print
 	def summStatsToJsArrTxt(summStats : Seq[MdlSummaryStat], flag_prettyPrnt : Boolean) : String = {

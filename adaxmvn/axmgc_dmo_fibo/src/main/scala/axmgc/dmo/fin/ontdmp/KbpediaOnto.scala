@@ -20,8 +20,8 @@ trait KBPediaOntoLoader {
 	private val pth_kbpPrefixes_v25 = "gdat/kbpedia/kbprc_prefixes.n3"
 	private val fldr_kbpTyp_v25 = "gdat/kbpedia/typologies_v250/"
 
-	private val myMdl_KBPRC = loadJenaModelFromRsrc(pth_kbp_v25)
-	private val myMdl_KKO = loadJenaModelFromRsrc(pth_kko_v25)
+	private lazy val myMdl_KBPRC = loadJenaModelFromRsrc(pth_kbp_v25)
+	private lazy val myMdl_KKO = loadJenaModelFromRsrc(pth_kko_v25)
 
 	private def loadJenaModelFromRsrc(rsrcPth : String) : JenaMdl = {
 		myS4JLog.info("Starting load of jena model from rsrcPth: {}", rsrcPth)
@@ -50,10 +50,11 @@ trait KBPediaOntoLoader {
 		myS4JLog.info("Read {} lines from {} ", lineSeq.size, pthToRsrc )
 		lineSeq
 	}
-	def loadAllTyposUsingPrefixesAsText(): Unit = {
+	def loadAllTyposUsingPrefixesAsText(): List[(String, JenaMdl)] = {
 		val prefixTextLines = readTextResourceLines(pth_kbpPrefixes_v25)
-		all_kbpedia_typo_fnms.foreach(fnm => {
+		all_kbpedia_typo_fnms.map(fnm => {
 			val kbpTypoMdl = loadTypoModelWithPrefixLines(fnm, prefixTextLines)
+			(fnm, kbpTypoMdl)
 		})
 	}
 	def loadTypoModelWithPrefixLines(fNameTail : String, prefixLines : Seq[String]) : JenaMdl = {
@@ -124,6 +125,7 @@ trait KBPediaOntoWrap extends MdlDmpFncs {
 
 	private val myOntLoader = new KBPediaOntoLoader {}
 	private val ontQryMgr = new OntQryMgr
+	private val statToJson = new MdlSttJsonMaker {}
 
 	def dumpKbprcStatsToLogAndJsonTxt(): String = {
 		val kbprcMdl = myOntLoader.getKBPRC_model
@@ -135,8 +137,23 @@ trait KBPediaOntoWrap extends MdlDmpFncs {
 		val kkoStatJsnTxt = ontQryMgr.dumpMdlStatsToJsnArrTxt(kkoMdl)
 		kkoStatJsnTxt
 	}
-	def dumpTypoStats : String = {
-		myOntLoader.loadAllTyposUsingPrefixesAsText() // brokenTrialLoadAllTypos()
-		"done"
+	private def collectTypoStats : List[MdlStat] = {
+		val allTypoMdlPairs: List[(String, JenaMdl)] = myOntLoader.loadAllTyposUsingPrefixesAsText()
+		val stats: Seq[AggStat] = allTypoMdlPairs.map(nmAndMdl => {
+			val mdlNm : String = nmAndMdl._1
+			val jMdl : JenaMdl = nmAndMdl._2
+			val genStats: Seq[MdlStat] = ontQryMgr.collectGenMdlStats(jMdl)
+			val aggOneStt = AggStat(mdlNm, genStats.toList)
+			aggOneStt
+		})
+		stats.toList
+	}
+	def dumpTypoStatsAsJsonTxt : String = {
+		// FIXME:  This collection uses significant RAM
+		val typoStats = collectTypoStats
+		val aggAllTypos = AggStat("agg-of-all-typos", typoStats)
+		val jsonObj = statToJson.mdlStatToJsObj(aggAllTypos)
+		val jsonTxt = jsonObj.prettyPrint
+		jsonTxt
 	}
 }
