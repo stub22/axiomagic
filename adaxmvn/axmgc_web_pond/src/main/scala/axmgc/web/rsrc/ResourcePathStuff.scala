@@ -4,6 +4,10 @@ import org.slf4j.{Logger, LoggerFactory}
 
 private trait ResourcePathStuff
 
+trait TextResourceUtils {
+
+}
+
 trait RsrcNms {
 	protected lazy val myS4JLog : Logger = LoggerFactory.getLogger(this.getClass)
 
@@ -11,7 +15,7 @@ trait RsrcNms {
 
 	private val pth_icNms = "gdat/rsrc_nms/icon_name_x3290.txt"
 
-	private def readTxtLines(pthToRsrc: String): Seq[String] = {
+	def readTxtLines(pthToRsrc: String): Seq[String] = {
 		val src = Source.fromResource(pthToRsrc)
 		val lineSeq = src.getLines().toSeq
 		myS4JLog.info("Read {} lines", lineSeq.size)

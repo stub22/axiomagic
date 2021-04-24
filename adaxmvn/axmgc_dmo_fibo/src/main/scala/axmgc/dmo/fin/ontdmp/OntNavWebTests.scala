@@ -17,6 +17,7 @@ trait OntNavResponder {
 	private val PRMKY_SEL = "sel"
 	private val PRMVL_KBPEDIA_RC = "kbpedia"
 	private val PRMVL_KBPEDIA_KKO = "kko"
+	private val PRMVL_KBPEDIA_TYPOS = "kbtypo"
 	private val PRMVL_FIBO = "fibo"
 	private val PRMVL_DUM = "dummy"
 
@@ -31,6 +32,7 @@ trait OntNavResponder {
 			case PRMVL_FIBO => mkFiboResponse(paramMap)
 			case PRMVL_KBPEDIA_RC => mkKbprcResponse(paramMap)
 			case PRMVL_KBPEDIA_KKO => mkKkoResponse(paramMap)
+			case PRMVL_KBPEDIA_TYPOS => mkKbpTyposResponse(paramMap)
 			case PRMVL_DUM => myDummyTreeResponder.makeAnswerEntity(paramMap)
 			case _ => throw new Exception("Unknown selector: " + selPrm)
 		}
@@ -58,6 +60,11 @@ trait OntNavResponder {
 	private def mkKkoResponse(paramMap : Map[String, String]) : HEStrict = {
 		// FIXME:  This stat txt is not actually navdat
 		val statJsonTxt: String = myKbpediaOnt.dumpKkoStatsToLogAndJsonTxt()
+		val navdatEnt = myHTEM.makeJsonEntity(statJsonTxt)
+		navdatEnt
+	}
+	private def mkKbpTyposResponse(paramMap : Map[String, String]) : HEStrict = {
+		val statJsonTxt: String = myKbpediaOnt.dumpTypoStats
 		val navdatEnt = myHTEM.makeJsonEntity(statJsonTxt)
 		navdatEnt
 	}
