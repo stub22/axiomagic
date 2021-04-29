@@ -1,4 +1,5 @@
 # Exclude big ol' kbpedia test files
 kbpedia/
 findat_md/
+lean_mathlib/
 # Done

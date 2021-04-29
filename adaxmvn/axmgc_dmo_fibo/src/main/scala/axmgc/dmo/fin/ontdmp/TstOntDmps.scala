@@ -2,13 +2,13 @@ package axmgc.dmo.fin.ontdmp
 
 import axmgc.web.lnch.FallbackLog4J
 import axmgc.web.pond.WebServerLauncher
-
 import org.slf4j.{Logger, LoggerFactory}
 import akka.http.scaladsl.{server => dslServer}
-import axmgc.xpr.vis_js.{MakeWebTableRoutes, MakeSampleSaveRoutes}
+import axmgc.dmo.ksrc.lean_mthlb.LnMthlbNavRouteBldr
+import axmgc.xpr.vis_js.{MakeSampleSaveRoutes, MakeWebTableRoutes}
 
 object TstOntDmps  {
-	val flg_consoleTest = true
+	val flg_consoleTest = false
 	val flg_wbsvcLnch =  true
 	val flg_setupFallbackLog4J = false // Set to false if log4j.properties is expected, e.g. from Jena.
 	val myFallbackLog4JLevel = org.apache.log4j.Level.INFO
@@ -68,9 +68,10 @@ class TstOntApp(myActSysNm : String) extends WebServerLauncher {
 	}
 	private def makeOurTestComboRoute (): dslServer.Route = {
 		val dmprRt = mkDumperRoute()
-		val nvRt = mkNavTreeRoute("onav")
+		val dmOntNvTrRt = mkDemoOntNavTreeRoute("onav")
+		val lnMthNvTrRt = mkProofLibNavTreeRoute("lmnav")
 		val bonusRt = mkBonusRoute()
-		val testComboRt = dmprRt ~ nvRt ~ bonusRt
+		val testComboRt = dmprRt ~ dmOntNvTrRt ~ lnMthNvTrRt ~ bonusRt
 		testComboRt
 	}
 	private def mkDumperRoute(): dslServer.Route = {
@@ -85,11 +86,17 @@ class TstOntApp(myActSysNm : String) extends WebServerLauncher {
 		val dmprRt = dmprRtMkr.makeDmprTstRt
 		dmprRt
 	}
-	private def mkNavTreeRoute(routePathTxt : String) : dslServer.Route = {
-		val wnrb = new OntNavRouteBldr{}
+	private def mkDemoOntNavTreeRoute(routePathTxt : String) : dslServer.Route = {
+		val wnrb = new DemoOntNavRouteBldr{}
 		val wnrt = wnrb.mkNavJsonRt(routePathTxt)
 		wnrt
 	}
+	private def mkProofLibNavTreeRoute(routePathTxt : String) : dslServer.Route = {
+		val lmnRB = new LnMthlbNavRouteBldr{}
+		val lmnRt = lmnRB.mkNavJsonRt(routePathTxt)
+		lmnRt
+	}
+
 	private def mkBonusRoute() : dslServer.Route = {
 		val mssr = new MakeSampleSaveRoutes{}
 		val svRt = mssr.mkSavingRt

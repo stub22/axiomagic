@@ -193,20 +193,72 @@ object RunNavItemMakerTests {
 
 import akka.http.scaladsl.model.HttpEntity.{Strict => HEStrict}
 import axmgc.web.ent.HtEntMkr
+trait NavJsonEntApi {
+	def mkBroadAnswerEntity(paramMap : Map[String, String]) : HEStrict
+	def mkNarrowAnswerEntity(navQID : String, paramMap : Map[String, String]) : HEStrict
+}
+trait NavJsonTxtApi {
+	def mkBroadJsonTxt(paramMap : Map[String, String]) : String
+	def mkNarrowJsonTxt(navQID : String, paramMap : Map[String, String]) : String
 
-trait WebNavItemResponder {
-	private val myNimTsts = new NavItemMakerTests{}
-	private val myHTEM = new HtEntMkr {}
-
-	def makeAnswerEntity(paramMap : Map[String, String]) : HEStrict = {
-		val jsTxt = myNimTsts.testNavTreeDataGen(paramMap)
-		val navdatEnt = myHTEM.makeJsonEntity(jsTxt)
-		navdatEnt
+}
+trait NavJsonEntImpl extends NavJsonEntApi {
+	protected def getNavJsonTxtMkr : NavJsonTxtApi
+	protected def getHtEntMkr : HtEntMkr
+	override def mkBroadAnswerEntity(paramMap : Map[String, String]) : HEStrict = {
+		val broadJsonTxt = getNavJsonTxtMkr.mkBroadJsonTxt(paramMap)
+		getHtEntMkr.makeJsonEntity(broadJsonTxt)
 	}
-	def mkNarrowAnswerEntity(navQID : String, paramMap : Map[String, String]) : HEStrict = {
-		val jsTxt = myNimTsts.testFocusedTreeDataGen(navQID, paramMap)
-		val navdatEnt = myHTEM.makeJsonEntity(jsTxt)
-		navdatEnt
+	override def mkNarrowAnswerEntity(navQID : String, paramMap : Map[String, String]) : HEStrict = {
+		val nrrowJsonTxt = getNavJsonTxtMkr.mkNarrowJsonTxt(navQID, paramMap)
+		getHtEntMkr.makeJsonEntity(nrrowJsonTxt)
+	}
+}
+class FakeNavJsonTxtImpl extends NavJsonTxtApi {
+	private val myNimTsts = new NavItemMakerTests{}
+
+	override def mkBroadJsonTxt(paramMap: Map[String, String]): String = {
+		myNimTsts.testNavTreeDataGen(paramMap)
+	}
+	override def mkNarrowJsonTxt(navQID: String, paramMap: Map[String, String]): String = {
+		myNimTsts.testFocusedTreeDataGen(navQID, paramMap)
 	}
 
 }
+
+class RobustNavJsonTxtImpl extends NavJsonTxtApi {
+	private val myFallbackImpl = new FakeNavJsonTxtImpl
+	override def mkBroadJsonTxt(paramMap: Map[String, String]): String = {
+
+		myFallbackImpl.mkBroadJsonTxt(paramMap)
+	}
+
+	override def mkNarrowJsonTxt(navQID: String, paramMap: Map[String, String]): String = {
+		myFallbackImpl.mkNarrowJsonTxt(navQID, paramMap)
+	}
+}
+/*
+private class FakeNavItemRespImpl() extends NavJsonEntImpl {
+	private val myNimTsts = new NavItemMakerTests{}
+
+	private val myHTEM = new HtEntMkr {}
+
+	override protected def getHtEntMkr: HtEntMkr = myHTEM
+
+	override protected def getNavJsonTxtMkr: NavJsonTxtApi = new NavJsonTxtApi {
+	}
+}
+*/
+
+/* Before refactor was:
+override def mkBroadAnswerEntity(paramMap : Map[String, String]) : HEStrict = {
+	val jsTxt = myNimTsts.testNavTreeDataGen(paramMap)
+	val navdatEnt = myHTEM.makeJsonEntity(jsTxt)
+	navdatEnt
+}
+override def mkNarrowAnswerEntity(navQID : String, paramMap : Map[String, String]) : HEStrict = {
+	val jsTxt = myNimTsts.testFocusedTreeDataGen(navQID, paramMap)
+	val navdatEnt = myHTEM.makeJsonEntity(jsTxt)
+	navdatEnt
+}
+ */
