@@ -1,0 +1,104 @@
+<html>
+  <head>
+	<title>Axiomagic.fun - Misc.</title>
+	<link href="_style/axmgc_page.css" rel="stylesheet" type="text/css"/>
+	<script type="text/javascript" async
+  src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+	<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+	jax: ["input/TeX","output/HTML-CSS"],
+	displayAlign: "left"
+});    
+	</script>
+	<!-- Scripts defining the application of this page 
+
+	-->
+	<script src="_dmscrpt/vplot_morecalc_J15.js"></script>        
+  </head>
+  <body>
+	<div id="page-heading">Axiomagic.fun - Misc.</div>
+	<hr/>
+	<div id="navigationBlock">
+		<ul>
+			<li> <a href="index.html">welcome</a> </li>
+		
+			<li> <a href="math_review.html">math review</a></li>
+		
+			<li> <a href="https://github.com/stub22/axiomagic">github</a></li>
+
+			<li> <a href="axweb_misc.html" id="navCurrent">misc.</a></li>
+		</ul>
+	</div>
+	<hr/>
+	<div>
+		LaTeX stuff
+		<div id="eqnDmBlk110">
+			<h3>Equational Model</h3>
+			<div>
+				<span>Example formatted maths using MathJax</span>
+			</div>				
+			<pre>
+Explanation of inline HTML blocks with tex2jax markup:
+By default, the tex2jax preprocessor defines the LaTeX math delimiters, which are \(...\) 
+for in-line math, and \[...\] for displayed equations. 
+It also defines the TeX delimiters $$...$$ for displayed equations, but it does not 
+define $...$ as in-line math delimiters. 
+Overall helps if there is newline divding HTML tags from lines with embedded math 
+(which does not nec. mean linebreak in output).  Seems that span-wrapped text is more 
+tightly embedded, whereas leaving it at block level in a div means cruder line-break interp.
+			</pre>    
+
+			<span><code>LaTeX using \( and $$</code> 
+			When \(a \ne 0\), there are two solutions to \(ax^2 + bx + c = 0\) and they are
+			$$x = {-b \pm \sqrt{b^2-4ac} \over 2a}.$$    
+			</span>
+		</div>
+		<div class="tily">
+			<div>
+				START MathML block from poking func <code>doMathDemoStuff(tgtId)</code> 
+			</div>
+			<div id="mexprTgt01">mexpr-01</div>   
+			END MathML from writeStuff
+		</div>			
+		<div>
+			<p>
+				Big ol integral using <code>iiiint</code>
+				$$\iiiint_V \mu(t,u,v,w) \,dt\,du\,dv\,dw$$
+			</p>
+			<p>
+				Another using <code>oint</code>
+				$$\oint_V f(s,t) \,ds\,dt$$
+			</p>
+			<div>And another oint  which fails if switched to oiint, so: FIXME recheck 'oiint' <br/>
+				$$\oint_V f(s) \,ds$$
+			</div>
+			<div>
+				Sum \(\sum_{n=1}^{\infty} 2^{-n} = 1\) inside text, directly within a div
+			</div>    
+			<div>
+				<a target="difrm" href="http://www.asciimath.org">Asciimath</a> enclosed in back-ticks: `sum_(i=1)^n i^3=((n(n+1))/2)^2`
+			</div>
+		</div>
+	  </div>
+
+	</div>
+	<hr/>
+	<div id="hasIfrm">
+		<iframe name="difrm" src="http://www.gravax.fun" style="border:2px solid greenyellow; width:100%; height:400px;" title="Iframe Example"></iframe>
+	</div>
+	<hr/>
+	<div id="bttmRsrcLnks">
+		<h3>Resources</h3>
+		<ul>
+		<li><a href="https://github.com/stub22/axiomagic">axiomagic</a> on github</li>
+		</ul>
+	</div>
+	<script type="text/javascript">
+		console.log("start axiomagic.fun intro page-bottom script");
+		let mathDemoTgtId = 'mexprTgt01';
+		// doMathDemoStuff(mathDemoTgtId);
+
+		console.log("END of body-bottom script block.")
+	</script>
+  </body>
+</html>
