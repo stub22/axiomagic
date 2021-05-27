@@ -1,4 +1,4 @@
-# Exclude big ol' kbpedia test files
+# Exclude big ol' test-data files (imported from external projects)
 kbpedia/
 findat_md/
 lean_mathlib/
