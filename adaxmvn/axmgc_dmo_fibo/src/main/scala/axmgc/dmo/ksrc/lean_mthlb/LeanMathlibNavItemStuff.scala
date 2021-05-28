@@ -20,6 +20,10 @@ class LmlNavItemMaker {
 
 	def mkBigJsObj : JsObject = ???
 	def mkBigTree() : String = {
+
+		// Lean-src-tree reading experiment predates our use of the export_json file.
+		// Results of web inquiries are spray-json trees built by AxioMagic
+		// (no direct relation to lean export_json nor to the jackson-databind code in TestLeanTreeScan)
 		chkFolderNaive(getClass, "/gdat/lean_mathlib/src")
 		val pondClz = classOf[axmgc.web.json.Person]
 		chkFolderNaive(pondClz, "/wdat")
