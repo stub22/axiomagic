@@ -34,7 +34,9 @@ object TestLeanTreeScan {
 
 		val leanExpScanner = new LeanExportTreeScanner()
 
-		leanExpScanner.doScan()
+		leanExpScanner.doScanExpWeb()
+
+		leanExpScanner.doScanExpStrct()
 
 	}
 }
@@ -56,19 +58,43 @@ trait ResourceReadUtils {
 		myS4JLogger.info(s"Resource length: ${rlen}")
 		rlen
 	}
-
 }
+/*
+	// As of 2021-May a recent snapshot of the mathlib docs may usually be found at:
+	// https://github.com/leanprover-community/mathlib_docs/tree/master/docs
+	// in the form of an HTML tree, which also includes a single json dump file
+	// "export_db.json.gz", specifying 7 fields
+	//  "filename", "kind", "is_meta", "line", "src_link", "docs_link", "decl_header_html"
+	// This file copied into build tree as lml_exweb_20210521_sz196MB.json
+	//  The github snap does NOT (as of 2021-05) contain the more detailed export.json file
+	//  we really want, which is produced by:
+	//	https://github.com/leanprover-community/doc-gen/blob/master/src/export_json.lean
+	//	using some subset of the mathlib library (or a sufficiently similar collection).
+	//  Following that step, print_docs.py does a lot of stuff, including producing the less
+	//  structured export_db.json, which is all we had access to until:
+	//  2021-05-29:  Received a snapshot of export.json from Bryan G. Chen on Zulip Chat.
+	// https://leanprover.zulipchat.com/#narrow/stream/113489-new-members/topic/Studying.20mathlib.20as.20a.20knowledge.20artifact.3B.20.20seeking.20.22expor.2E.2E.2E/near/240727843
+	// copied into axio build tree as:  lml_exstruct_20210529_sz91MB.json
+*/
 class LeanExportTreeScanner() {
 	val myS4JLogger: Logger = LoggerFactory.getLogger(this.getClass)
 	private val myRrUtils = new ResourceReadUtils {}
 	// Resource path needs leading '/' in this case!
-	private val pth_lmlExpJson = "/gdat/lean_mathlib/lml_export_db_20210521_sz196MB.json"
-	def doScan(): Unit = {
+	private val pth_lmlExpWebJson = "/gdat/lean_mathlib/lml_exweb_20210521_sz196MB.json"
+	private val pth_lmlExpStrctJson = "/gdat/lean_mathlib/lml_exstruct_20210529_sz91MB.json"
+	def doScanExpWeb() : Unit = {
+		doScan(pth_lmlExpWebJson)
+	}
+	def doScanExpStrct() : Unit = {
+		doScan(pth_lmlExpStrctJson)
+	}
+
+	def doScan(rsrcPth : String): Unit = {
 		myS4JLogger.info(".doScan() BEGIN")
-		myRrUtils.checkResourceLength(pth_lmlExpJson)
-		val rstrm: InputStream = getClass.getResourceAsStream(pth_lmlExpJson)
+		myRrUtils.checkResourceLength(rsrcPth)
+		val rstrm: InputStream = getClass.getResourceAsStream(rsrcPth)
 		if (rstrm == null) {
-			val msg = s"Cannot open rsrc at: ${pth_lmlExpJson}"
+			val msg = s"Cannot open rsrc at: ${rsrcPth}"
 			myS4JLogger.error(msg)
 			throw new Exception(msg)
 		}
@@ -80,7 +106,7 @@ class LeanExportTreeScanner() {
 		// drainStreamToArr(rstrm)
 		rstrm.close()
 		// myS4JLogger.info(s"Read ${lineCnt} lines and ${chrCnt} total chars")
-		myS4JLogger.info(".doScan() END")
+		myS4JLogger.info(s".doScan(${rsrcPth}) END")
 	}
 	lazy private val jckOM = new ObjectMapper
 	lazy private val jwpp = jckOM.writerWithDefaultPrettyPrinter()
@@ -90,18 +116,6 @@ class LeanExportTreeScanner() {
 		myS4JLogger.info(s"Read JsonNode of class ${jt.getClass}, with JsonNodeType=${nodeType}")
 		jt
 	}
-
-	// As of 2021-May a recent snapshot of the mathlib docs may usually be found at:
-	// https://github.com/leanprover-community/mathlib_docs/tree/master/docs
-	// in the form of an HTML tree, which also includes a single json dump file
-	// "export_db.json.gz"
-	// ...however this does not contain THE more detailed export.json file we really want, which is
-	// produced by:
-	//	https://github.com/leanprover-community/doc-gen/blob/master/src/export_json.lean
-	//	using some subset of the mathlib library (or a sufficiently similar collection).
-	//  Following that step, print_docs.py does a lot of stuff, including producing the less
-	//  structured export_db.json, which is all we have access to so far.
-
 
 	def anlyzJON(jsonObj : ObjectNode) : Unit = {
 		import scala.collection.JavaConverters._
