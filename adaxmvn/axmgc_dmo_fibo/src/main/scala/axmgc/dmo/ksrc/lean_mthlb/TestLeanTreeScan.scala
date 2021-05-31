@@ -88,7 +88,7 @@ class LeanExportTreeScanner() {
 		val webObjNodes  = doScan(pth_lmlExpWebJson)
 		myS4JLogger.info(s"Scan of EXP-WEB=${pth_lmlExpWebJson} found ${webObjNodes.length} JSON objNodes")
 		val webTopNode = webObjNodes.head
-		anlyzFieldNames(webTopNode)
+		anlyzFieldNames(webTopNode, "web-export-top")
 		anlyzFields(webTopNode, true, true)
 	}
 /*
@@ -100,6 +100,7 @@ doScanExpStrct - declsArrayNode size: 79515
 anlyzFieldNames - Got 644 names, first-10=List(add_action, add_cancel_comm_monoid, add_cancel_monoid, add_comm_group, add_comm_group.is_Z_bilin, add_comm_monoid, add_comm_semigroup, add_group, add_group.fg, add_left_cancel_monoid), last-10=List(uniform_add_group, uniform_space, unique, unique_factorization_monoid, vadd_comm_class, wf_dvd_monoid, witt_vector.is_poly, witt_vector.is_poly₂, wseq.productive, zsqrtd.nonsquare)
 
  */
+	private val myJJA = new JacksonJsonAnlyz {}
 	val LML_FLD_DECLS = "decls" // array
 	val LML_FLD_INSTANCES = "instances" // obj
 	val LML_FLD_MOD_DOCS = "mod_docs" // obj
@@ -109,20 +110,20 @@ anlyzFieldNames - Got 644 names, first-10=List(add_action, add_cancel_comm_monoi
 		val strctObjNodes = doScan(pth_lmlExpStrctJson)
 		myS4JLogger.info(s"Scan of EXP-STRUCT=${pth_lmlExpStrctJson} found ${strctObjNodes.length} JSON objNodes")
 		val strctTopNode = strctObjNodes.head
-		anlyzFieldNames(strctTopNode)
+		anlyzFieldNames(strctTopNode, "struct-top")
 		val strctPairsList: Seq[(String, JsonNode)] = grabFieldPairs(strctTopNode)
 		val typDescs = strctPairsList.map(nmNd => (nmNd._1, nmNd._2.getNodeType, nmNd._2.getClass))
 		myS4JLogger.info(s"Sruct-type descs: ${typDescs}")
 		val declsAN: ArrayNode = strctTopNode.get(LML_FLD_DECLS).asInstanceOf[ArrayNode]
-		myS4JLogger.info(s"declsArrayNode size: ${declsAN.size()}")
+		anlyzArr(declsAN, "decls")
 		val instncsON : ObjectNode = strctTopNode.get(LML_FLD_INSTANCES).asInstanceOf[ObjectNode]
-		anlyzFieldNames(instncsON)
+		anlyzFieldNames(instncsON, "instances")
 		val modDocsON = strctTopNode.get(LML_FLD_MOD_DOCS).asInstanceOf[ObjectNode]
-		anlyzFieldNames(modDocsON)
+		anlyzFieldNames(modDocsON, "mod-docs")
 		val notesAN = strctTopNode.get(LML_FLD_NOTES).asInstanceOf[ArrayNode]
-		myS4JLogger.info(s"notesAN array size: ${notesAN.size()}")
+		anlyzArr(notesAN, "notes")
 		val tacticsAN = strctTopNode.get(LML_FLD_TACTIC_DOCS).asInstanceOf[ArrayNode]
-		myS4JLogger.info(s"tacticsAN array size: ${tacticsAN.size()}")
+		anlyzArr(tacticsAN, "tactic-docs")
 	}
 
 	def doScan(rsrcPth : String): List[ObjectNode] = {
@@ -154,11 +155,11 @@ anlyzFieldNames - Got 644 names, first-10=List(add_action, add_cancel_comm_monoi
 		jt
 	}
 
-	def anlyzFieldNames(jsonObj : ObjectNode) : Unit = {
+	def anlyzFieldNames(jsonObj : ObjectNode, objDesc : String) : Unit = {
 		import scala.collection.JavaConverters._
 		val fldNmzIt = jsonObj.fieldNames()
 		val fnmzLst = fldNmzIt.asScala.toList
-		myS4JLogger.info(s"Got ${fnmzLst.length} names, first-10=${fnmzLst.take(10)}, last-10=${fnmzLst.takeRight(10)}")
+		myS4JLogger.info(s"obj_${objDesc} has ${fnmzLst.length} field names, first-10=${fnmzLst.take(10)}, last-10=${fnmzLst.takeRight(10)}")
 	}
 	def grabFieldPairs(jsonObj : ObjectNode) : List[(String, JsonNode)] = {
 		// FIXME:  Do in fewer lines as a conversion
@@ -197,13 +198,17 @@ anlyzFieldNames - Got 644 names, first-10=List(add_action, add_cancel_comm_monoi
 			})
 			logBar()
 		}
-		val jja = new JacksonJsonAnlyz {}
 		val allNodes: Seq[JsonNode] = fpList.map(_._2)
-		val fnHistoMap = jja.mkFieldHistoMap(allNodes)
+		val fnHistoMap = myJJA.mkFieldHistoMap(allNodes)
 		myS4JLogger.info(s"Field Histo Map: ${fnHistoMap}")
-		val kindMap = jja.mkUniqFieldValHistoMap(allNodes, "kind")
+		val kindMap = myJJA.mkUniqFieldValHistoMap(allNodes, "kind")
 		myS4JLogger.info(s"Kind Histo Map: ${kindMap}")
 	}
+	def anlyzArr(arrNode : ArrayNode, arrDesc : String) : Unit = {
+		val elemTypSig = myJJA.chkElemTypz(arrNode)
+		myS4JLogger.info(s"Array[${arrDesc}] has ${arrNode.size()} elements, with type-sig: ${elemTypSig}")
+	}
+
 	private def logBar() : Unit = {
 		myS4JLogger.info("================================================================")
 	}
@@ -243,6 +248,20 @@ trait JacksonJsonAnlyz {
 			mutMap.put(fvtxt, upCnt)
 		})
 		mutMap.toMap
+	}
+	def chkElemTypz(arrNode : ArrayNode): Either[Map[JsonNodeType, Int], JsonNodeType] = {
+		val histMap = new SMHashMap[JsonNodeType,Int]()
+		val elemIt = arrNode.iterator()
+		while (elemIt.hasNext) {
+			val elem = elemIt.next()
+			val elemTyp: JsonNodeType = elem.getNodeType
+			val prevCnt = histMap.getOrElse(elemTyp, 0)
+			histMap.put(elemTyp, prevCnt + 1)
+		}
+		val m = histMap.toMap
+		if (m.size == 1) {
+			Right(m.head._1)
+		} else Left(m)
 	}
 
 }
