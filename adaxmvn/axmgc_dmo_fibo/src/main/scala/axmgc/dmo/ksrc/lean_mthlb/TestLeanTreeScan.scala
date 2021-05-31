@@ -1,24 +1,24 @@
 package axmgc.dmo.ksrc.lean_mthlb
 
-import java.io.{InputStream, InputStreamReader}
+import org.slf4j.{Logger, LoggerFactory}
+import axmgc.web.lnch.FallbackLog4J
+
+import java.io.{InputStream}
 import java.net.{URL, URLConnection}
+import scala.io.Source
+
 import java.util
 import java.util.{Map => JMap}
 
-import axmgc.web.lnch.FallbackLog4J
-import com.fasterxml.jackson.databind.node.ArrayNode
+import scala.collection.{Map => SMap}
+import scala.collection.mutable.{ListBuffer => SMListBuf, HashMap => SMHashMap}
 
-import scala.collection.{immutable, mutable, Map => SMap}
 /*
-Using Jackson-Databind which we already had on classpath thanks to oracle-nosql-client
-Note security vulnerabilities related to reflection in some versions of jackson-databind
+Using Jackson-Databind, which we already had on classpath thanks to oracle-nosql-client.
+Note security vulnerabilities related to reflection in some versions of jackson-databind.
  */
-import com.fasterxml.jackson.databind.node.{JsonNodeType, ObjectNode}
+import com.fasterxml.jackson.databind.node.{JsonNodeType, ObjectNode, ArrayNode}
 import com.fasterxml.jackson.databind.{JsonNode, ObjectMapper}
-import org.slf4j.{Logger, LoggerFactory}
-
-import scala.collection.mutable.ListBuffer
-import scala.io.Source
 
 object TestLeanTreeScan {
 
@@ -64,9 +64,10 @@ trait ResourceReadUtils {
 	// As of 2021-May a recent snapshot of the mathlib docs may usually be found at:
 	// https://github.com/leanprover-community/mathlib_docs/tree/master/docs
 	// in the form of an HTML tree, which also includes a single json dump file
-	// "export_db.json.gz", specifying 7 fields
+	// "export_db.json.gz", which defines 7 fields for each documented library element:
 	//  "filename", "kind", "is_meta", "line", "src_link", "docs_link", "decl_header_html"
-	// This file copied into build tree as lml_exweb_20210521_sz196MB.json
+	// A snapshot of this file is manually copied into local build tree as lml_exweb_20210521_sz196MB.json
+	// That snapshot contains 84,502 library elements.
 	//  The github snap does NOT (as of 2021-05) contain the more detailed export.json file
 	//  we really want, which is produced by:
 	//	https://github.com/leanprover-community/doc-gen/blob/master/src/export_json.lean
@@ -162,7 +163,7 @@ anlyzFieldNames - Got 644 names, first-10=List(add_action, add_cancel_comm_monoi
 	def grabFieldPairs(jsonObj : ObjectNode) : List[(String, JsonNode)] = {
 		// FIXME:  Do in fewer lines as a conversion
 		val fldzIt: util.Iterator[JMap.Entry[String, JsonNode]] = jsonObj.fields()
-		val lbuf = new ListBuffer[(String, JsonNode)]
+		val lbuf = new SMListBuf[(String, JsonNode)]
 		while (fldzIt.hasNext) {
 			val fldEntry: JMap.Entry[String, JsonNode] = fldzIt.next()
 			lbuf.append((fldEntry.getKey, fldEntry.getValue))
@@ -197,7 +198,7 @@ anlyzFieldNames - Got 644 names, first-10=List(add_action, add_cancel_comm_monoi
 			logBar()
 		}
 		val jja = new JacksonJsonAnlyz {}
-		val allNodes: immutable.Seq[JsonNode] = fpList.map(_._2)
+		val allNodes: Seq[JsonNode] = fpList.map(_._2)
 		val fnHistoMap = jja.mkFieldHistoMap(allNodes)
 		myS4JLogger.info(s"Field Histo Map: ${fnHistoMap}")
 		val kindMap = jja.mkUniqFieldValHistoMap(allNodes, "kind")
@@ -220,7 +221,7 @@ trait JacksonJsonAnlyz {
 	import scala.collection.JavaConverters._
 	// Count the number of times each field occurs
 	def mkFieldHistoMap(jns : Traversable[JsonNode]) : Map[String, Int] = {
-		val mutMap = new mutable.HashMap[String, Int]
+		val mutMap = new SMHashMap[String, Int]
 		jns.foreach(jn => {
 			val fldNmzIt = jn.fieldNames()
 			val fnmzLst = fldNmzIt.asScala.toList
@@ -233,7 +234,7 @@ trait JacksonJsonAnlyz {
 		mutMap.toMap
 	}
 	def mkUniqFieldValHistoMap(jns : Traversable[JsonNode], fieldNm : String) : Map[String, Int] = {
-		val mutMap = new mutable.HashMap[String, Int]
+		val mutMap = new SMHashMap[String, Int]
 		jns.foreach(jn => {
 			val fld: JsonNode = jn.get(fieldNm)
 			val fvtxt = fld.asText("NOT_A_VALUE_FIELD")
