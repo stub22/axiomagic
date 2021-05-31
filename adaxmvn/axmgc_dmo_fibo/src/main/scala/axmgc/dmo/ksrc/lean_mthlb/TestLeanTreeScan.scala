@@ -23,14 +23,18 @@ object TestLeanTreeScan {
 	val myFallbackLog4JLevel = org.apache.log4j.Level.INFO
 	lazy val myFLog4J = new FallbackLog4J {}
 
-	lazy val myS4JLogger: Logger = LoggerFactory.getLogger(classOf[LeanExportTreeScanner])
+	// Resource path needs leading '/' in this case!
+	private val rsrcPth_lmlExpWebJson = "/gdat/lean_mathlib/lml_exweb_20210521_sz196MB.json"
+	private val rsrcPth_lmlExpStrctJson = "/gdat/lean_mathlib/lml_exstruct_20210529_sz91MB.json"
+
+	// lazy val myS4JLogger: Logger = LoggerFactory.getLogger(classOf[LeanExportTreeScanner])
 
 	def main(args: Array[String]) {
 		if (flg_setupFallbackLog4J) {
 			myFLog4J.setupFallbackLogging(myFallbackLog4JLevel)
 		}
 
-		val leanExpScanner = new LeanExportTreeScanner()
+		val leanExpScanner = new LeanExportTreeScanner(rsrcPth_lmlExpWebJson, rsrcPth_lmlExpStrctJson)
 
 		leanExpScanner.doScanExpWeb()
 
@@ -55,54 +59,56 @@ object TestLeanTreeScan {
 	//  2021-05-29:  Received a snapshot of export.json from Bryan G. Chen on Zulip Chat.
 	// https://leanprover.zulipchat.com/#narrow/stream/113489-new-members/topic/Studying.20mathlib.20as.20a.20knowledge.20artifact.3B.20.20seeking.20.22expor.2E.2E.2E/near/240727843
 	// copied into axio build tree as:  lml_exstruct_20210529_sz91MB.json
-*/
-class LeanExportTreeScanner() {
-	val myS4JLogger: Logger = LoggerFactory.getLogger(this.getClass)
-	private val myParsingHelper = new JacksonJsonParsingHelper {}
 
-	// Resource path needs leading '/' in this case!
-	private val pth_lmlExpWebJson = "/gdat/lean_mathlib/lml_exweb_20210521_sz196MB.json"
-	private val pth_lmlExpStrctJson = "/gdat/lean_mathlib/lml_exstruct_20210529_sz91MB.json"
-	def doScanExpWeb() : Unit = {
-		val webObjNodes  = myParsingHelper.doScan(pth_lmlExpWebJson)
-		myS4JLogger.info(s"Scan of EXP-WEB=${pth_lmlExpWebJson} found ${webObjNodes.length} JSON objNodes")
-		val webTopNode = webObjNodes.head
-		anlyzFieldNames(webTopNode, "web-export-top")
-		anlyzFields(webTopNode, true, true)
-	}
-/*
 doScanExpStrct - Scan of EXP-STRUCT=/gdat/lean_mathlib/lml_exstruct_20210529_sz91MB.json found 1 JSON objNodes
 anlyzFieldNames - Got 5 names, first-10=List(decls, instances, mod_docs, notes, tactic_docs), last-10=List(decls, instances, mod_docs, notes, tactic_docs)
 grabFieldPairs - Got list of length: 5
 doScanExpStrct - Sruct-type descs: List((decls,ARRAY,class com.fasterxml.jackson.databind.node.ArrayNode), (instances,OBJECT,class com.fasterxml.jackson.databind.node.ObjectNode), (mod_docs,OBJECT,class com.fasterxml.jackson.databind.node.ObjectNode), (notes,ARRAY,class com.fasterxml.jackson.databind.node.ArrayNode), (tactic_docs,ARRAY,class com.fasterxml.jackson.databind.node.ArrayNode))
 doScanExpStrct - declsArrayNode size: 79515
 anlyzFieldNames - Got 644 names, first-10=List(add_action, add_cancel_comm_monoid, add_cancel_monoid, add_comm_group, add_comm_group.is_Z_bilin, add_comm_monoid, add_comm_semigroup, add_group, add_group.fg, add_left_cancel_monoid), last-10=List(uniform_add_group, uniform_space, unique, unique_factorization_monoid, vadd_comm_class, wf_dvd_monoid, witt_vector.is_poly, witt_vector.is_poly₂, wseq.productive, zsqrtd.nonsquare)
-
  */
+
+class LeanExportTreeScanner(rsrcPth_lmlExpWebJson : String, rsrcPth_lmlExpStrctJson : String) {
+	val myS4JLogger: Logger = LoggerFactory.getLogger(this.getClass)
+	private val myParsingHelper = new JacksonJsonParsingHelper {}
 	private val myJJA = new JacksonJsonAnlyz {}
+
+	def doScanExpWeb() : Unit = {
+		val webObjNodes  = myParsingHelper.doScan(rsrcPth_lmlExpWebJson)
+		myS4JLogger.info(s"Scan of EXP-WEB=${rsrcPth_lmlExpWebJson} found ${webObjNodes.length} JSON objNodes")
+		val webTopNode = webObjNodes.head
+		anlyzFieldNames(webTopNode, "web-export-top")
+		anlyzFields(webTopNode, true, true)
+	}
+
 	val LML_FLD_DECLS = "decls" // array
 	val LML_FLD_INSTANCES = "instances" // obj
 	val LML_FLD_MOD_DOCS = "mod_docs" // obj
 	val LML_FLD_NOTES = "notes" // array
 	val LML_FLD_TACTIC_DOCS = "tactic_docs" // array
+
 	def doScanExpStrct() : Unit = {
-		val strctObjNodes = myParsingHelper.doScan(pth_lmlExpStrctJson)
-		myS4JLogger.info(s"Scan of EXP-STRUCT=${pth_lmlExpStrctJson} found ${strctObjNodes.length} JSON objNodes")
+		import scala.collection.JavaConverters._
+		val strctObjNodes = myParsingHelper.doScan(rsrcPth_lmlExpStrctJson)
+		myS4JLogger.info(s"Scan of EXP-STRUCT=${rsrcPth_lmlExpStrctJson} found ${strctObjNodes.length} JSON objNodes")
 		val strctTopNode = strctObjNodes.head
 		anlyzFieldNames(strctTopNode, "struct-top")
 		val strctPairsList: Seq[(String, JsonNode)] = grabFieldPairs(strctTopNode)
 		val typDescs = strctPairsList.map(nmNd => (nmNd._1, nmNd._2.getNodeType, nmNd._2.getClass))
-		myS4JLogger.info(s"Sruct-type descs: ${typDescs}")
+		myS4JLogger.info(s"Struct-type descs: ${typDescs}")
 		val declsAN: ArrayNode = strctTopNode.get(LML_FLD_DECLS).asInstanceOf[ArrayNode]
-		anlyzArr(declsAN, "decls")
+		anlyzArr(declsAN, LML_FLD_DECLS)
+		val declNodes: Iterator[JsonNode] = declsAN.iterator().asScala
+		val declsFieldHistoMap = myJJA.mkFieldHistoMap(declNodes)
+		myS4JLogger.info(s"Decls field histogram: ${declsFieldHistoMap}")
 		val instncsON : ObjectNode = strctTopNode.get(LML_FLD_INSTANCES).asInstanceOf[ObjectNode]
-		anlyzFieldNames(instncsON, "instances")
+		anlyzFieldNames(instncsON, LML_FLD_INSTANCES)
 		val modDocsON = strctTopNode.get(LML_FLD_MOD_DOCS).asInstanceOf[ObjectNode]
-		anlyzFieldNames(modDocsON, "mod-docs")
+		anlyzFieldNames(modDocsON, LML_FLD_MOD_DOCS)
 		val notesAN = strctTopNode.get(LML_FLD_NOTES).asInstanceOf[ArrayNode]
-		anlyzArr(notesAN, "notes")
+		anlyzArr(notesAN, LML_FLD_NOTES)
 		val tacticsAN = strctTopNode.get(LML_FLD_TACTIC_DOCS).asInstanceOf[ArrayNode]
-		anlyzArr(tacticsAN, "tactic-docs")
+		anlyzArr(tacticsAN, LML_FLD_TACTIC_DOCS)
 	}
 
 	def anlyzFieldNames(jsonObj : ObjectNode, objDesc : String) : Unit = {

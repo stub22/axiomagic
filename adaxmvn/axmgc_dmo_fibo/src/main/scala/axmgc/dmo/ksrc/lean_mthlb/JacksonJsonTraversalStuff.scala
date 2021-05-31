@@ -11,7 +11,7 @@ private trait JacksonJsonTraversalStuff
 trait JacksonJsonAnlyz {
 	import scala.collection.JavaConverters._
 	// Count the number of times each field occurs
-	def mkFieldHistoMap(jns : Traversable[JsonNode]) : Map[String, Int] = {
+	def mkFieldHistoMap(jns : TraversableOnce[JsonNode]) : Map[String, Int] = {
 		val mutMap = new SMHashMap[String, Int]
 		jns.foreach(jn => {
 			val fldNmzIt = jn.fieldNames()
