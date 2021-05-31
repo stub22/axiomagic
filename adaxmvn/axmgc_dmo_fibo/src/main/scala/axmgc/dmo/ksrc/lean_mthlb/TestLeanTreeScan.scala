@@ -2,16 +2,13 @@ package axmgc.dmo.ksrc.lean_mthlb
 
 import org.slf4j.{Logger, LoggerFactory}
 import axmgc.web.lnch.FallbackLog4J
-
-import java.io.{InputStream}
-import java.net.{URL, URLConnection}
-import scala.io.Source
+import java.io.InputStream
 
 import java.util
 import java.util.{Map => JMap}
 
-import scala.collection.{Map => SMap}
-import scala.collection.mutable.{ListBuffer => SMListBuf, HashMap => SMHashMap}
+import scala.collection.immutable.{Seq, Map => SMap}
+import scala.collection.mutable.{HashMap => SMHashMap, ListBuffer => SMListBuf}
 
 /*
 Using Jackson-Databind, which we already had on classpath thanks to oracle-nosql-client.
@@ -41,25 +38,6 @@ object TestLeanTreeScan {
 
 	}
 }
-trait ResourceReadUtils {
-	val myS4JLogger: Logger = LoggerFactory.getLogger(this.getClass)
-	// 191 MB (200,695,650 bytes)
-	// Naive read to array in 69s:  Read stream into char-array of len: 200695650
-	def drainStreamToArr(rstrm : InputStream): Unit = {
-		val isrc =	Source.fromInputStream(rstrm)
-		val iarr: Array[Char] = isrc.toArray
-		myS4JLogger.info(s"Read stream into char-array of len: ${iarr.length}")
-
-	}
-	def checkResourceLength(rpath : String ) : Long = {
-		val rsrc: URL = getClass().getResource(rpath)
-		myS4JLogger.info(s"Resource URL: ${rsrc}")
-		val rconn: URLConnection = rsrc.openConnection()
-		val rlen: Int = rconn.getContentLength()
-		myS4JLogger.info(s"Resource length: ${rlen}")
-		rlen
-	}
-}
 /*
 	// As of 2021-May a recent snapshot of the mathlib docs may usually be found at:
 	// https://github.com/leanprover-community/mathlib_docs/tree/master/docs
@@ -80,12 +58,13 @@ trait ResourceReadUtils {
 */
 class LeanExportTreeScanner() {
 	val myS4JLogger: Logger = LoggerFactory.getLogger(this.getClass)
-	private val myRrUtils = new ResourceReadUtils {}
+	private val myParsingHelper = new JacksonJsonParsingHelper {}
+
 	// Resource path needs leading '/' in this case!
 	private val pth_lmlExpWebJson = "/gdat/lean_mathlib/lml_exweb_20210521_sz196MB.json"
 	private val pth_lmlExpStrctJson = "/gdat/lean_mathlib/lml_exstruct_20210529_sz91MB.json"
 	def doScanExpWeb() : Unit = {
-		val webObjNodes  = doScan(pth_lmlExpWebJson)
+		val webObjNodes  = myParsingHelper.doScan(pth_lmlExpWebJson)
 		myS4JLogger.info(s"Scan of EXP-WEB=${pth_lmlExpWebJson} found ${webObjNodes.length} JSON objNodes")
 		val webTopNode = webObjNodes.head
 		anlyzFieldNames(webTopNode, "web-export-top")
@@ -107,7 +86,7 @@ anlyzFieldNames - Got 644 names, first-10=List(add_action, add_cancel_comm_monoi
 	val LML_FLD_NOTES = "notes" // array
 	val LML_FLD_TACTIC_DOCS = "tactic_docs" // array
 	def doScanExpStrct() : Unit = {
-		val strctObjNodes = doScan(pth_lmlExpStrctJson)
+		val strctObjNodes = myParsingHelper.doScan(pth_lmlExpStrctJson)
 		myS4JLogger.info(s"Scan of EXP-STRUCT=${pth_lmlExpStrctJson} found ${strctObjNodes.length} JSON objNodes")
 		val strctTopNode = strctObjNodes.head
 		anlyzFieldNames(strctTopNode, "struct-top")
@@ -124,35 +103,6 @@ anlyzFieldNames - Got 644 names, first-10=List(add_action, add_cancel_comm_monoi
 		anlyzArr(notesAN, "notes")
 		val tacticsAN = strctTopNode.get(LML_FLD_TACTIC_DOCS).asInstanceOf[ArrayNode]
 		anlyzArr(tacticsAN, "tactic-docs")
-	}
-
-	def doScan(rsrcPth : String): List[ObjectNode] = {
-		myS4JLogger.info(".doScan() BEGIN")
-		myRrUtils.checkResourceLength(rsrcPth)
-		val rstrm: InputStream = getClass.getResourceAsStream(rsrcPth)
-		if (rstrm == null) {
-			val msg = s"Cannot open rsrc at: ${rsrcPth}"
-			myS4JLogger.error(msg)
-			throw new Exception(msg)
-		}
-		val jsonNode: JsonNode = jacksonParse(rstrm)
-		val rsltLst : List[ObjectNode] = if (jsonNode.isObject) {
-			val objNode: ObjectNode = jsonNode.asInstanceOf[ObjectNode]
-			List(objNode)
-		} else Nil
-		// drainStreamToArr(rstrm)
-		rstrm.close()
-		// myS4JLogger.info(s"Read ${lineCnt} lines and ${chrCnt} total chars")
-		myS4JLogger.info(s".doScan(${rsrcPth}) END")
-		rsltLst
-	}
-	lazy private val jckOM = new ObjectMapper
-	lazy private val jwpp = jckOM.writerWithDefaultPrettyPrinter()
-	def jacksonParse(inStrm : InputStream) : JsonNode = {
-		val jt: JsonNode = jckOM.readTree(inStrm)
-		val nodeType: JsonNodeType = jt.getNodeType
-		myS4JLogger.info(s"Read JsonNode of class ${jt.getClass}, with JsonNodeType=${nodeType}")
-		jt
 	}
 
 	def anlyzFieldNames(jsonObj : ObjectNode, objDesc : String) : Unit = {
@@ -175,7 +125,7 @@ anlyzFieldNames - Got 644 names, first-10=List(add_action, add_cancel_comm_monoi
 	}
 	def anlyzFields(jsonObj : ObjectNode, flg_dmpPairs : Boolean, flg_dmpNodes : Boolean) : Unit = {
 		import scala.collection.JavaConverters._
-		val fpList = grabFieldPairs(jsonObj)
+		val fpList: Seq[(String, JsonNode)] = grabFieldPairs(jsonObj)
 		val namesOnly: Seq[String] = fpList.map(_._1)
 		myS4JLogger.info(s"First 1000 names ${namesOnly.take(1000)}")
 		myS4JLogger.info(s"Last 1000 names ${namesOnly.takeRight(1000)}")
@@ -186,7 +136,7 @@ anlyzFieldNames - Got 644 names, first-10=List(add_action, add_cancel_comm_monoi
 
 			myS4JLogger.info(s"First 3 pairs: ${firstPairs}")
 			firstPairs.foreach(p => {
-				myS4JLogger.info(s"name=${p._1}, node=[${prettyPrint(p._2)}]")
+				myS4JLogger.info(s"name=${p._1}, node=[${myJJA.prettyPrint(p._2)}]")
 			})
 			logBar()
 		}
@@ -194,7 +144,7 @@ anlyzFieldNames - Got 644 names, first-10=List(add_action, add_cancel_comm_monoi
 			val firstNodes: Seq[JsonNode] = fpList.take(3).map(_._2)
 			myS4JLogger.info(s"First 3 nodes: ${firstNodes}")
 			firstNodes.foreach(n => {
-				myS4JLogger.info(s"Pretty Node: ${prettyPrint(n)}")
+				myS4JLogger.info(s"Pretty Node: ${myJJA.prettyPrint(n)}")
 			})
 			logBar()
 		}
@@ -212,56 +162,6 @@ anlyzFieldNames - Got 644 names, first-10=List(add_action, add_cancel_comm_monoi
 	private def logBar() : Unit = {
 		myS4JLogger.info("================================================================")
 	}
-	def prettyPrint(jn : JsonNode) : String = {
-		val pptxt = jwpp.writeValueAsString(jn)
-		pptxt
-	}
-	// private def countKinds()
-	def toScalaMap(jsonObj : ObjectNode) : Map[String,JsonNode] = {
-		??? // 	val mutaMap = new scala.mutable.
-	}
-}
-
-trait JacksonJsonAnlyz {
-	import scala.collection.JavaConverters._
-	// Count the number of times each field occurs
-	def mkFieldHistoMap(jns : Traversable[JsonNode]) : Map[String, Int] = {
-		val mutMap = new SMHashMap[String, Int]
-		jns.foreach(jn => {
-			val fldNmzIt = jn.fieldNames()
-			val fnmzLst = fldNmzIt.asScala.toList
-			fnmzLst.foreach(fn => {
-				val oldCnt : Int = mutMap.getOrElse(fn, 0)
-				val upCnt = oldCnt + 1
-				mutMap.put(fn, upCnt)
-			})
-		})
-		mutMap.toMap
-	}
-	def mkUniqFieldValHistoMap(jns : Traversable[JsonNode], fieldNm : String) : Map[String, Int] = {
-		val mutMap = new SMHashMap[String, Int]
-		jns.foreach(jn => {
-			val fld: JsonNode = jn.get(fieldNm)
-			val fvtxt = fld.asText("NOT_A_VALUE_FIELD")
-			val oldCnt : Int = mutMap.getOrElse(fvtxt, 0)
-			val upCnt = oldCnt + 1
-			mutMap.put(fvtxt, upCnt)
-		})
-		mutMap.toMap
-	}
-	def chkElemTypz(arrNode : ArrayNode): Either[Map[JsonNodeType, Int], JsonNodeType] = {
-		val histMap = new SMHashMap[JsonNodeType,Int]()
-		val elemIt = arrNode.iterator()
-		while (elemIt.hasNext) {
-			val elem = elemIt.next()
-			val elemTyp: JsonNodeType = elem.getNodeType
-			val prevCnt = histMap.getOrElse(elemTyp, 0)
-			histMap.put(elemTyp, prevCnt + 1)
-		}
-		val m = histMap.toMap
-		if (m.size == 1) {
-			Right(m.head._1)
-		} else Left(m)
-	}
 
 }
+
