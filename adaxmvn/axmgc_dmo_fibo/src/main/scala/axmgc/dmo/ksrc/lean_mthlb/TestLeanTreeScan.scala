@@ -6,6 +6,7 @@ import java.util
 import java.util.{Map => JMap}
 
 import axmgc.web.lnch.FallbackLog4J
+import com.fasterxml.jackson.databind.node.ArrayNode
 
 import scala.collection.{immutable, mutable, Map => SMap}
 /*
@@ -83,13 +84,47 @@ class LeanExportTreeScanner() {
 	private val pth_lmlExpWebJson = "/gdat/lean_mathlib/lml_exweb_20210521_sz196MB.json"
 	private val pth_lmlExpStrctJson = "/gdat/lean_mathlib/lml_exstruct_20210529_sz91MB.json"
 	def doScanExpWeb() : Unit = {
-		doScan(pth_lmlExpWebJson)
+		val webObjNodes  = doScan(pth_lmlExpWebJson)
+		myS4JLogger.info(s"Scan of EXP-WEB=${pth_lmlExpWebJson} found ${webObjNodes.length} JSON objNodes")
+		val webTopNode = webObjNodes.head
+		anlyzFieldNames(webTopNode)
+		anlyzFields(webTopNode, true, true)
 	}
+/*
+doScanExpStrct - Scan of EXP-STRUCT=/gdat/lean_mathlib/lml_exstruct_20210529_sz91MB.json found 1 JSON objNodes
+anlyzFieldNames - Got 5 names, first-10=List(decls, instances, mod_docs, notes, tactic_docs), last-10=List(decls, instances, mod_docs, notes, tactic_docs)
+grabFieldPairs - Got list of length: 5
+doScanExpStrct - Sruct-type descs: List((decls,ARRAY,class com.fasterxml.jackson.databind.node.ArrayNode), (instances,OBJECT,class com.fasterxml.jackson.databind.node.ObjectNode), (mod_docs,OBJECT,class com.fasterxml.jackson.databind.node.ObjectNode), (notes,ARRAY,class com.fasterxml.jackson.databind.node.ArrayNode), (tactic_docs,ARRAY,class com.fasterxml.jackson.databind.node.ArrayNode))
+doScanExpStrct - declsArrayNode size: 79515
+anlyzFieldNames - Got 644 names, first-10=List(add_action, add_cancel_comm_monoid, add_cancel_monoid, add_comm_group, add_comm_group.is_Z_bilin, add_comm_monoid, add_comm_semigroup, add_group, add_group.fg, add_left_cancel_monoid), last-10=List(uniform_add_group, uniform_space, unique, unique_factorization_monoid, vadd_comm_class, wf_dvd_monoid, witt_vector.is_poly, witt_vector.is_poly₂, wseq.productive, zsqrtd.nonsquare)
+
+ */
+	val LML_FLD_DECLS = "decls" // array
+	val LML_FLD_INSTANCES = "instances" // obj
+	val LML_FLD_MOD_DOCS = "mod_docs" // obj
+	val LML_FLD_NOTES = "notes" // array
+	val LML_FLD_TACTIC_DOCS = "tactic_docs" // array
 	def doScanExpStrct() : Unit = {
-		doScan(pth_lmlExpStrctJson)
+		val strctObjNodes = doScan(pth_lmlExpStrctJson)
+		myS4JLogger.info(s"Scan of EXP-STRUCT=${pth_lmlExpStrctJson} found ${strctObjNodes.length} JSON objNodes")
+		val strctTopNode = strctObjNodes.head
+		anlyzFieldNames(strctTopNode)
+		val strctPairsList: Seq[(String, JsonNode)] = grabFieldPairs(strctTopNode)
+		val typDescs = strctPairsList.map(nmNd => (nmNd._1, nmNd._2.getNodeType, nmNd._2.getClass))
+		myS4JLogger.info(s"Sruct-type descs: ${typDescs}")
+		val declsAN: ArrayNode = strctTopNode.get(LML_FLD_DECLS).asInstanceOf[ArrayNode]
+		myS4JLogger.info(s"declsArrayNode size: ${declsAN.size()}")
+		val instncsON : ObjectNode = strctTopNode.get(LML_FLD_INSTANCES).asInstanceOf[ObjectNode]
+		anlyzFieldNames(instncsON)
+		val modDocsON = strctTopNode.get(LML_FLD_MOD_DOCS).asInstanceOf[ObjectNode]
+		anlyzFieldNames(modDocsON)
+		val notesAN = strctTopNode.get(LML_FLD_NOTES).asInstanceOf[ArrayNode]
+		myS4JLogger.info(s"notesAN array size: ${notesAN.size()}")
+		val tacticsAN = strctTopNode.get(LML_FLD_TACTIC_DOCS).asInstanceOf[ArrayNode]
+		myS4JLogger.info(s"tacticsAN array size: ${tacticsAN.size()}")
 	}
 
-	def doScan(rsrcPth : String): Unit = {
+	def doScan(rsrcPth : String): List[ObjectNode] = {
 		myS4JLogger.info(".doScan() BEGIN")
 		myRrUtils.checkResourceLength(rsrcPth)
 		val rstrm: InputStream = getClass.getResourceAsStream(rsrcPth)
@@ -98,15 +133,16 @@ class LeanExportTreeScanner() {
 			myS4JLogger.error(msg)
 			throw new Exception(msg)
 		}
-		val jsonNode = jacksonParse(rstrm)
-		if (jsonNode.isObject) {
-			val objNode = jsonNode.asInstanceOf[ObjectNode]
-			anlyzJON(objNode)
-		}
+		val jsonNode: JsonNode = jacksonParse(rstrm)
+		val rsltLst : List[ObjectNode] = if (jsonNode.isObject) {
+			val objNode: ObjectNode = jsonNode.asInstanceOf[ObjectNode]
+			List(objNode)
+		} else Nil
 		// drainStreamToArr(rstrm)
 		rstrm.close()
 		// myS4JLogger.info(s"Read ${lineCnt} lines and ${chrCnt} total chars")
 		myS4JLogger.info(s".doScan(${rsrcPth}) END")
+		rsltLst
 	}
 	lazy private val jckOM = new ObjectMapper
 	lazy private val jwpp = jckOM.writerWithDefaultPrettyPrinter()
@@ -117,11 +153,14 @@ class LeanExportTreeScanner() {
 		jt
 	}
 
-	def anlyzJON(jsonObj : ObjectNode) : Unit = {
+	def anlyzFieldNames(jsonObj : ObjectNode) : Unit = {
 		import scala.collection.JavaConverters._
 		val fldNmzIt = jsonObj.fieldNames()
 		val fnmzLst = fldNmzIt.asScala.toList
 		myS4JLogger.info(s"Got ${fnmzLst.length} names, first-10=${fnmzLst.take(10)}, last-10=${fnmzLst.takeRight(10)}")
+	}
+	def grabFieldPairs(jsonObj : ObjectNode) : List[(String, JsonNode)] = {
+		// FIXME:  Do in fewer lines as a conversion
 		val fldzIt: util.Iterator[JMap.Entry[String, JsonNode]] = jsonObj.fields()
 		val lbuf = new ListBuffer[(String, JsonNode)]
 		while (fldzIt.hasNext) {
@@ -130,25 +169,35 @@ class LeanExportTreeScanner() {
 		}
 		val l = lbuf.toList
 		myS4JLogger.info(s"Got list of length: ${l.length}")
-		val namesOnly: Seq[String] = l.map(_._1)
+		l
+	}
+	def anlyzFields(jsonObj : ObjectNode, flg_dmpPairs : Boolean, flg_dmpNodes : Boolean) : Unit = {
+		import scala.collection.JavaConverters._
+		val fpList = grabFieldPairs(jsonObj)
+		val namesOnly: Seq[String] = fpList.map(_._1)
 		myS4JLogger.info(s"First 1000 names ${namesOnly.take(1000)}")
 		myS4JLogger.info(s"Last 1000 names ${namesOnly.takeRight(1000)}")
-		val m: SMap[String, JsonNode] = lbuf.toMap
-		val firstPairs: Seq[(String, JsonNode)] = l.take(3)
 		logBar()
-		myS4JLogger.info(s"First 3 pairs: ${firstPairs}")
-		firstPairs.foreach(p => {
-			myS4JLogger.info(s"name=${p._1}, node=[${prettyPrint(p._2)}]")
-		})
-		logBar()
-		val firstNodes: Seq[JsonNode] = l.take(3).map(_._2)
-		myS4JLogger.info(s"First 3 nodes: ${firstNodes}")
-		firstNodes.foreach(n => {
-			myS4JLogger.info(s"Pretty Node: ${prettyPrint(n)}")
-		})
-		logBar()
+		if (flg_dmpPairs) {
+			val m: SMap[String, JsonNode] = fpList.toMap
+			val firstPairs: Seq[(String, JsonNode)] = fpList.take(3)
+
+			myS4JLogger.info(s"First 3 pairs: ${firstPairs}")
+			firstPairs.foreach(p => {
+				myS4JLogger.info(s"name=${p._1}, node=[${prettyPrint(p._2)}]")
+			})
+			logBar()
+		}
+		if (flg_dmpNodes) {
+			val firstNodes: Seq[JsonNode] = fpList.take(3).map(_._2)
+			myS4JLogger.info(s"First 3 nodes: ${firstNodes}")
+			firstNodes.foreach(n => {
+				myS4JLogger.info(s"Pretty Node: ${prettyPrint(n)}")
+			})
+			logBar()
+		}
 		val jja = new JacksonJsonAnlyz {}
-		val allNodes: immutable.Seq[JsonNode] = l.map(_._2)
+		val allNodes: immutable.Seq[JsonNode] = fpList.map(_._2)
 		val fnHistoMap = jja.mkFieldHistoMap(allNodes)
 		myS4JLogger.info(s"Field Histo Map: ${fnHistoMap}")
 		val kindMap = jja.mkUniqFieldValHistoMap(allNodes, "kind")
