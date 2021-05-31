@@ -3,8 +3,7 @@ package axmgc.dmo.ksrc.lean_mthlb
 import com.fasterxml.jackson.databind.{JsonNode, ObjectMapper}
 import com.fasterxml.jackson.databind.node.{ArrayNode, JsonNodeType}
 
-import scala.collection.immutable.{Seq, Map => SMap}
-import scala.collection.mutable.{HashMap => SMHashMap, ListBuffer => SMListBuf}
+import scala.collection.mutable.{HashMap => SMHashMap}
 
 private trait JacksonJsonTraversalStuff
 
@@ -24,7 +23,7 @@ trait JacksonJsonAnlyz {
 		})
 		mutMap.toMap
 	}
-	def mkUniqFieldValHistoMap(jns : Traversable[JsonNode], fieldNm : String) : Map[String, Int] = {
+	def mkUniqFieldValHistoMap(jns : TraversableOnce[JsonNode], fieldNm : String) : Map[String, Int] = {
 		val mutMap = new SMHashMap[String, Int]
 		jns.foreach(jn => {
 			val fld: JsonNode = jn.get(fieldNm)

@@ -2,20 +2,18 @@ package axmgc.dmo.ksrc.lean_mthlb
 
 import org.slf4j.{Logger, LoggerFactory}
 import axmgc.web.lnch.FallbackLog4J
-import java.io.InputStream
 
-import java.util
-import java.util.{Map => JMap}
+import java.util.{Map => JMap, Iterator => JIterator}
 
 import scala.collection.immutable.{Seq, Map => SMap}
-import scala.collection.mutable.{HashMap => SMHashMap, ListBuffer => SMListBuf}
+import scala.collection.mutable.{ListBuffer => SMListBuf}
 
 /*
 Using Jackson-Databind, which we already had on classpath thanks to oracle-nosql-client.
 Note security vulnerabilities related to reflection in some versions of jackson-databind.
  */
-import com.fasterxml.jackson.databind.node.{JsonNodeType, ObjectNode, ArrayNode}
-import com.fasterxml.jackson.databind.{JsonNode, ObjectMapper}
+import com.fasterxml.jackson.databind.node.{ObjectNode, ArrayNode}
+import com.fasterxml.jackson.databind.{JsonNode}
 
 object TestLeanTreeScan {
 
@@ -87,8 +85,20 @@ class LeanExportTreeScanner(rsrcPth_lmlExpWebJson : String, rsrcPth_lmlExpStrctJ
 	val LML_FLD_NOTES = "notes" // array
 	val LML_FLD_TACTIC_DOCS = "tactic_docs" // array
 
+	val LML_DCLFLD_STRUCT_FLDS = "structure_fields"
+	val LML_DCLFLD_NAME = "name"
+	val LML_DCLFLD_LINE = "line"
+	val LML_DCLFLD_EQNS = "equations"
+	val LML_DCLFLD_CNSTRCTRS = "constructors"
+	val LML_DCLFLD_ATTRS = "attributes"
+	val LML_DCLFLD_FNAME = "filename"
+	val LML_DCLFLD_ARGS = "args"
+	val LML_DCLFLD_DOC_STRNG = "doc_string"
+	val LML_DCLFLD_KIND = "kind"
+	val LML_DCLFLD_TYPE = "type"
+	val LML_DCLFLD_FLG_META = "is_meta"
+
 	def doScanExpStrct() : Unit = {
-		import scala.collection.JavaConverters._
 		val strctObjNodes = myParsingHelper.doScan(rsrcPth_lmlExpStrctJson)
 		myS4JLogger.info(s"Scan of EXP-STRUCT=${rsrcPth_lmlExpStrctJson} found ${strctObjNodes.length} JSON objNodes")
 		val strctTopNode = strctObjNodes.head
@@ -96,13 +106,8 @@ class LeanExportTreeScanner(rsrcPth_lmlExpWebJson : String, rsrcPth_lmlExpStrctJ
 		val strctPairsList: Seq[(String, JsonNode)] = grabFieldPairs(strctTopNode)
 		val typDescs = strctPairsList.map(nmNd => (nmNd._1, nmNd._2.getNodeType, nmNd._2.getClass))
 		myS4JLogger.info(s"Struct-type descs: ${typDescs}")
-		val declsAN: ArrayNode = strctTopNode.get(LML_FLD_DECLS).asInstanceOf[ArrayNode]
-		anlyzArr(declsAN, LML_FLD_DECLS)
-		val declNodes: Iterator[JsonNode] = declsAN.iterator().asScala
-		val declsFieldHistoMap = myJJA.mkFieldHistoMap(declNodes)
-		myS4JLogger.info(s"Decls field histogram: ${declsFieldHistoMap}")
-		val instncsON : ObjectNode = strctTopNode.get(LML_FLD_INSTANCES).asInstanceOf[ObjectNode]
-		anlyzFieldNames(instncsON, LML_FLD_INSTANCES)
+		anlyzDecls(strctTopNode)
+		anlyzInstncs(strctTopNode)
 		val modDocsON = strctTopNode.get(LML_FLD_MOD_DOCS).asInstanceOf[ObjectNode]
 		anlyzFieldNames(modDocsON, LML_FLD_MOD_DOCS)
 		val notesAN = strctTopNode.get(LML_FLD_NOTES).asInstanceOf[ArrayNode]
@@ -110,7 +115,34 @@ class LeanExportTreeScanner(rsrcPth_lmlExpWebJson : String, rsrcPth_lmlExpStrctJ
 		val tacticsAN = strctTopNode.get(LML_FLD_TACTIC_DOCS).asInstanceOf[ArrayNode]
 		anlyzArr(tacticsAN, LML_FLD_TACTIC_DOCS)
 	}
-
+	private def anlyzDecls(strctTopNode : ObjectNode) : Unit = {
+		import scala.collection.JavaConverters._
+		val declsAN: ArrayNode = strctTopNode.get(LML_FLD_DECLS).asInstanceOf[ArrayNode]
+		anlyzArr(declsAN, LML_FLD_DECLS)
+		val declNodes: Iterator[JsonNode] = declsAN.iterator().asScala
+		val declsFieldHistoMap = myJJA.mkFieldHistoMap(declNodes)
+		myS4JLogger.info(s"Decls field histogram: ${declsFieldHistoMap}")
+		// Decls field histogram: Map(structure_fields -> 79515, name -> 79515, line -> 79515, equations -> 79515, constructors -> 79515, attributes -> 79515, filename -> 79515, args -> 79515, doc_string -> 79515, kind -> 79515, type -> 79515, is_meta -> 79515)
+		val firstDecls: Array[JsonNode] = declsAN.iterator().asScala.take(3).toArray
+		(0 to 2).foreach(idx => {
+			myS4JLogger.info(s"decl[${idx}] = ${myJJA.prettyPrint(firstDecls(idx))}")
+		})
+	}
+	private def anlyzInstncs(strctTopNode : ObjectNode) : Unit = {
+		import scala.collection.JavaConverters._
+		val instncsON : ObjectNode = strctTopNode.get(LML_FLD_INSTANCES).asInstanceOf[ObjectNode]
+		anlyzFieldNames(instncsON, LML_FLD_INSTANCES)
+		val fpList: Seq[(String, JsonNode)] = grabFieldPairs(instncsON)
+		// val firstPairs: Array[(String, JsonNode)] = instncsON.iterator().asScala.take(3).toArray
+		(0 to 2).foreach(idx => {
+			val instPair = fpList(idx)
+			val (instNm, instRec) = instPair
+			val instRecDump = instRec.toString
+			val recDumpLen = instRecDump.length
+			val recDumpHead = instRecDump.take(256)
+			myS4JLogger.info(s"inst[${idx}]: name=${instNm} rec-dump-len=${recDumpLen} rec-dump-head=${recDumpHead}")
+		})
+	}
 	def anlyzFieldNames(jsonObj : ObjectNode, objDesc : String) : Unit = {
 		import scala.collection.JavaConverters._
 		val fldNmzIt = jsonObj.fieldNames()
@@ -118,8 +150,8 @@ class LeanExportTreeScanner(rsrcPth_lmlExpWebJson : String, rsrcPth_lmlExpStrctJ
 		myS4JLogger.info(s"obj_${objDesc} has ${fnmzLst.length} field names, first-10=${fnmzLst.take(10)}, last-10=${fnmzLst.takeRight(10)}")
 	}
 	def grabFieldPairs(jsonObj : ObjectNode) : List[(String, JsonNode)] = {
-		// FIXME:  Do in fewer lines as a conversion
-		val fldzIt: util.Iterator[JMap.Entry[String, JsonNode]] = jsonObj.fields()
+		// FIXME:  Redo in fewer lines+mutOps, using conversions
+		val fldzIt: JIterator[JMap.Entry[String, JsonNode]] = jsonObj.fields()
 		val lbuf = new SMListBuf[(String, JsonNode)]
 		while (fldzIt.hasNext) {
 			val fldEntry: JMap.Entry[String, JsonNode] = fldzIt.next()
