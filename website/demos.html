@@ -1,0 +1,98 @@
+<html>
+  <head>
+	<title>AxioMagic.fun - demo screenshots</title>
+	<link href="_style/axmgc_page.css" rel="stylesheet" type="text/css"/>
+	<script type="text/javascript" async
+  src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+	jax: ["input/TeX","output/HTML-CSS"],
+	displayAlign: "left"
+});    
+	</script>
+	<!-- Scripts defining the application of this page 
+
+	-->
+	<script src="_dmscrpt/vplot_morecalc_J15.js"></script>        
+  </head>
+  <body>
+	<div id="page-heading">AxioMagic.fun - demo screenshots</div>
+	<hr/>
+	<div id="navigationBlock">
+		<ul>
+			<li> <a href="index.html">welcome</a></li>
+			<li> <a href="demos.html" id="navCurrent">demo screenshots</a></li>
+			<li> <a href="math_review.html">math review</a></li>
+			<li> <a href="https://github.com/stub22/axiomagic">github</a></li>
+		</ul>
+	</div>
+	<hr/>
+	<div>
+		<span><b>WARNING</b> This software and website is just a snapshot of some research prototoypes.</span>
+		<br/><span>There is not much useful code here yet, and the organization is driven by experimental concerns.</span>
+		<br/><span>Proceed at your own risk, for here be dragons.</span>
+		<h2>Some Gross Screenshots</h2>
+		<div>
+			<span>AxioMagic.fun generates composed UIs using HTML data-viz components like those shown here.</span>
+			<br/><span>Axmgc GUI provides interactive playground / lab for investigation, supported in impl by browsable ontos and apis.</span>
+			<br/>This example uses Vega-lite, Vue, MathJax, Fancytree and AG Grid to produce
+			<br/><b>AxioMagic Demo</b> = interactive math GUI with trees, grids, eqns.</span>
+			<br/><span>These images show preliminary examples of a few GUI widgets.  Hovering over an image will enlarge it (in a rather jarring and <i>unresponsive</i> way, sorry!).</span>
+				
+			</div>
+		</div>
+		<div id="dmImgGrp01" class="flexCntnrRow">
+			<div id="dmScrnsCol">
+				<figure>
+					<a href="_scrnimg/axdem_p1_top_A.png"><img class="dmscrnH thumbH" src="_scrnimg/axdem_p1_top_A.png"/></a>
+					<figcaption>(above) axiomagic nav-ui screen elements</figcaption>
+				</figure>
+				<figure>
+					<figcaption>(below) axiomagic service Scala code in IntelliJ IDE</figcaption>
+					<a href="https://github.com/stub22/axiomagic/tree/master/adaxmvn"><img class="dmscrnH thumbH" src="_scrnimg/axsrv_p25_ide_A.png"/></a>
+				</figure>
+			</div>
+			<div id="dmDeetsCol">
+				<figure>
+					<figcaption>output example with scatterplots and some equations</figcaption>
+					<a href="_scrnimg/axdem_p2_bott_A.png"><img class="dmscrnV thumbV" src="_scrnimg/axdem_p2_bott_A.png"></a>
+				</figure>
+				<div id="explnUiXform">
+					<h3>Barebones Explanation</h3>
+					<div>
+						<span>From input source model and user choices, we derive 1+ of each kind: </span>
+						<ul>
+							<li>explanation (txt)</li>
+							<li>diagram (svg)</li>
+							<li>in-math (expressions, equations, functions) </li>
+							<li>in-code (types, rules, functions)</li>
+							<li>in-param (numbers, choices, flags)</li>
+							<li>in-bulk-data (nominals, numbers, text)</li>
+						</ul>
+						<span>Then we derive outputs below, based on inputs above:</span>
+						<ul>
+							<li>out-math</li>
+							<li>out-bulk-data</li>
+							<li>out-plot (JSON -> Vega, d3, Plot.ly, other)</li>
+							<li>out-log</li>
+						</ul>
+					</div>
+
+				</div>	
+		
+			</div>
+		</div>
+	</div>
+	<div id="hmmSoBig">
+		<div id="eqnRenderDemos" class="flexCntnrRow">
+	</div>
+	<hr/>
+	<script type="text/javascript">
+		console.log("start axiomagic.fun intro page-bottom script");
+		let mathDemoTgtId = 'mexprTgt01';
+		doMathDemoStuff(mathDemoTgtId);
+
+		console.log("END of body-bottom script block.")
+	</script>
+  </body>
+</html>

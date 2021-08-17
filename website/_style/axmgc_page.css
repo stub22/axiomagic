@@ -53,8 +53,56 @@ body {
     /* width: 100%; */
 }
 
-.dmscrn {
-  width : 45%;
+
+.dmscrnH {
+  width : 90%;
   height: auto;
   vertical-align : top;
+}
+.dmscrnV {
+  width : 90%;
+  height: auto;
+  /*
+  width : auto;
+  height: 90%;
+  */
+  vertical-align : top;
+}
+
+
+.thumbH:hover {
+  /*
+  position:relative;
+  top:-25px;
+  left:-35px;
+  */
+  width: 150%;
+  height:auto;
+  display:block;
+  z-index:999;
+}
+
+.thumbV:hover {
+  position:relative;
+  top:-25px;
+  left:-35px;
+  height: 90%;
+  width:auto;
+  display:block;
+  z-index:999;
+}
+
+.flexCntnrCol {
+  display: flex;
+  flex-direction: column;
+}
+
+.flexCntnrRow {
+  display: flex;
+  flex-direction: row;
+}
+
+.tily {
+  border: 1px solid #000;
+  padding: 0 5px;
 }
