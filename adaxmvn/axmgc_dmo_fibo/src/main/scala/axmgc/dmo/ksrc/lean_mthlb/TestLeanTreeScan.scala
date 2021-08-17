@@ -125,7 +125,7 @@ class LeanExportTreeScanner(rsrcPth_lmlExpWebJson : String, rsrcPth_lmlExpStrctJ
 		// Decls field histogram: Map(structure_fields -> 79515, name -> 79515, line -> 79515, equations -> 79515, constructors -> 79515, attributes -> 79515, filename -> 79515, args -> 79515, doc_string -> 79515, kind -> 79515, type -> 79515, is_meta -> 79515)
 		val firstDecls: Array[JsonNode] = declsAN.iterator().asScala.take(3).toArray
 		(0 to 2).foreach(idx => {
-			myS4JLogger.info(s"decl[${idx}] = ${myJJA.prettyPrint(firstDecls(idx))}")
+			myS4JLogger.warn(s"decl[${idx}] = ${myJJA.prettyPrint(firstDecls(idx))}")
 		})
 	}
 	private def anlyzInstncs(strctTopNode : ObjectNode) : Unit = {
@@ -203,3 +203,28 @@ class LeanExportTreeScanner(rsrcPth_lmlExpWebJson : String, rsrcPth_lmlExpStrctJ
 
 }
 
+/*
+interface DeclInfo {
+  name: string;
+  args: efmt[];
+  type: efmt;
+  doc_string: string;
+  filename: string;
+  line: int;
+  attributes: string[];
+  equations: efmt[];
+  kind: string;
+  structure_fields: [string, efmt][];
+  constructors: [string, efmt][];
+}
+```
+Where efmt is defined as follows ('c' is a concatenation, 'n' is nesting):
+```typescript
+type efmt = ['c', efmt, efmt] | ['n', efmt] | string;
+```
+ */
+
+/*
+arrgh
+
+ */
