@@ -2,14 +2,14 @@ package axmgc.dmo.fin.ontdmp
 
 import axmgc.web.lnch.FallbackLog4J
 import axmgc.web.pond.WebServerLauncher
-import org.apache.jena.riot.RDFDataMgr
 import org.slf4j.{Logger, LoggerFactory}
 import akka.http.scaladsl.{server => dslServer}
-import axmgc.xpr.vis_js.{MakeWebTableRoutes, MakeSampleSaveRoutes}
+import axmgc.dmo.ksrc.lean_mthlb.LnMthlbNavRouteBldr
+import axmgc.xpr.vis_js.{MakeSampleSaveRoutes, MakeWebTableRoutes}
 
 object TstOntDmps  {
-	val flg_consoleTest = true
-	val flg_wbsvcLnch = true
+	val flg_consoleTest = false
+	val flg_wbsvcLnch =  true
 	val flg_setupFallbackLog4J = false // Set to false if log4j.properties is expected, e.g. from Jena.
 	val myFallbackLog4JLevel = org.apache.log4j.Level.INFO
 
@@ -43,9 +43,18 @@ class TstOntApp(myActSysNm : String) extends WebServerLauncher {
 
 	protected lazy val myS4JLog : Logger = LoggerFactory.getLogger(this.getClass)
 	protected lazy val myActorSys = makeActorSys(myActSysNm)
-	private lazy val myFiboChkr  = new ChkFibo {}
+	private lazy val myFiboChkr  = new FiboOntWrap {}
+	private lazy val myKbpOntWrp = new KBPediaOntoWrap {}
 
-	def chkOntStatsAndPrintToLog : Unit = {
+	def chkOntStatsAndPrintToLog : String = {
+		chkKbpStats()
+	}
+	private def chkKbpStats() : String = {
+		val typoStatsJsnTxt = myKbpOntWrp.dumpTypoStatsAsJsonTxt
+		myS4JLog.info("typoStats json block: {}", typoStatsJsnTxt)
+		typoStatsJsnTxt
+	}
+	private def chkFiboStats() : String = {
 		myFiboChkr.dumpFiboMdlStatsToLog()
 	}
 	def launchWebSvc(svcHostName : String, svcPort : Int, flg_blockUntilEnterKey: Boolean = true) : Unit = {
@@ -59,14 +68,17 @@ class TstOntApp(myActSysNm : String) extends WebServerLauncher {
 	}
 	private def makeOurTestComboRoute (): dslServer.Route = {
 		val dmprRt = mkDumperRoute()
-		val nvRt = mkNavTreeRoute("onav")
+		val dmOntNvTrRt = mkDemoOntNavTreeRoute("onav")
+		val lnMthNvTrRt = mkProofLibNavTreeRoute("lmnav")
 		val bonusRt = mkBonusRoute()
-		val testComboRt = dmprRt ~ nvRt ~ bonusRt
+		val testComboRt = dmprRt ~ dmOntNvTrRt ~ lnMthNvTrRt ~ bonusRt
 		testComboRt
 	}
 	private def mkDumperRoute(): dslServer.Route = {
 		val dmprTpblBrdg: DumperWebFeat = new DumperTupleBridge {
-			override protected def getFiboOntChkr: ChkFibo = myFiboChkr
+			override protected def findFiboOntWrap: FiboOntWrap = myFiboChkr
+
+			override protected def findKbpediaOntWrap: KBPediaOntoWrap = myKbpOntWrp
 		}
 		val dmprRtMkr = new DmpWbRtMkr {
 			override protected def getDumperWebFeat: DumperWebFeat = dmprTpblBrdg
@@ -74,11 +86,17 @@ class TstOntApp(myActSysNm : String) extends WebServerLauncher {
 		val dmprRt = dmprRtMkr.makeDmprTstRt
 		dmprRt
 	}
-	private def mkNavTreeRoute(routePathTxt : String) : dslServer.Route = {
-		val wnrb = new OntNavRouteBldr{}
+	private def mkDemoOntNavTreeRoute(routePathTxt : String) : dslServer.Route = {
+		val wnrb = new DemoOntNavRouteBldr{}
 		val wnrt = wnrb.mkNavJsonRt(routePathTxt)
 		wnrt
 	}
+	private def mkProofLibNavTreeRoute(routePathTxt : String) : dslServer.Route = {
+		val lmnRB = new LnMthlbNavRouteBldr{}
+		val lmnRt = lmnRB.mkNavJsonRt(routePathTxt)
+		lmnRt
+	}
+
 	private def mkBonusRoute() : dslServer.Route = {
 		val mssr = new MakeSampleSaveRoutes{}
 		val svRt = mssr.mkSavingRt

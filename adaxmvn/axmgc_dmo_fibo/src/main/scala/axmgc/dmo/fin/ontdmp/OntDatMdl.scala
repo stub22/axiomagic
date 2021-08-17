@@ -12,7 +12,7 @@ import scala.collection.mutable.ListBuffer
 
 trait OntDatMdl
 
-trait ChkFibo extends FiboVocab  { // with MdlDmpFncs {
+trait FiboOntWrap extends FiboVocab  { // with MdlDmpFncs {
 
 	private def loadFiboGrphMdl(): JenaMdl = {
 		val path = path_fiboOnt
@@ -21,15 +21,16 @@ trait ChkFibo extends FiboVocab  { // with MdlDmpFncs {
 	}
 	lazy protected val myFiboOntMdl = loadFiboGrphMdl
 	private val ontQryMgr = new OntQryMgr
-	def dumpFiboMdlStatsToLog(): Unit = {
+	def dumpFiboMdlStatsToLog(): String = {
 		val qryOutJsnTxt =  ontQryMgr.dumpMdlStatsToJsnArrTxt(myFiboOntMdl)
+		qryOutJsnTxt
 	}
 
 }
 
 
 
-private trait BadOldChkrGoAway extends ChkFibo {
+private trait BadOldChkrGoAway extends FiboOntWrap {
 
 	private def visitProps : Long = {
 		val omSpec1 : OntModelSpec =  OntModelSpec.OWL_MEM_RDFS_INF

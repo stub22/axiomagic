@@ -21,6 +21,7 @@ trait WebTableDataMaker {
 		import sampleTableJsonProtoCtx._
 		import spray.json.enrichAny
 		val rowSeqJson: JsValue = rowSeq.toJson
+
 		rowSeqJson
 	}
 	def colDefsToJsArray(colDefs : Seq[WebColumnDef]) : JsArray = {

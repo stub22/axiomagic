@@ -1,5 +1,8 @@
 package axmgc.web.ontui.ontfld
 import widoco.gui.GuiController
+import widoco.CreateResources
+import widoco.LODEParser
+import lode.LODEGeneration
 
 object TstOdocGen  {
 	def main(args: Array[String]): Unit = {

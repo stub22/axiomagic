@@ -2,15 +2,13 @@ package axmgc.dmo.fin.ontdmp
 
 import akka.http.scaladsl.{Http, server => dslServer}
 import dslServer.Directives.{complete, entity, get, path, _}
-import dslServer.Directive0
 import akka.http.scaladsl.model.HttpEntity.{Strict => HEStrict}
 import axmgc.web.ent.{HtEntMkr, WebXmlGen}
 import axmgc.web.lnkdt.LDChunkerTest
-import axmgc.web.pond._
 import axmgc.web.tuple.{IntrnlPonderRslt, WebRqPrms, WebTupleMaker}
 import org.slf4j.{Logger, LoggerFactory}
 
-trait DumperWebRoutes // Marker for file - only
+private trait DumperWebRoutes // Marker for file - only
 
 trait DumperWebFeat {
 	val pthTok_dhlo = "dhlo"
@@ -91,18 +89,19 @@ trait DumperTupleBridge extends DumperWebFeat {
 		Some(myRslt)
 	}
 
-	private lazy val myKbpediaOnt = new KBPediaOntoWrap {}
+
+	protected def findKbpediaOntWrap : KBPediaOntoWrap
+	private lazy val myKbpOntWrap : KBPediaOntoWrap = findKbpediaOntWrap
 
 	private def goNuts(np : String) : String = {
 		myS4JLog.info("goNuts got np: {}", np)
-		val kbpMdl = myKbpediaOnt.getKBP_model
-		val statJsonTxt: String = myKbpediaOnt.dumpStatsToLogAndJsonTxt()
+		val statJsonTxt: String = myKbpOntWrap.dumpKbprcStatsToLogAndJsonTxt()
 		statJsonTxt
 	}
 
-	protected def getFiboOntChkr : ChkFibo
+	protected def findFiboOntWrap : FiboOntWrap
 
-	private lazy val myFiboOntChkr = getFiboOntChkr
+	private lazy val myFiboOntWrap = findFiboOntWrap
 
 	private def dumpSomeFiboStats(fsp : String) : String = {
 		myS4JLog.info("dumpSomeFiboStats got fsp: {}", fsp)
