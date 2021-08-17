@@ -1,102 +1,125 @@
 <html>
   <head>
-	<title>Axiomagic.fun - interactive math components</title>
-	<link href="styles.css" rel="stylesheet" type="text/css"/>
-    <script type="text/javascript" async
+	<title>AxioMagic.fun - introduction</title>
+	<link href="_style/axmgc_page.css" rel="stylesheet" type="text/css"/>
+	<script type="text/javascript" async
   src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"></script>
 <script type="text/x-mathjax-config">
 MathJax.Hub.Config({
-    jax: ["input/TeX","output/HTML-CSS"],
-    displayAlign: "left"
+	jax: ["input/TeX","output/HTML-CSS"],
+	displayAlign: "left"
 });    
-    </script>	
+	</script>
+	<!-- Scripts defining the application of this page 
+
+	-->
+	<script src="_dmscrpt/vplot_morecalc_J15.js"></script>        
   </head>
   <body>
-	<div id="page-heading">Axiomagic.fun - interactive math components</div>
+	<div id="page-heading">AxioMagic.fun = tools for exploring models</div>
 	<hr/>
 	<div id="navigationBlock">
 		<ul>
-			<li> <a href="index.html">Welcome</a> </li>
-			<!--
-			<li> <a href="demo.html">Demo</a></li>
-			-->
-			<li> <a href="https://github.com/stub22/axiomagic" id="navCurrent">GitHub</a></li>
+			<li> <a href="index.html" id="navCurrent">welcome</a></li>
+			<li> <a href="demos.html">demo screenshots</a></li>
+			<li> <a href="math_review.html">math review</a></li>
+			<li> <a href="https://github.com/stub22/axiomagic" >github</a></li>
 		</ul>
 	</div>
 	<hr/>
 	<div>
-		<h2>Introduction</h2>
 		<div>
-			Axiomagic.fun generates composed UIs using HTML data-viz components like those shown here.
-			<br/>This example uses Vega-lite, Vue, MathJax, Fancytree and AG Grid.  
+			<span><b>WARNING</b> This software and website is just a snapshot of some research prototoypes.</span>
+			<br/><span>There is not much useful code here yet, and the organization is driven by experimental concerns.</span>
+			<br/><span>Proceed at your own risk, for here be dragons.</span>
 		</div>
 		<div>
-			<img class="dmscrn" src="_scrnimg/axdem_p1_top_A.png"/>img desc p1</img>
-			<img class="dmscrn" src="_scrnimg/axdem_p2_bott_A.png">img desc p2</img>
-		</div> 
-	</div>
-	<div>
-		<div id="explnUiXform">
-			<h3>Barebones Explanation</h3>
-			<div>
-				<span>From input source model and user choices, we derive 1+ of each kind: </span>
-				<ul>
-					<li>explanation (txt)</li>
-					<li>diagram (svg)</li>
-					<li>in-math (expressions, equations, functions) </li>
-					<li>in-code (types, rules, functions)</li>
-					<li>in-param (numbers, choices, flags)</li>
-					<li>in-bulk-data (nominals, numbers, text)</li>
-				</ul>
-				<span>Then we derive outputs below, based on inputs above:</span>
-				<ul>
-					<li>out-math</li>
-					<li>out-bulk-data</li>
-					<li>out-plot (JSON -> Vega, d3, Plot.ly, other)</li>
-					<li>out-log</li>
-				</ul>
-			</div>
-			<h3>Equational Model</h3>
-			<div>
-				<span>Example formatted maths using MathJax</span>
-			</div>
-			<h3>Over That Soc</h3>
-			<div>
-				<span>Todo: improve screenshot PNGs and PDFs motivating stakeholder decisions.</span>
-			</div>
-		</div>         
-		<div id="listDepLinks">
-			<div><span>Axmgc Demo - interactive math GUI with trees, grids, eqns</span>
-				<span>GUI provides interactive playground / lab for investigation, supported in impl by browsable ontos and apis.</span>
-			</div>
-			
-			<span>JS (~ES6) main component list
-				<a target="difrm" href="https://vuejs.org/v2/guide/">Vue</a> UI,
-				<a target="difrm" href="https://vega.github.io/vega-lite/docs/spec.html">Vega-Lite</a> 2D plots,
-				<a target="difrm" href="https://github.com/mar10/fancytree">Fancytree</a> rich tree UI system (uses JQueryUi)
-				
-				<a target="difrm" href="https://github.com/ag-grid/ag-grid">AG Grid (Community ed.)</a>  
-				rich grid UI system (<a target="difrm" href="https://www.npmjs.com/package/ag-grid-community">NPM package info</a>>)
-			</span>
-			<span>Additional UI features</span>	
-				<a target="difrm" href="https://www.mathjax.org/">MathJax</a> math display	
-				<a target="difrm" href="https://svgjs.com/">SVG.js</a> 2D graphics + anim,
-				<a target="difrm" href="https://lurchmath.github.io/openmath-js/site/api-reference/">OpenMath.js</a>
-				standard math grammar.
-				[ REQUIRES SEPARATE DOWNLOAD, GPL licensed: <a target="difrm" href="https://netlogoweb.org/">NetLogo-Web</a> /
-				<a target="difrm" href="http://agentscript.org/">Agentscript</a> agents]
-			</span><br/>
-			<span>Server side (Scala 2.12+, JDK 8+) dep list
-				<a target="difrm" href="https://doc.akka.io/docs/akka-http/current/">Akka Http</a> (previously known as spray.io),
-				<a target="difrm" href="https://jena.apache.org">Jena RDF</a>.
-			</span>			
+			<h3>Introduction</h3>
+			<span>Axiomagic is a library of Scala and Javascript features for interaction with knowledge and information.
+			<br/><span>The information may be in many different forms, including graphs, equations, and datasets.</span>
 		</div>
 	</div>
-	<div>
-		<h3>Resources</h3>
+	<div id="hmmSoBig">
+		<div id="eqnRenderDemos" class="flexCntnrRow">
+	</div>
+	<hr/>
+	<h3 style="margin: auto; text-align: center;">Feature Ingredients</h3>
+	<div id="afterSoc" class="flexCntnrRow">
+		<div id="listDepLinks" class="flexCntnrRow">
+			<div class="tily">
+				<h4>Primary JS (ES6+) component deps</h4>
+				<ul>
+					<li><a target="difrm" href="https://vega.github.io/vega-lite/docs/spec.html">Vega-Lite</a> = JSON-speced data plots</li>
+					<li><a target="difrm" href= "http://wwwendt.de/tech/fancytree/demo/">Fancytree</a> = tree UI system
+					</li>		
+					<li><a target="difrm" href="https://www.ag-grid.com/javascript-grid/">AG Grid</a> = data-table UI comp 
+					</li>
+				</ul>	
+				<h4>Knowledge combination formats (mainly in cloud)</h4>
+				<ul>
+					<li>RDF, LinkedData, SPARQL</li>
+					<li>JSON Schema, OpenAPI</li>
+					<li>Lean MathLib</li>
+					<li>may emulate Graph-QL</li>
+				</ul>
+			</div>
+			<div class="tily">
+				<h4>Http Web Service (middle tier)</h4>
+				<ul>
+					<li>Service Platform = Scala 2.12+ on JDK 8+</li>
+					<li><a target="difrm" href="https://jena.apache.org">Jena RDF API</a> v3.8+ (Apache License)</li>
+					<li><a target="difrm" href="https://mvnrepository.com/artifact/com.typesafe.akka/akka-http">Akka Http</a> 
+						v10.1.4+ (Apache License, based on original <a target="difrm" href="http://www.spray.io">Spray.io</a>)
+					</li>
+				</ul>
+				<h4>Content Mgmt and Gov</h4>	
+					<li><a target="difrm" href="http://www.solidproject.org">SOLID</a> pods for content sharing 
+					</li>
+					<li>Option: Share public AxioMagic services deployed on <a target="herokwin" href="http://www.heroku.com">Heroku</a> and other cloud hosting platforms</li>
+					<li>Option: Run private AxioMagic service on private network or private cloud</li>
+				</ul>
+			</div>				
+			<div class="tily">
+				<h4>Additional optional UI + modeling features</h4>	
+				<ul class="ignorc">
+					<li><a target="difrm" href="https://vuejs.org/v2/guide/">Vue</a> (v2.x) reactive DOM updates</li>
+					<li><a target="difrm" href="http://docs.mathjax.org/en/v2.7-latest/">MathJax</a> (v2.x) math display</li>
+					<li><a target="difrm" href="https://svgjs.com/">SVG.js</a> 2D graphics + anim</li>
+					<li><a target="difrm" href="https://lurchmath.github.io/openmath-js/site/api-reference/">OpenMath.js</a> standard math grammar</li>
+					<li>[ REQUIRES SEPARATE DOWNLOAD, GPL licensed: <a target="difrm" href="https://netlogoweb.org/">NetLogo-Web</a> /
+								<a target="difrm" href="http://agentscript.org/">Agentscript</a> agents]
+					</li>			
+				</ul>
+			</div>
+
+		</div>
+	</div>
+	<hr/>
+	<div id="hasIfrm">
+		<iframe name="difrm" src="http://www.gravax.fun" style="border:2px solid greenyellow; width:100%; height:300px;" title="Iframe Example"></iframe>
+	</div>
+	<hr/>
+	<div id="bttmRsrcLnks">
+		<h3>Resources (links open in new window)</h3>
 		<ul>
 		<li><a href="https://github.com/stub22/axiomagic">axiomagic</a> on github</li>
 		</ul>
-	</div>    
+		<h4>Credits and Licenses</h4>
+		<ul>
+			<li>Stu B22 (<a target="blogwin" href="https://outrect.blogspot.com/">blog</a>, <a target="ghubwin" href="https://github.com/stub22/">github</a>) is primary author of AxioMagic code and content, generally offered under terms of Apache License 2.0</li>
+			<li>Many third party open source materials are included by the axiomagic code, transparently and with due credit, mostly with compatible license (Apache, BSD, MIT)</li>
+			<li>Some examples and optional components may be subject to other licenses such as GPL (NetLogo, Agentscript, and some parts of Symja)</li>
+			<li>Commercial support and web maintenance questions may be directed to <a href="http://www.appstract.com">Appstract Inventions</a></li>
+			
+		</ul>
+	</div>
+			
+	<script type="text/javascript">
+		console.log("start axiomagic.fun intro page-bottom script");
+		let mathDemoTgtId = 'mexprTgt01';
+		doMathDemoStuff(mathDemoTgtId);
+
+		console.log("END of body-bottom script block.")
+	</script>
   </body>
 </html>
