@@ -2,8 +2,9 @@ package axmgc.dmo.xpr.io.prqt
 
 import org.slf4j.{Logger, LoggerFactory}
 import axmgc.web.lnch.FallbackLog4J
+import java.util.{Iterator => JIterator, Map => JMap}
 
-import java.util.{Map => JMap, Iterator => JIterator}
+import axmgc.xpr.io.prqt.CopiedFromExGeneric
 
 import scala.collection.immutable.{Seq, Map => SMap}
 import scala.collection.mutable.{ListBuffer => SMListBuf}
@@ -25,6 +26,8 @@ object TestPrqtIoEasily {
 		val prqtSrcScanner = new PrqtSourceScanner(rsrcPth_lmlExpWebJson, rsrcPth_lmlExpStrctJson)
 
 		prqtSrcScanner.doScan()
+
+
 	}
 }
 
@@ -34,10 +37,14 @@ class PrqtSourceScanner(rsrcPth_lmlExpWebJson : String, rsrcPth_lmlExpStrctJson 
 	def doScan() : Unit = {
 		logBar()
 		myS4JLogger.info(s"Pretending to scan prqt file=${rsrcPth_lmlExpWebJson}, how bow da?")
+		doGenericWriteThenRead
 		logBar()
 	}
-
-
+	def doGenericWriteThenRead : Unit = {
+		val cfeg = new CopiedFromExGeneric {}
+		cfeg.writePrqtFile
+		cfeg.readPrqtFile
+	}
 	private def logBar() : Unit = {
 		myS4JLogger.info("================================================================")
 	}
