@@ -13,7 +13,16 @@ from Stu B22 and pals.
 
 Axiomagic is intended to be a thin layer of functions and tools, relying on the burgeoning capacity of today's open source components for server, cloud, browser, and edge devices.  Use it to build rich, sophsiticated applications, or quick, narrow investigations.
 
-Implementation Technology:  Scala, RDF, Akka, Idris, and HTML/JS. 
+ * Interactive Pipeline Technology  
+   * Presentation data mapping over curated models
+   * Deployed as library or service
+   * Scala, RDF, Akka, HTML/JS
+
+ * Upstream Math/Proof Technology
+   * Seed knowledge graphs built from varied inputs
+   * Dependent types, constraint logic, proofs
+   * Idris, F star, Lean, Agda
+
 ## Example Applications
 Some open science experiments helping drive our requirements for Axiomagic:
 
