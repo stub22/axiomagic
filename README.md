@@ -26,8 +26,8 @@ Axiomagic is intended to be a thin layer of functions and tools, relying on the 
 
 ###  Current Pipeline Test Launchers
 Here are 12 launchable scala programs, each of which may be considered a test and/or demo of some feature's existence.
-They are intended to be runnable in CI.  File input data is all pulled from classpath resources.
-Almost no arguments or enviroment used by these launchers.  Exceptions are noted below.
+They are intended to be runnable in CI.  File input data is pulled from classpath resources.
+Almost no arguments or enviroment used by these launchers.  Some exceptions are noted below.
 
 #### Web stuff
   * [axmgc.web.pond.AxmgcPonderApp](adaxmvn/axmgc_web_pond/src/main/scala/axmgc/web/pond/AxmgcPonder.scala)
@@ -38,11 +38,11 @@ Almost no arguments or enviroment used by these launchers.  Exceptions are noted
     
 #### Math stuff
   * [axmgc.dmo.ksrc.lean_mthlb.TestLeanTreeScan](adaxmvn/axmgc_dmo_fibo/src/main/scala/axmgc/dmo/ksrc/lean_mthlb/TestLeanTreeScan.scala)
-    * Outputs contents of some Lean (v3) MathLib proof export JSON files
+    * Outputs contents of some Lean (v3) [MathLib](https://leanprover-community.github.io) proof export JSON files (to console)
   * [axmgc.xpr.sym_mth.TstSymCalculus](adaxmvn/axmgc_dmo_fibo/src/main/scala/axmgc/xpr/sym_mth/TstSymCalculus.scala)
-    * Launches evaluator of math expressions using Symja pure-java math stack  
+    * Launches evaluator of math expressions using [Symja](https://github.com/axkr/symja_android_library) pure-java math stack, avail for Java and Android
   * [axmgc.xpr.nlg.TestNlg](adaxmvn/axmgc_dmo_hvol/src/main/scala/axmgc/xpr/nlg/TestNlg.scala)
-    * Launches a demo of NetLogo agent simulation (NetLogo license is GPL)
+    * Launches a demo of [NetLogo](https://ccl.northwestern.edu/netlogo/) agent simulation (may include GPL-licensed components)
     
 #### Onto stuff
   * [axmgc.web.ontui.ontfld.TstOdocGen](adaxmvn/axmgc_web_ontui/src/main/scala/axmgc/web/ontui/ontfld/TstOdocGen.scala)
@@ -53,8 +53,9 @@ Almost no arguments or enviroment used by these launchers.  Exceptions are noted
 #### Storage stuff
   * [axmgc.dmo.fin.ontdmp.borkl.RunTstBorkl](adaxmvn/axmgc_dmo_fibo/src/main/scala/axmgc/dmo/fin/ontdmp/borkl/RunTstBorkl.scala)
     * Write and read to a Orcl. NoSQL / BerkeleyDB database service
+    * Will attempt local disk writes in sub-folder ____
   * [axmgc.dmo.xpr.io.prqt.TestPrqtIoEasily](https://github.com/stub22/axiomagic/blob/xprmnt_mlrn_djl_mxnet/adaxmvn/axmgc_dmo_bgdt/src/main/scala/axmgc/xpr/io/prqt/TestPrqtIoEasily.scala)
-    * Write and read a parquet-format file
+    * Write and read a parquet-format file at location _____
     * Uses [parquet4s](https://github.com/mjakubowski84/parquet4s)
     * On MsWin requires Hadoop FS runtime to check file paths
     * Issue: axiomagic.dmo.bgdt is not yet merged to master branch
