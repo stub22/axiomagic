@@ -1,5 +1,5 @@
-# axiomagic tuning kit 
-Axiomagic is an open source meta-system for interactive exploration.
+# axiomagic exploration toolkit 
+AxioMagic is an open source toolkit for interactive knowledge exploration webapps.
 <br/>Core components use Scala, Akka Http, RDF, and HTML/CSS/Javascript.
 
 
