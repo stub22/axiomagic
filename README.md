@@ -2,28 +2,11 @@
 AxioMagic is an open source toolkit for interactive knowledge exploration webapps.
 <br/>Core components use Scala, Akka Http, RDF, and HTML/CSS/Javascript.
 
-Please also see our main website at [AxioMagic.fun](http://www.axiomagic.fun)
-
-## Uses 
+#### Quick Functional Summary
 Axiomagic is a toolkit for interactions with domain-specific data, deployed in browsers, calculators, simulators, and games.
-<br/>Axmgc features apply naturally in science, finance, and edutainment.
+<br/>The project features are ripe for customization in science, finance, and edutainment.
 
-## Lineage and Structure
-This work builds on models and designs from previous projects, including the [Glue-AI 1.x](http://glue.ai) constellation 
-from Stu B22 and pals.
-
-Axiomagic is intended to be a thin layer of functions and tools, relying on the burgeoning capacity of today's open source components for server, cloud, browser, and edge devices.  Use it to build rich, sophsiticated applications, or quick, narrow investigations.
-
- * Interactive Pipeline Technology  
-   * Presentation data mapping over curated models
-   * Deployed as library or service
-   * Scala, RDF, Akka, HTML/JS
-
- * Upstream Math/Proof Technology
-   * Seed knowledge graphs built from varied inputs
-   * Dependent types, constraint logic, proofs
-   * Idris, F star, Lean, Agda
-   * See our [Math Review](http://www.axiomagic.fun/math_review.html) page  
+Please also see our main website at [AxioMagic.fun](http://www.axiomagic.fun)
 
 ## Prototype status  (updated 2021-09-28)
 
@@ -74,8 +57,27 @@ Almost no arguments or enviroment used by these launchers.  Some exceptions are 
 #### Other launchers of less significance
   * [axmgc.xpr.pdm.LnchMndTst](adaxmvn/axmgc_dmo_hvol/src/main/scala/axmgc/xpr/pdm/LnchMndTst.scala)
 
-## Features and Applications
+## Features and Structure
 
+More overview is available at main project website:
+  * [axiomagic.fun](http://www.axiomagic.fun)
+
+This work builds on models and designs from previous projects, including the [Glue-AI 1.x](http://glue.ai) constellation 
+from Stu B22 and pals.
+
+Axiomagic is intended to be a thin layer of functions and tools, relying on the burgeoning capacity of today's open source components for server, cloud, browser, and edge devices.  Use it to build rich, sophsiticated applications, or quick, narrow investigations.
+
+#### Interactive Pipeline Technology  
+ * Presentation data mapping over curated models
+ * Deployed as library or service
+ * Scala, RDF, Akka, HTML/JS
+
+#### Upstream Math/Proof Technology
+ * Seed knowledge graphs built from varied inputs
+ * Dependent types, constraint logic, proofs
+ * Idris, F star, Lean, Agda
+ * See our [Math Review](http://www.axiomagic.fun/math_review.html) page  
+   
 ### Fun Part : What, Why, How?
 AxioMagic components generate tweakable and routable data-interactions for users,
 employing color, sound, motion, and even music.  Interactions generally take the form
@@ -84,21 +86,9 @@ of web components accessing structured data.
 Interactions are assembled from equations, functions, mappings, templates, rules, and schemas.
 These definitions commonly use parameters, which may be tweaked by users at runtime.
 
-## Example Applications
-Some open science experiments helping drive our requirements for Axiomagic
-
-#### Scientific Study Examples  
- * http://gravax.fun - Interactive model analysis tool tackling e.g. 
-   * https://gitlab.com/stub22/open-sci-cosmo - Gravitation at galactic scale
-   * https://gitlab.com/stub22/open-sci-proof - Models of variable axioms (= the ultimate version of what we call "tuning")
- * [Math vocabulary navigation]() - Automated math UI linking, using public math vocab metadata
-
-#### Practical Engineering Examples
- * https://gitlab.com/stub22/open-fin-onto - Open financial computing, grounded in FIBO and related ontologies
- * https://gitlab.com/stub22/defogo - Wildfire analysis leveraging IoT and cloud
-  
-## Runtime Component Examples
+### Runtime Component Structures
 Axiomagic enables both client (AxCli) and cerver (AxSrv) components, which may be selectively combined into an embedded (AxEmb) setup.
+
 ### AxCli client component
 * GUI + network + NUI demonstration components, adaptable to interactive applications for advanced users
   * Experimental components, not production optimized 
@@ -116,3 +106,17 @@ Axiomagic enables both client (AxCli) and cerver (AxSrv) components, which may b
 ### AxEmb embedded component
 * Embedded components combine features of AxSrv and AxCli for a particular narrow use case.
 * Preferred approach is compiling via Rust to LLVM executable, runnable on micro-OS.
+
+## Example Applications
+Some open science experiments helping drive our requirements for Axiomagic
+
+#### Scientific Study Examples  
+ * http://gravax.fun - Interactive model analysis tool tackling e.g. 
+   * https://gitlab.com/stub22/open-sci-cosmo - Gravitation at galactic scale
+   * https://gitlab.com/stub22/open-sci-proof - Models of variable axioms (= the ultimate version of what we call "tuning")
+ * [Math vocabulary navigation]() - Automated math UI linking, using public math vocab metadata
+
+#### Practical Engineering Examples
+ * https://gitlab.com/stub22/open-fin-onto - Open financial computing, grounded in FIBO and related ontologies
+ * https://gitlab.com/stub22/defogo - Wildfire analysis leveraging IoT and cloud
+  
