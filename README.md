@@ -7,7 +7,7 @@ Axiomagic is an open source meta-system for interactive exploration.
 Axiomagic is a toolkit for interactions with domain-specific data, deployed in browsers, calculators, simulators, and games.
 <br/>Axmgc features apply naturally in science, finance, and edutainment.
 
-## Lineage
+## Lineage and Structure
 This work builds on models and designs from previous projects, including the [Glue-AI 1.x](http://glue.ai) constellation 
 from Stu B22 and pals.
 
@@ -22,6 +22,22 @@ Axiomagic is intended to be a thin layer of functions and tools, relying on the 
    * Seed knowledge graphs built from varied inputs
    * Dependent types, constraint logic, proofs
    * Idris, F star, Lean, Agda
+
+## Prototype status  (updated 2021-09-28)
+
+###  Current Pipeline Test Launchers
+  * axmgc.web.pond.AxmgcPonderApp
+  * axmgc.web.ontui.ontfld.TstOdocGen
+  * axmgc.dmo.ksrc.lean_mthlb.TestLeanTreeScan
+  * axmgc.dmo.xpr.io.prqt.TestPrqtIoEasily
+  * axmgc.dmo.fin.ontdmp.borkl.RunTstBorkl
+  * axmgc.dmo.fin.ontdmp.TstOntDmps
+  * axmgc.xpr.exd.TstExdLnch
+  * axmgc.xpr.pdm.LnchMndTst
+  * axmgc.xpr.sym_mth.TstSymCalculus
+  * axmgc.xpr.nlg.TestNlg
+  * axmgc.xpr.vis_js.RunNavItemMakerTests
+  * axmgc.xpr.dkp_shacl.DkpDtstLnch
 
 ## Example Applications
 Some open science experiments helping drive our requirements for Axiomagic:
