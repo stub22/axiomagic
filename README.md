@@ -1,5 +1,5 @@
-# axiomagic tuning kit 
-Axiomagic is an open source meta-system for interactive exploration.
+# axiomagic exploration toolkit 
+AxioMagic is an open source toolkit for interactive knowledge exploration webapps.
 <br/>Core components use Scala, Akka Http, RDF, and HTML/CSS/Javascript.
 
 
@@ -26,18 +26,28 @@ Axiomagic is intended to be a thin layer of functions and tools, relying on the 
 ## Prototype status  (updated 2021-09-28)
 
 ###  Current Pipeline Test Launchers
-  * axmgc.web.pond.AxmgcPonderApp
-  * axmgc.web.ontui.ontfld.TstOdocGen
-  * axmgc.dmo.ksrc.lean_mthlb.TestLeanTreeScan
-  * axmgc.dmo.xpr.io.prqt.TestPrqtIoEasily
-  * axmgc.dmo.fin.ontdmp.borkl.RunTstBorkl
-  * axmgc.dmo.fin.ontdmp.TstOntDmps
-  * axmgc.xpr.exd.TstExdLnch
-  * axmgc.xpr.pdm.LnchMndTst
-  * axmgc.xpr.sym_mth.TstSymCalculus
-  * axmgc.xpr.nlg.TestNlg
-  * axmgc.xpr.vis_js.RunNavItemMakerTests
-  * axmgc.xpr.dkp_shacl.DkpDtstLnch
+  * [axmgc.web.pond.AxmgcPonderApp](adaxmvn/axmgc_web_pond/src/main/scala/axmgc/web/pond/AxmgcPonder.scala)
+  * [axmgc.web.ontui.ontfld.TstOdocGen](adaxmvn/axmgc_web_ontui/src/main/scala/axmgc/web/ontui/ontfld/TstOdocGen.scala)
+  * [axmgc.dmo.ksrc.lean_mthlb.TestLeanTreeScan](adaxmvn/axmgc_dmo_fibo/src/main/scala/axmgc/dmo/ksrc/lean_mthlb/TestLeanTreeScan.scala)
+  * [axmgc.dmo.xpr.io.prqt.TestPrqtIoEasily](https://github.com/stub22/axiomagic/blob/xprmnt_mlrn_djl_mxnet/adaxmvn/axmgc_dmo_bgdt/src/main/scala/axmgc/xpr/io/prqt/TestPrqtIoEasily.scala) (but subproj axiomagic.dmo.bgdt is not yet merged to master branch)
+  * [axmgc.dmo.fin.ontdmp.borkl.RunTstBorkl](adaxmvn/axmgc_dmo_fibo/src/main/scala/axmgc/dmo/fin/ontdmp/borkl/RunTstBorkl.scala)
+  * [axmgc.dmo.fin.ontdmp.TstOntDmps](adaxmvn/axmgc_dmo_fibo/src/main/scala/axmgc/dmo/fin/ontdmp/TstOntDmps.scala)
+  * [axmgc.xpr.exd.TstExdLnch](adaxmvn/axmgc_dmo_hvol/src/main/scala/axmgc/xpr/exd/TstExdLnch.scala)
+  * [axmgc.xpr.pdm.LnchMndTst](adaxmvn/axmgc_dmo_hvol/src/main/scala/axmgc/xpr/pdm/LnchMndTst.scala)
+  * [axmgc.xpr.sym_mth.TstSymCalculus](adaxmvn/axmgc_dmo_fibo/src/main/scala/axmgc/xpr/sym_mth/TstSymCalculus.scala)
+  * [axmgc.xpr.nlg.TestNlg](adaxmvn/axmgc_dmo_hvol/src/main/scala/axmgc/xpr/nlg/TestNlg.scala)
+  * [axmgc.xpr.vis_js.RunNavItemMakerTests](adaxmvn/axmgc_dmo_fibo/src/main/scala/axmgc/xpr/vis_js/SampleNavItemStuff.scala)
+  * [axmgc.xpr.dkp_shacl.DkpDtstLnch](adaxmvn/axmgc_dmo_fibo/src/main/scala/axmgc/xpr/dkp_shacl/DkpDtstLnch.scala)
+
+## Features and Applications
+
+### Fun Part : What, Why, How?
+AxioMagic components generate tweakable and routable data-interactions for users,
+employing color, sound, motion, and even music.  Interactions generally take the form
+of web components accessing structured data.
+
+Interactions are assembled from equations, functions, mappings, templates, rules, and schemas.
+These definitions commonly use parameters, which may be tweaked by users at runtime.
 
 ## Example Applications
 Some open science experiments helping drive our requirements for Axiomagic:
@@ -58,7 +68,7 @@ Some open science experiments helping drive our requirements for Axiomagic:
    *  Primarily used in HTML5 + JS environments.
    *  Uses [rdfjs N3](https://github.com/rdfjs/N3.js/) parser to read inbound turtle-RDF msgs.
    *  Optional MIDI connections for tweaking and switching of running components.
-   *  Authentication and data privacy+portability integrations with WebId and [Solid](https://stub22.solid.community/). (link to stub22's community page)
+   *  Authentication and data privacy+portability integrations with WebId and [Solid](https://pod.inrupt.com/stub22/profile/card#me). (Link is to stub22's pod-profile)
  * AxSrv
    *  RDF-mediated logic core for state, query, goal-seeking and planning.
    *  Apps authored using lab server components, tested by running AxCli GUI with local info streams.
@@ -69,12 +79,5 @@ Some open science experiments helping drive our requirements for Axiomagic:
    *  Embedded components combine features of AxSrv and AxCli for a particular narrow use case.
    *  Preferred approach is compiling via Rust to LLVM executable, runnable on micro-OS.
 
-## Fun Part : What, Why, How?
-These components generate tweakable and routable multidimensional experiences for users,
-employing color, sound, motion, music.  These experiences are defined in terms of timelines,
-including the familiar concept of events.
-
-Features are added by creating equations, functions, mappings, templates, rules, and schemas.
-These definitions commonly use parameters, which may be tweaked by users at runtime.
 
 
