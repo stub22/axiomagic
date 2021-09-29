@@ -1,19 +1,44 @@
 # axiomagic tuning kit 
 Axiomagic is an open source meta-system for interactive exploration.
 <br/>Core components use Scala, Akka Http, RDF, and HTML/CSS/Javascript.
-<br/>Upstream functional generators (Scala, Idris, ...) emit bounded, tunable, explainable smarts (model kernels) for use in downstream interactive web runtime.
+
 
 ## Uses 
 Axiomagic is a toolkit for interactions with domain-specific data, deployed in browsers, calculators, simulators, and games.
 <br/>Axmgc features apply naturally in science, finance, and edutainment.
 
-## Lineage
+## Lineage and Structure
 This work builds on models and designs from previous projects, including the [Glue-AI 1.x](http://glue.ai) constellation 
 from Stu B22 and pals.
 
 Axiomagic is intended to be a thin layer of functions and tools, relying on the burgeoning capacity of today's open source components for server, cloud, browser, and edge devices.  Use it to build rich, sophsiticated applications, or quick, narrow investigations.
 
-Implementation Technology:  Scala, RDF, Akka, Idris, and HTML/JS. 
+ * Interactive Pipeline Technology  
+   * Presentation data mapping over curated models
+   * Deployed as library or service
+   * Scala, RDF, Akka, HTML/JS
+
+ * Upstream Math/Proof Technology
+   * Seed knowledge graphs built from varied inputs
+   * Dependent types, constraint logic, proofs
+   * Idris, F star, Lean, Agda
+
+## Prototype status  (updated 2021-09-28)
+
+###  Current Pipeline Test Launchers
+  * axmgc.web.pond.AxmgcPonderApp
+  * axmgc.web.ontui.ontfld.TstOdocGen
+  * axmgc.dmo.ksrc.lean_mthlb.TestLeanTreeScan
+  * axmgc.dmo.xpr.io.prqt.TestPrqtIoEasily
+  * axmgc.dmo.fin.ontdmp.borkl.RunTstBorkl
+  * axmgc.dmo.fin.ontdmp.TstOntDmps
+  * axmgc.xpr.exd.TstExdLnch
+  * axmgc.xpr.pdm.LnchMndTst
+  * axmgc.xpr.sym_mth.TstSymCalculus
+  * axmgc.xpr.nlg.TestNlg
+  * axmgc.xpr.vis_js.RunNavItemMakerTests
+  * axmgc.xpr.dkp_shacl.DkpDtstLnch
+
 ## Example Applications
 Some open science experiments helping drive our requirements for Axiomagic:
 
@@ -51,40 +76,5 @@ including the familiar concept of events.
 
 Features are added by creating equations, functions, mappings, templates, rules, and schemas.
 These definitions commonly use parameters, which may be tweaked by users at runtime.
-The combination of formal mapping with playful tweaking is what we call FAF:
 
-**F.ormal A.djustment F.un**
 
-Now you know why we make Axiomagic: to have fun times doing Ax-FAF!  
-But remember, we are also quite formal around here.
-
-The underlying open source components allow us to build apps as interlocking tapestries of:
-*  Client GUI code:  Uses Vue.js to update HTML+CSS GUI, renders client UI from graphs 
-*  Client Graphs: RDF in browser via rdfjs, optional JSON-LD, talks to server agents
-*  Server Agents: Akka via HTTP, WebSockets, generates custom HTML+data GUI per client
-*  Server Graphs:  SHACL, GraphQuery, SPARQL, TinkerPop/Gremlin
-*  Server Functions:  Scala, AWS-Lambda, and similar functions compiled via proof systems embodying modern type theory.  See "Research Direction" section below.
-<br/><b>WHERE</b>:  ClientGraphs and ServerGraphs are coherently supplied from upstream logic of our functional proof generators (Idris {Haskell, Ocaml}, deep Scala, univalence). 
-
-## Getting Started
-
-As of 2019-January, Axiomagic contains a skeleton of scala projects, built with maven.
-We use the Intellij IDEA for a friendly coding experience.  
-
-The axmgc.web.pond project contains the runnable object AxmgcPonderApp, in package axmgc.web.pond.
-
-This app launches a web service running Akka HTTP.  The service delivers test web pages and RDF-backed query results.
-
-Our javascript UI prototypes are not yet committed to this repository.
-
-_Coming Soon:  Screenshots, plus perhaps a video?_
-
-## Research Direction (as of 2019-Feb)
-
-Conceptually Axiomagic embraces dependent types, theorem provers, univalence as discussed broadly here:
-* [open-sci-proof](https://gitlab.com/stub22/open-sci-proof/)
-
-Our current upstream compiler prototype uses primarily [Idris](https://www.idris-lang.org) (agda, ocaml, haskell)), progressing towards a Scala/Rust/StrongTyped2020 module for [MMT](https://uniformal.github.io/doc/) or equivalent.
-
-## Support and Contact
-Gitter chatrooms: https://gitter.im/glue-v2/axiomagic
