@@ -2,6 +2,8 @@
 AxioMagic is an open source toolkit for interactive knowledge exploration webapps.
 <br/>Core components use Scala, Akka Http, RDF, and HTML/CSS/Javascript.
 
+Please also see our main website at [AxioMagic.fun](http://www.axiomagic.fun)
+
 ## Uses 
 Axiomagic is a toolkit for interactions with domain-specific data, deployed in browsers, calculators, simulators, and games.
 <br/>Axmgc features apply naturally in science, finance, and edutainment.
@@ -21,6 +23,7 @@ Axiomagic is intended to be a thin layer of functions and tools, relying on the 
    * Seed knowledge graphs built from varied inputs
    * Dependent types, constraint logic, proofs
    * Idris, F star, Lean, Agda
+   * See our [Math Review](http://www.axiomagic.fun/math_review.html) page  
 
 ## Prototype status  (updated 2021-09-28)
 
@@ -43,7 +46,7 @@ Almost no arguments or enviroment used by these launchers.  Some exceptions are 
     * Launches evaluator of math expressions using [Symja](https://github.com/axkr/symja_android_library) pure-java math stack, avail for Java and Android
   * [axmgc.xpr.nlg.TestNlg](adaxmvn/axmgc_dmo_hvol/src/main/scala/axmgc/xpr/nlg/TestNlg.scala)
     * Launches a demo of [NetLogo](https://ccl.northwestern.edu/netlogo/) agent simulation (may include GPL-licensed components)
-    
+  
 #### Onto stuff
   * [axmgc.web.ontui.ontfld.TstOdocGen](adaxmvn/axmgc_web_ontui/src/main/scala/axmgc/web/ontui/ontfld/TstOdocGen.scala)
     * Runs ontology document generators from WIDOCO project 
