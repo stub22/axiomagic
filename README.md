@@ -26,16 +26,16 @@ Axiomagic is intended to be a thin layer of functions and tools, relying on the 
 ## Prototype status  (updated 2021-09-28)
 
 ###  Current Pipeline Test Launchers
-  * axmgc.web.pond.AxmgcPonderApp
+  * [axmgc.web.pond.AxmgcPonderApp]
   * [axmgc.web.ontui.ontfld.TstOdocGen](adaxmvn/axmgc_web_ontui/src/main/scala/axmgc/web/ontui/ontfld/TstOdocGen.scala)
   * axmgc.dmo.ksrc.lean_mthlb.TestLeanTreeScan
   * axmgc.dmo.xpr.io.prqt.TestPrqtIoEasily
-  * axmgc.dmo.fin.ontdmp.borkl.RunTstBorkl
-  * axmgc.dmo.fin.ontdmp.TstOntDmps
-  * axmgc.xpr.exd.TstExdLnch
+  * [axmgc.dmo.fin.ontdmp.borkl.RunTstBorkl](adaxmvn/axmgc_dmo_fibo/src/main/scala/axmgc/dmo/fin/ontdmp/borkl/RunTstBorkl.scala)
+  * [axmgc.dmo.fin.ontdmp.TstOntDmps](adaxmvn/axmgc_dmo_fibo/src/main/scala/axmgc/dmo/fin/ontdmp/TstOntDmps.scala)
+  * [axmgc.xpr.exd.TstExdLnch](adaxmvn/axmgc_dmo_hvol/src/main/scala/axmgc/xpr/exd/TstExdLnch.scala)
   * axmgc.xpr.pdm.LnchMndTst
-  * axmgc.xpr.sym_mth.TstSymCalculus
-  * [axmgc.xpr.nlg.TestNlg](https://github.com/stub22/axiomagic/blob/master/adaxmvn/axmgc_dmo_hvol/src/main/scala/axmgc/xpr/nlg/TestNlg.scala)
+  * [axmgc.xpr.sym_mth.TstSymCalculus](adaxmvn/axmgc_dmo_fibo/src/main/scala/axmgc/xpr/sym_mth/TstSymCalculus.scala)
+  * [axmgc.xpr.nlg.TestNlg](adaxmvn/axmgc_dmo_hvol/src/main/scala/axmgc/xpr/nlg/TestNlg.scala)
   * axmgc.xpr.vis_js.RunNavItemMakerTests
   * axmgc.xpr.dkp_shacl.DkpDtstLnch
 
