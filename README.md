@@ -27,7 +27,7 @@ Axiomagic is intended to be a thin layer of functions and tools, relying on the 
 
 ###  Current Pipeline Test Launchers
   * axmgc.web.pond.AxmgcPonderApp
-  * axmgc.web.ontui.ontfld.TstOdocGen
+  * [axmgc.web.ontui.ontfld.TstOdocGen](adaxmvn/axmgc_web_ontui/src/main/scala/axmgc/web/ontui/ontfld/TstOdocGen.scala)
   * axmgc.dmo.ksrc.lean_mthlb.TestLeanTreeScan
   * axmgc.dmo.xpr.io.prqt.TestPrqtIoEasily
   * axmgc.dmo.fin.ontdmp.borkl.RunTstBorkl
@@ -35,7 +35,7 @@ Axiomagic is intended to be a thin layer of functions and tools, relying on the 
   * axmgc.xpr.exd.TstExdLnch
   * axmgc.xpr.pdm.LnchMndTst
   * axmgc.xpr.sym_mth.TstSymCalculus
-  * axmgc.xpr.nlg.TestNlg
+  * [axmgc.xpr.nlg.TestNlg](https://github.com/stub22/axiomagic/blob/master/adaxmvn/axmgc_dmo_hvol/src/main/scala/axmgc/xpr/nlg/TestNlg.scala)
   * axmgc.xpr.vis_js.RunNavItemMakerTests
   * axmgc.xpr.dkp_shacl.DkpDtstLnch
 
