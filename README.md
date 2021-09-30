@@ -27,6 +27,7 @@ Almost no arguments or enviroment used by these launchers.  Some exceptions are 
     * Outputs contents of some Lean (v3) [MathLib](https://leanprover-community.github.io) proof export JSON files (to console)
   * [axmgc.xpr.sym_mth.TstSymCalculus](adaxmvn/axmgc_dmo_fibo/src/main/scala/axmgc/xpr/sym_mth/TstSymCalculus.scala)
     * Launches evaluator of math expressions using [Symja](https://github.com/axkr/symja_android_library) pure-java math stack, avail for Java and Android
+    * Note that some parts of Symja use LGPL or GPL licenses.
   * [axmgc.xpr.nlg.TestNlg](adaxmvn/axmgc_dmo_hvol/src/main/scala/axmgc/xpr/nlg/TestNlg.scala)
     * Launches a demo of [NetLogo](https://ccl.northwestern.edu/netlogo/) agent simulation (may include GPL-licensed components)
   
@@ -114,7 +115,7 @@ Some open science experiments helping drive our requirements for Axiomagic
  * http://gravax.fun - Interactive model analysis tool tackling e.g. 
    * https://gitlab.com/stub22/open-sci-cosmo - Gravitation at galactic scale
    * https://gitlab.com/stub22/open-sci-proof - Models of variable axioms (= the ultimate version of what we call "tuning")
- * [Math vocabulary navigation]() - Automated math UI linking, using public math vocab metadata
+ * [Math vocabulary navigation]() - Automated math UI linking, using public math vocab metadata (project proposal)
 
 #### Practical Engineering Examples
  * https://gitlab.com/stub22/open-fin-onto - Open financial computing, grounded in FIBO and related ontologies
