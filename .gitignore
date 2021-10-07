@@ -1,8 +1,11 @@
 *.class
 *.log
 *.iml
+*.exe
 .idea/
 target/
 nlogo_models*/
 odoc_out*/
 onor*/
+hdp/
+prqextemp/
