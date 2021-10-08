@@ -2,12 +2,7 @@ package axmgc.dmo.xpr.io.prqt
 
 import org.slf4j.{Logger, LoggerFactory}
 import axmgc.web.lnch.FallbackLog4J
-import java.util.{Iterator => JIterator, Map => JMap}
-
-import axmgc.xpr.io.prqt.CopiedFromExGeneric
-
-import scala.collection.immutable.{Seq, Map => SMap}
-import scala.collection.mutable.{ListBuffer => SMListBuf}
+import axmgc.xpr.io.prqt.{MakesUserDat, ReadsAndWritesPrqtWithOurSchema}
 
 object TestPrqtIoEasily {
 
@@ -27,7 +22,6 @@ object TestPrqtIoEasily {
 
 		prqtSrcScanner.doScan()
 
-
 	}
 }
 
@@ -41,9 +35,15 @@ class PrqtSourceScanner(rsrcPth_lmlExpWebJson : String, rsrcPth_lmlExpStrctJson 
 		logBar()
 	}
 	def doGenericWriteThenRead : Unit = {
-		val cfeg = new CopiedFromExGeneric {}
-		cfeg.writePrqtFile
-		cfeg.readPrqtFile
+		val datMkr = new MakesUserDat {}
+		val udat = datMkr.mkUsrDat
+		val rdrAndWrtr = new ReadsAndWritesPrqtWithOurSchema {}
+		val dirPath ="prqextmp"
+		val fname = "urecs_" + System.currentTimeMillis() + ".parquet"
+		val filePath = s"$dirPath/$fname"
+
+		rdrAndWrtr.writePrqtFile(udat, filePath)
+		rdrAndWrtr.readPrqtFile(filePath)
 	}
 	private def logBar() : Unit = {
 		myS4JLogger.info("================================================================")
