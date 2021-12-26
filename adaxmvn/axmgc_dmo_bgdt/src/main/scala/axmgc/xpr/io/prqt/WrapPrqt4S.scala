@@ -1,25 +1,15 @@
 package axmgc.xpr.io.prqt
 
-/*
-import com.github.mjakubowski84.parquet4s.{ParquetWriter} // ParquetStreams
-import org.apache.parquet.hadoop.ParquetFileWriter
-import org.apache.parquet.hadoop.metadata.CompressionCodecName
-
-import org.apache.hadoop.conf.Configuration
-*/
-
 import java.time.{LocalDate, ZoneOffset}
 import java.util.TimeZone
-import com.github.mjakubowski84.parquet4s.{ParquetReader, ParquetWriter, RowParquetRecord, ValueCodecConfiguration}
+
+import com.github.mjakubowski84.parquet4s.{ParquetIterable, ParquetReader, ParquetWriter, RowParquetRecord, Value, ValueCodecConfiguration}
 import org.apache.parquet.schema.PrimitiveType.PrimitiveTypeName.{BINARY, INT32, INT64}
 import org.apache.parquet.schema.Type.Repetition.{OPTIONAL, REQUIRED}
 import org.apache.parquet.schema.{LogicalTypeAnnotation, MessageType, OriginalType, Types}
 
-import java.nio.file.Files
-
 
 private trait WrapPrqt4S
-
 
 case class DummyRec(dmrcId: String, dmName: String, created: java.sql.Timestamp)
 
@@ -66,14 +56,26 @@ trait ReadsAndWritesPrqtWithOurSchema extends KnowsOurSchemaImplicitly {
 
 	def readPrqtFile (fPath : String) : Unit = {
 		//read
-		val readData = ParquetReader.read[RowParquetRecord](fPath)
+		val readData: ParquetIterable[RowParquetRecord] = ParquetReader.read[RowParquetRecord](fPath)
+		// val x = readData
 		try {
-			readData.foreach { record =>
-				val id = record.get[Long](ID, vcc)
-				val name = record.get[String](Name, vcc)
-				val birthday = record.get[LocalDate](Birthday, vcc)
-				println(s"User[$ID=$id,$Name=$name,$Birthday=$birthday]")
-			}
+			readData.foreach { r =>  printRPR(r) }
 		} finally readData.close()
 	}
+	def printRPR (rpr : RowParquetRecord) : Unit = {
+		println(s"*** rpr=${rpr}")
+		val rm: Map[String, Value] = rpr.toMap
+		val rsq = rpr.toSeq
+		println(s"field-seq=$rsq")
+		rsq.foreach(pair => {
+			val (n,v) = pair
+			println(s"n=$n, v=$v, vclz=${v.getClass}")
+		})
+		val id = rpr.get[Long](ID, vcc)
+		val name = rpr.get[String](Name, vcc)
+		val birthday = rpr.get[LocalDate](Birthday, vcc)
+		println(s"User[$ID=$id,$Name=$name,$Birthday=$birthday]")
+
+	}
+
 }
