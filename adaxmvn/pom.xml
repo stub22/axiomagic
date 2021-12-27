@@ -28,7 +28,8 @@
         <paranamer.version>2.8</paranamer.version>
         <parquet4s.version>2.0.1</parquet4s.version>
         <hadoop.client.version>2.9.2</hadoop.client.version>
-        <netlogo.version>6.0.4</netlogo.version>
+        <!-- Appears that NetLogo is moving repos, and it may require Scala 2.12 (not 2.13) -->
+        <netlogo.version>6.2.1</netlogo.version>
         <!-- FIXME:  Old version of Log4J with infamous security vulnerability -->
         <slf4j.log4j.version>1.7.25</slf4j.log4j.version>
 

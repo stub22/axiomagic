@@ -1,15 +1,17 @@
 package axmgc.xpr.nlg
-
+private trait NetLogoDemoIsDisabled
+/*
 import org.nlogo.app.{App => NlgFullApp}
 import org.nlogo.lite.{AppletPanel, InterfaceComponent => NlgIntfc}
 import org.nlogo.headless.{HeadlessWorkspace => NlgHdlsWrk}
 import org.nlogo.workspace.{Controllable => NlgCntrlbl}
-
+*/
 /*
  *  FIXME: NetLogo is distributed under GPL license, so this experiment should be treated as an optional
  *  demo-plugin for the axiomagic.dmo.hvol module.
  *  https://ccl.northwestern.edu/netlogo/docs/copyright.html
  */
+/*
 object TestNlg {
 	def main(args: Array[String]) {
 		val workingDir = System.getProperty("user.dir");
@@ -85,6 +87,8 @@ trait NlgBoss {
 		java.awt.EventQueue.invokeAndWait(rnbl)
 	}
 }
+*/
+
 /*
 Exception in thread "main" java.lang.NoClassDefFoundError: org/jhotdraw/framework/DrawingEditor
 
