@@ -39,6 +39,13 @@ pathSingleSlash: is equivalent to rawPathPrefix(Slash ~ PathEnd). It matches whe
 pathEndOrSingleSlash: is equivalent to rawPathPrefix(PathEnd) or rawPathPrefix(Slash ~ PathEnd). It matches either when there is no remaining path or is just a single slash.
 		 */
 		// path requires whole remaining path being matched
+
+		// 2021-12-26 Added postfixOps (which is "not recommended") as workaround during upgrade to Scala 2.13
+		// https://www.scala-lang.org/api/2.13.x/scala/language$.html#postfixOps:languageFeature.postfixOps
+		// See note below line 67 (was line 60):      pathPrefix (ptok_scrjs / )
+
+		import scala.language.postfixOps
+
 		val wbRscRt =
 		get {
 			parameterMap { paramMap =>
@@ -58,6 +65,11 @@ pathEndOrSingleSlash: is equivalent to rawPathPrefix(PathEnd) or rawPathPrefix(S
 						// What about mime-type header?
 						getFromResource(resNm)
 					} ~ pathPrefix (ptok_scrjs / ) {
+/*
+On upgrade to Scala 2.13 we encountered this error relating to the / operator:
+[ERROR] E:/_emnt/axio_git_clnz/agc_02/adaxmvn/axmgc_web_pond/src/main/scala/axmgc/web/rsrc/WebRsrc.scala:60: postfix operator / needs to be enabled
+by making the implicit value scala.language.postfixOps visible.
+ */
 						lgr.info ("Found GET js-script prefix: {}", ptok_scrjs)
 						extractUnmatchedPath { jsPth =>
 							lgr.info("Extract js-script path: {}", jsPth)

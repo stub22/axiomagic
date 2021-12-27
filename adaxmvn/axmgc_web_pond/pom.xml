@@ -26,12 +26,12 @@
         -->
         <dependency>
             <groupId>com.typesafe.akka</groupId>
-            <artifactId>akka-actor_2.12</artifactId>
+            <artifactId>akka-actor_2.13</artifactId>
             <version>${akka.guts.version}</version>
         </dependency>
         <dependency>
             <groupId>com.typesafe.akka</groupId>
-            <artifactId>akka-stream_2.12</artifactId>
+            <artifactId>akka-stream_2.13</artifactId>
             <version>${akka.guts.version}</version>
         </dependency>
 

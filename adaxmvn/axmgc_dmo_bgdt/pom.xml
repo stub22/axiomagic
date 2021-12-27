@@ -28,9 +28,9 @@
  -->
         <dependency>
             <groupId>com.github.mjakubowski84</groupId>
-            <artifactId>parquet4s-core_2.12</artifactId>
+            <artifactId>parquet4s-core_2.13</artifactId>
             <!-- Expects hadoop-client at v2.9.2+ -->
-            <version>1.9.3</version>
+            <version>2.0.1</version>
         </dependency>
         <dependency>
             <groupId>org.apache.hadoop</groupId>
