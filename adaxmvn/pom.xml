@@ -25,6 +25,7 @@
         <spray.json.version>1.3.6</spray.json.version>
         <jena.version>3.8.0</jena.version>
         <spark.version>3.2.0</spark.version>
+        <paranamer.version>2.8</paranamer.version>
         <parquet4s.version>2.0.1</parquet4s.version>
         <hadoop.client.version>2.9.2</hadoop.client.version>
         <netlogo.version>6.0.4</netlogo.version>

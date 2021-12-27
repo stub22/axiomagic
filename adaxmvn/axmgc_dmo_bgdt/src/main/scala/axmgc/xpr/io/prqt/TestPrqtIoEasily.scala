@@ -4,6 +4,9 @@ import org.slf4j.{Logger, LoggerFactory}
 import axmgc.web.lnch.FallbackLog4J
 import axmgc.xpr.io.prqt.{MakesUserDat, ReadsAndWritesPrqtWithOurSchema}
 
+// Note in IDEA environment variables we set:
+// HADOOP_HOME=E:\_emnt\axio_git_clnz\agc_02\adaxmvn\axmgc_dmo_bgdt\hdp
+// to use module's hdp/bin/winutils.exe
 object TestPrqtIoEasily {
 
 	val flg_setupFallbackLog4J = false // Set to false if log4j.properties is expected, e.g. from Jena.

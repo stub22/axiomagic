@@ -17,19 +17,19 @@ https://stackoverflow.com/questions/53315677/spark-java-saveastable-failes-with-
         <dependency>
             <groupId>com.thoughtworks.paranamer</groupId>
             <artifactId>paranamer</artifactId>
-            <version>2.8</version>
+            <version>${paranamer.version}</version>
         </dependency>
 
         <!-- Until 2021-12-26 we used these Scala 2.12 compat versions   -->
         <dependency>
             <groupId>org.apache.spark</groupId>
-            <artifactId>spark-core_2.12</artifactId>
-            <version>2.4.0</version>
+            <artifactId>spark-core_${scalver.suffix}</artifactId>
+            <version>${spark.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.spark</groupId>
-            <artifactId>spark-sql_2.12</artifactId>
-            <version>2.4.0</version>
+            <artifactId>spark-sql_${scalver.suffix}</artifactId>
+            <version>${spark.version}</version>
         </dependency>
 
         <!-- Uses bintray repo linked below in "repositories" section -->
@@ -53,7 +53,10 @@ https://stackoverflow.com/questions/53315677/spark-java-saveastable-failes-with-
             <type>jar</type>
         </dependency>
         -->
-        <!--  yup -->
+        <!--    Because hvol does not grab pond as a dep, it does not get the .iml properties which
+                configure scala sdk for launching .main programs.  We must set the SDK for this .iml module.
+                Look at the "dependencies" per module under Project Structure.
+         -->
         <!--
         <dependency>
             <groupId>${project.groupId}</groupId>
