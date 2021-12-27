@@ -19,19 +19,19 @@
 
         <dependency>
             <groupId>com.typesafe.akka</groupId>
-            <artifactId>akka-http_2.12</artifactId>
+            <artifactId>akka-http_${scalver.suffix}</artifactId>
             <version>${akka.http.version}</version>
         </dependency>
         <!-- akka-http above can pull in akka, but idea doesn't see it without these explicit helpers:
         -->
         <dependency>
             <groupId>com.typesafe.akka</groupId>
-            <artifactId>akka-actor_2.13</artifactId>
+            <artifactId>akka-actor_${scalver.suffix}</artifactId>
             <version>${akka.guts.version}</version>
         </dependency>
         <dependency>
             <groupId>com.typesafe.akka</groupId>
-            <artifactId>akka-stream_2.13</artifactId>
+            <artifactId>akka-stream_${scalver.suffix}</artifactId>
             <version>${akka.guts.version}</version>
         </dependency>
 
@@ -52,31 +52,31 @@
             This dep transitively brings in spray-json, but visual IDEs might sometimes not see it. -->
         <dependency>
             <groupId>com.typesafe.akka</groupId>
-            <artifactId>akka-http-spray-json_2.12</artifactId>
-            <version>10.1.7</version>
+            <artifactId>akka-http-spray-json_${scalver.suffix}</artifactId>
+            <version>${akka.http.version}</version>
         </dependency>
         <!-- Explicit, approximately same version of json lib is brought in transitively above
 				Does this extra explicit dep help latest IDEA? (stub22 is using 2020.2)
 		-->
-				<dependency>
-					<groupId>io.spray</groupId>
-					<artifactId>spray-json_2.12</artifactId>
-					<version>${spray.json.version}</version>
-				</dependency>
+        <dependency>
+            <groupId>io.spray</groupId>
+            <artifactId>spray-json_${scalver.suffix}</artifactId>
+            <version>${spray.json.version}</version>
+        </dependency>
 
 
         <!-- XML bindings:
             OK  -->
         <dependency>
             <groupId>org.scala-lang.modules</groupId>
-            <artifactId>scala-xml_2.12</artifactId>
-            <version>1.1.1</version>
+            <artifactId>scala-xml_${scalver.suffix}</artifactId>
+            <version>${scala.xml.version}</version>
         </dependency>
 
 		<dependency>
 			<groupId>com.typesafe.akka</groupId>
-			<artifactId>akka-http-xml_2.12</artifactId>
-			<version>10.1.7</version>
+			<artifactId>akka-http-xml_${scalver.suffix}</artifactId>
+			<version>${akka.http.version}</version>
 		</dependency>
 
     </dependencies>

@@ -42,7 +42,7 @@ https://stackoverflow.com/questions/53315677/spark-java-saveastable-failes-with-
         <dependency>
             <groupId>org.nlogo</groupId>
             <artifactId>netlogo</artifactId>
-            <version>6.0.4</version>
+            <version>${netlogo.version}</version>
         </dependency>
         <!--
         <dependency>
