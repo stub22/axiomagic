@@ -3,7 +3,7 @@ package axmgc.xpr.io.prqt
 import java.time.{LocalDate, ZoneOffset}
 import java.util.TimeZone
 
-import com.github.mjakubowski84.parquet4s.{ParquetIterable, ParquetReader, ParquetWriter, RowParquetRecord, Value, ValueCodecConfiguration}
+import com.github.mjakubowski84.parquet4s.{ParquetIterable, ParquetReader, ParquetWriter, Path, RowParquetRecord, Value, ValueCodecConfiguration}
 import org.apache.parquet.schema.PrimitiveType.PrimitiveTypeName.{BINARY, INT32, INT64}
 import org.apache.parquet.schema.Type.Repetition.{OPTIONAL, REQUIRED}
 import org.apache.parquet.schema.{LogicalTypeAnnotation, MessageType, OriginalType, Types}
@@ -32,10 +32,12 @@ trait MakesUserDat extends HasSchemaNamesAndVCC {
 		(2L, "Bob", LocalDate.of(1980, 2, 28)),
 		(3L, "Cecilia", LocalDate.of(1977, 3, 15))
 	).map { case (id, name, birthday) =>
-		RowParquetRecord.empty
-				.add(ID, id, vcc)
-				.add(Name, name, vcc)
-				.add(Birthday, birthday, vcc)
+		// 2021-12-26 updating versions of Scala and Parquet4s
+		// naively replaced "empty" with "EmptyNoSchema", and "add" with "updated".
+		RowParquetRecord.EmptyNoSchema
+				.updated(ID, id, vcc)
+				.updated(Name, name, vcc)
+				.updated(Birthday, birthday, vcc)
 	}
 }
 trait KnowsOurSchemaImplicitly extends HasSchemaNamesAndVCC {
@@ -50,13 +52,14 @@ trait KnowsOurSchemaImplicitly extends HasSchemaNamesAndVCC {
 trait ReadsAndWritesPrqtWithOurSchema extends KnowsOurSchemaImplicitly {
 
 	def writePrqtFile (udat : List[RowParquetRecord], fPath : String) : Unit = {
-
-		ParquetWriter.writeAndClose(fPath, udat) // users.parquet
+		val pPath = Path(fPath)
+		ParquetWriter.writeAndClose(pPath, udat) // users.parquet
 	}
 
 	def readPrqtFile (fPath : String) : Unit = {
+		val pPath = Path(fPath)
 		//read
-		val readData: ParquetIterable[RowParquetRecord] = ParquetReader.read[RowParquetRecord](fPath)
+		val readData: ParquetIterable[RowParquetRecord] = ParquetReader.read[RowParquetRecord](pPath)
 		// val x = readData
 		try {
 			readData.foreach { r =>  printRPR(r) }

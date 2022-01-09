@@ -28,20 +28,20 @@
  -->
         <dependency>
             <groupId>com.github.mjakubowski84</groupId>
-            <artifactId>parquet4s-core_2.12</artifactId>
+            <artifactId>parquet4s-core_${scalver.suffix}</artifactId>
             <!-- Expects hadoop-client at v2.9.2+ -->
-            <version>1.9.3</version>
+            <version>${parquet4s.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.hadoop</groupId>
             <artifactId>hadoop-client</artifactId>
-            <version>2.9.2</version>
+            <version>${hadoop.client.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.apache.hadoop</groupId>
             <artifactId>hadoop-aws</artifactId>
-            <version>2.9.2</version>
+            <version>${hadoop.client.version}</version>
         </dependency>
     </dependencies>
 <!--  snapshots ref copied from dmo_fibo,  but not used here in dmo_bgdt
