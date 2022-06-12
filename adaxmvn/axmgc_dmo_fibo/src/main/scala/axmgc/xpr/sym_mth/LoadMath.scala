@@ -9,7 +9,7 @@ import org.matheclipse.core.parser.ExprParser
 import org.matheclipse.core.expression.{F, S}
 import java.io.StringWriter
 
-import org.matheclipse.parser.client.FEConfig
+import org.matheclipse.parser.client.ParserConfig
 import org.slf4j.{Logger, LoggerFactory}
 
 trait LoadMath
@@ -107,7 +107,7 @@ trait ChkChkMth extends ChkFormulas {
 	def flag_lowerCaseSymbols : Boolean = false
 
 	private lazy val myEvEng : EvalEngine = {
-		FEConfig.PARSER_USE_LOWERCASE_SYMBOLS = flag_lowerCaseSymbols;  // This has a big effect on how exprs get interpreted.
+		ParserConfig.PARSER_USE_LOWERCASE_SYMBOLS = flag_lowerCaseSymbols;  // This has a big effect on how exprs get interpreted.
 		val flag_relaxedSyn = flag_useRelaxedSyntax //  false => not relaxed == capitalization matters == more like Mathematica
 		new EvalEngine(flag_relaxedSyn)
 	}

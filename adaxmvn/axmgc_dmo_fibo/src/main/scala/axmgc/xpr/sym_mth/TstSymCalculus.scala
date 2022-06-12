@@ -2,7 +2,7 @@ package axmgc.xpr.sym_mth
 
 
 import axmgc.web.lnch.FallbackLog4J
-import org.matheclipse.parser.client.FEConfig
+import org.matheclipse.parser.client.ParserConfig
 import org.slf4j.{Logger, LoggerFactory}
 
 trait TstSymFncs {
@@ -34,7 +34,7 @@ object TstSymCalculus {
 			if (flg_preferMmaMode) {
 				runMmaConsole(args)
 			} else {
-				FEConfig.PARSER_USE_LOWERCASE_SYMBOLS = true;
+				ParserConfig.PARSER_USE_LOWERCASE_SYMBOLS = true;
 				runRelaxedConsole(args)
 			}
 		}
