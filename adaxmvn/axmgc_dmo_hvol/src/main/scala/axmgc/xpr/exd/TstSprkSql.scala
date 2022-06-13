@@ -1,5 +1,10 @@
 package axmgc.xpr.exd
 
-trait TstSprkSql {
+private trait TstSprkSql
+
+trait FakeDataFeeder {
+	/*
+	We flood our spark pipeline with dummy records to compare.
+	 */
 
 }
