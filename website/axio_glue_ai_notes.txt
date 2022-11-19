@@ -1,0 +1,7 @@
+2022-11-19  Folder containing glue.ai website linked into axiomagic.fun, using a linux soft link (ln -s) on coco.
+
+Root:
+http://www.axiomagic.fun/glue_ai_v1/
+
+Glue-ML:
+http://www.axiomagic.fun/glue_ai_v1/glue_ml.html
