@@ -2,7 +2,7 @@ package axmgc.xpr.sym_mth
 
 
 import axmgc.web.lnch.FallbackLog4J
-import org.matheclipse.parser.client.ParserConfig
+import org.matheclipse.parser.client.{ParserConfig}
 import org.slf4j.{Logger, LoggerFactory}
 
 trait TstSymFncs {
@@ -49,6 +49,8 @@ object TstSymCalculus {
 	def runRelaxedConsole(args: Array[String]) : Unit = {
 		myS4JLogger.warn("Invoking org.matheclipse.io.eval.Console")
 		org.matheclipse.io.eval.Console.main(args)
+
+
 	}
 	def runMmaConsole(args: Array[String]) : Unit = {
 		myS4JLogger.warn("Invoking org.matheclipse.io.eval.MMAConsole")

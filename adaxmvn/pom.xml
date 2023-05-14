@@ -33,6 +33,9 @@
         <!-- FIXME:  Old version of Log4J with infamous security vulnerability -->
         <slf4j.log4j.version>1.7.25</slf4j.log4j.version>
 
+        <!-- Symja release version as of 2023-05-13 = 2.0.0 -->
+        <symja.version>3.0.0-SNAPSHOT</symja.version>
+
         <!-- Scala 2.12 dependency versions, used until 2021-12-26
         <scala.version>2.12.3</scala.version>
         <scala.compat.version>2.12.6</scala.compat.version>

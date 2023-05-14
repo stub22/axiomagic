@@ -21,32 +21,45 @@ object ModifiedSparkSQLExample {
 	val origPeopleTxtPath = "examples/src/main/resources/people.txt"
 	// Path does not exist: file:/E:/_emnt/axio_git_clnz/agc_02/adaxmvn/examples/src/main/resources/people.json
 
-	val hvolPathHead = "axmgc_dmo_hvol/"
 	val src_sprkExRes = "src/main/resources/sprk_ex_res/"
 	val peopleJsonPathTail  = "people.json"
-	val hvolSrcPeopleJson = hvolPathHead + src_sprkExRes + peopleJsonPathTail
-	val peopleTxtPathTail  = "people.txt"
-	val hvolSrcPeopleTxt = hvolPathHead + src_sprkExRes + peopleTxtPathTail
 
+	val peopleTxtPathTail  = "people.txt"
+
+	val hvolPathHead = "axmgc_dmo_hvol/"
 
 	def main(args: Array[String]): Unit = {
-		// $example on:init_session$
+
+		// Runs OK including createOrReplaceTempView but fails on "createGlobalTempView" wanting HADOOP_HOME
+		val flag_doGTV = true
+		val rsrcFldrPath =  hvolPathHead + src_sprkExRes
+		runSparkSqlDemos(rsrcFldrPath, flag_doGTV)
+	}
+
+	def runSparkSqlDemos(rsrcFldrPath : String, flag_doGTV : Boolean) : Unit = {
+
+		val hvolSrcPeopleJson = rsrcFldrPath + peopleJsonPathTail
+		val hvolSrcPeopleTxt = rsrcFldrPath  + peopleTxtPathTail
+
 		val spark = SparkSession
 				.builder()
 				.appName("Spark SQL basic example")
 				.config("spark.master", "local")
 				.getOrCreate()
 
-
-
-		// Runs OK including createOrReplaceTempView but fails on "createGlobalTempView" wanting HADOOP_HOME
-		runBasicDataFrameExample(spark, hvolSrcPeopleJson, false)
-
+		println("*********************** 0")
+		runBasicDataFrameExample(spark, hvolSrcPeopleJson, flag_doGTV)
+		println("*********************** 1")
 		runDatasetCreationExample(spark, hvolSrcPeopleJson)
+		println("*********************** 2")
 		runInferSchemaExample(spark, hvolSrcPeopleTxt)
+		println("*********************** 3")
 		runProgrammaticSchemaExample(spark, hvolSrcPeopleTxt)
-
+		println("*********************** 4")
+		Thread.sleep(60*1000)
+		println("*********************** 5")
 		spark.stop()
+		println("*********************** 6")
 	}
 
 

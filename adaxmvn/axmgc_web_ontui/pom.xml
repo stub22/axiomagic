@@ -21,7 +21,19 @@
 		<dependency>
 			<groupId>com.github.dgarijo</groupId>
 			<artifactId>Widoco</artifactId>
-			<version>v1.4.13</version>
+			<version>v1.4.16</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.github.jsonld-java</groupId>
+			<artifactId>jsonld-java</artifactId>
+			<version>0.13.4</version>
+			<exclusions>
+				<exclusion>
+					<groupId>com.github.jsonld-java.jsonld-java</groupId>
+					<artifactId>jsonld-java</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 	</dependencies>
 
