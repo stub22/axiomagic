@@ -9,7 +9,7 @@ import axmgc.xpr.vis_js.{MakeSampleSaveRoutes, MakeWebTableRoutes}
 
 object TstOntDmps  {
 	val flg_consoleTest = true
-	val flg_wbsvcLnch =  false
+	val flg_wbsvcLnch =  true
 	val flg_setupFallbackLog4J = false // Set to false if log4j.properties is expected, e.g. from Jena.
 	val myFallbackLog4JLevel = org.apache.log4j.Level.INFO
 
